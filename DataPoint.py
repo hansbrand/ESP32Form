@@ -10,6 +10,9 @@ class DataPoint(object):
         parsed = line.split("|")
         measure = parsed[1]
         measure = measure[2:]
+        if ("Er" in line):
+            self.meter = -1
+            return
         self.meter = float(measure.split("m,")[0])
         self.signal = int(measure.split("m,")[1])
         self.hAngle = float(parsed[4])

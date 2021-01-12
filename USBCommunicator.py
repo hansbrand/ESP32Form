@@ -106,10 +106,14 @@ class USBCommunicator(StoppableThread):
             while True:
                 ch = c.readline()
                 #print(ch)
-                ch = ch.decode("utf-8")
+                try:
+                    ch = ch.decode("utf-8")
+                except Exception as deco:
+                    print(deco)
+                    continue
                 ch.strip()
                 if  ch != '':
-                    #print("got : >" + ch + "<")
+                    print("got : >" + ch + "<")
                     self.appendReceived(ch)
                     time.sleep(0.2);
           except Exception as inst:
