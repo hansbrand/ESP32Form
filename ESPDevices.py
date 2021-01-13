@@ -135,6 +135,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 360,vstart = 0,vend = 1
   
   message = "C1:" + str(C_STEPPERCALIBRATE) + ":" 
   commandList.append(message)
+  print(commandList)
 
   return commandList
 
@@ -144,14 +145,15 @@ def handleMotor(message):
 def isSensor(message):
     global deviceList
     if (message[0] == 'M'):
-        handleMotor(message)
-        return False
-    if (message[0] != 'S'):return False
+       handleMotor(message)
+       return False
+    #if (message[0] != 'S'):return False
     st = message[0:2]
     if ((st in deviceList) != True): return False
     parts = message.split("|")
+    print(parts)
     if ( len (parts) < 3):return False
-    if ("Err" in parts[1]):
+    if ("Er" in message):
         DataContainer.ErrorList.append(parts[1])
         return False
     if (parts[1][0] == "S"):

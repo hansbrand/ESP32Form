@@ -115,7 +115,7 @@ class USBCommunicator(StoppableThread):
                 if  ch != '':
                     print("got : >" + ch + "<")
                     self.appendReceived(ch)
-                    time.sleep(0.2);
+                    time.sleep(0.2)
           except Exception as inst:
                 print(inst)
 

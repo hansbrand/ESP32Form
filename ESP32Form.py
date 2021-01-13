@@ -41,16 +41,16 @@ class Application(tk.Frame):
         time.sleep(10)
 
 
-    def createNewWindow(self):
-        global currentCanvas
+    # def createNewWindow(self):
+    #     global currentCanvas
 
-        if (tk.Toplevel.winfo_exists(self.newwin) == False):
-            self.newwin = tk.Toplevel(self.master, 
-                width=self.canvas_width ,
-                height=self.canvas_height)
-            self.newwin.config(bg='#202020')
+    #     if (tk.Toplevel.winfo_exists(self.newwin) == False):
+    #         self.newwin = tk.Toplevel(self.master, 
+    #             width=self.canvas_width ,
+    #             height=self.canvas_height)
+    #         self.newwin.config(bg='#202020')
 
-        graph3D = Graph3D(self.newwin)
+    #     graph3D = Graph3D(self.newwin)
 
 
 
@@ -115,7 +115,7 @@ class Application(tk.Frame):
         self.screen_width = self.master.winfo_screenwidth()
         self.screen_height = self.master.winfo_screenheight()
 
-        self.master.title( "ESP32 Controller");
+        self.master.title( "ESP32 Controller")
         self.timeman = 0
         communicator =  USBCommunicator.USBCommunicator()
 
@@ -130,7 +130,7 @@ class Application(tk.Frame):
         ESPDevices.initDevices()
         self.lastStatus = 0
 
-        self.initCanvas(master)
+        #self.initCanvas(master)
         atexit.register(self.cleanup)
         #sender = EMailer.Emailer()
         #sendTo = 'fdeitzer@gmail.com'
