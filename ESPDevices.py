@@ -135,7 +135,8 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 360,vstart = 0,vend = 1
   
   message = "C1:" + str(C_STEPPERCALIBRATE) + ":" 
   commandList.append(message)
-  print(commandList)
+  for c in commandList:
+    print(c)
 
   return commandList
 
