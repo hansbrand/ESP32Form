@@ -229,7 +229,8 @@ def updateSend():
         alreadysent += 1
         pbar = FormCommand.FormCommand.getWidgetByName("PROGRESSBAR")
         pbar["value"]=int(alreadysent / current2send * 100.0)
-        pbar.update();
+        pbar.update()
+        print(s)
         sendSingleCommand(s)
     queuelock.release()
 
@@ -288,7 +289,7 @@ def startserverThread():
         startme=True
         #com = FormCommand.FormCommand.getWidgetByName("COMPortList").get()
         #print(com)
-        COMSerial = serial.Serial('COM3', 115200, timeout=1)
+        COMSerial = serial.Serial('COM7', 115200, timeout=1)
         sth = Thread(target=startServer)
         sth.start()
         print("Server thread started")

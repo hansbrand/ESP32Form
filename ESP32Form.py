@@ -23,7 +23,7 @@ import FormMobile
 progressbar = None
 graph3D = None
 currentframe = None
-SMALLSCREEN = True
+SMALLSCREEN = False
 
 
 class Application(tk.Frame):
