@@ -80,12 +80,10 @@ class USBCommunicator(StoppableThread):
         global commandlock
 
         ident = message[0:2]
-        if ident == 'S1':
-            print(message)
         if ident in ESPDevices.deviceList:
-            print("Device found :" + message)
+            #print("Device found :" + message)
             message = message[:-1]
-            receiveList += message
+            receiveList +=[ message + "\n"]
             if (ESPDevices.isSensor(message)):
                 dp = DataPoint(message)
                 #print(dp)
@@ -94,7 +92,7 @@ class USBCommunicator(StoppableThread):
             commandlock.acquire()
             key = ESPDevices.getMessageID(message)
             if key in currentCommands.keys():
-                print("Delete :" + currentCommands[key])
+                #print("Delete :" + currentCommands[key])
                 del currentCommands[key]
             commandlock.release()
             receiveCounter += 1
@@ -113,7 +111,7 @@ class USBCommunicator(StoppableThread):
                     continue
                 ch.strip()
                 if  ch != '':
-                    print("got : >" + ch + "<")
+                    #print("got : >" + ch + "<")
                     self.appendReceived(ch)
                     time.sleep(0.2)
           except Exception as inst:

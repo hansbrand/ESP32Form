@@ -51,7 +51,10 @@ class FormCallbacks(object):
     @classmethod
     def callbackFULLSCAN(self , button):
         print("callbackFULLSCAN")
-        clist = ESPDevices.genSimpleCommands(False)
+        clist = ESPDevices.genSimpleCommands(True)
+        USBCommunicator.current2send = len(clist)
+        USBCommunicator.alreadysent = 0
+
         for s in clist:
             USBCommunicator.addCommand(s)
 

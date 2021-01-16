@@ -85,7 +85,7 @@ def addScanning(counter):
   commandList.append(message)
 
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 360,vstart = 0,vend = 180, hdelta = 1.0 ,vdelta = 5.0):
+def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 160, hdelta = 5.175 ,vdelta = 9.9):
   global commandList
 
   message = ""
@@ -119,7 +119,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 360,vstart = 0,vend = 1
     message = "M1:" + str(hindex) + ":" 
     counter +=1
     commandList.append(message)
-
+    vindex = vend
     while (vindex >= vstart):
       if (scanning):
         addScanning(counter)
@@ -152,7 +152,7 @@ def isSensor(message):
     st = message[0:2]
     if ((st in deviceList) != True): return False
     parts = message.split("|")
-    print(parts)
+    #print(parts)
     if ( len (parts) < 3):return False
     if ("Er" in message):
         DataContainer.ErrorList.append(parts[1])

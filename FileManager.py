@@ -144,5 +144,4 @@ def saveCSVlist(slist,ext):
             #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
             #l = l.replace("|",";")
             f.write(l)
-        f.write("\r\n")
 
