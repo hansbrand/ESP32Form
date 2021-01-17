@@ -54,6 +54,7 @@ class FormCallbacks(object):
         clist = ESPDevices.genSimpleCommands(True)
         USBCommunicator.current2send = len(clist)
         USBCommunicator.alreadysent = 0
+        #USBCommunicator.currentCommands = []
 
         for s in clist:
             USBCommunicator.addCommand(s)

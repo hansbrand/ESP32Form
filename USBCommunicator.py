@@ -36,7 +36,7 @@ isConnected = False
 queuelock = threading.RLock() 
 commandlock = threading.RLock() 
 
-MAXBUFFERSIZE = 10
+MAXBUFFERSIZE = 20
 current2send = 1
 alreadysent = 1
 
@@ -83,7 +83,7 @@ class USBCommunicator(StoppableThread):
         if ident in ESPDevices.deviceList:
             #print("Device found :" + message)
             message = message[:-1]
-            receiveList +=[ message + "\n"]
+            receiveList +=[ message]
             if (ESPDevices.isSensor(message)):
                 dp = DataPoint(message)
                 #print(dp)
@@ -92,7 +92,7 @@ class USBCommunicator(StoppableThread):
             commandlock.acquire()
             key = ESPDevices.getMessageID(message)
             if key in currentCommands.keys():
-                #print("Delete :" + currentCommands[key])
+                print("Delete :" + currentCommands[key] +">"+str(currentCommands))
                 del currentCommands[key]
             commandlock.release()
             receiveCounter += 1
@@ -102,19 +102,29 @@ class USBCommunicator(StoppableThread):
           #global COMSerial
           try:
             while True:
-                ch = c.readline()
-                #print(ch)
-                try:
-                    ch = ch.decode("utf-8")
-                except Exception as deco:
-                    print(deco)
-                    continue
-                ch.strip()
-                if  ch != '':
-                    #print("got : >" + ch + "<")
-                    self.appendReceived(ch)
-                    time.sleep(0.2)
+                response = ""
+                sertest = c.in_waiting
+                while (sertest):
+                    ch = c.read()
+                    #print(ch)
+                    try:
+                        ch = ch.decode("utf-8")
+                    except Exception as deco:
+                        print(deco)
+                        continue
+                    response = response + ch
+                    if (ch == '\n'):
+                        response.strip()
+                        if  response != '':
+                            print("got : >" + response + "<")
+                            self.appendReceived(response)
+                            time.sleep(0.2)
+                        response = ""
+                        sertest = c.in_waiting
+                    else:
+                        sertest = True                        
           except Exception as inst:
+
                 print(inst)
 
           pass
@@ -228,7 +238,7 @@ def updateSend():
         pbar = FormCommand.FormCommand.getWidgetByName("PROGRESSBAR")
         pbar["value"]=int(alreadysent / current2send * 100.0)
         pbar.update()
-        print(s)
+        print(s +">" + str(sendList)+"<")
         sendSingleCommand(s)
     queuelock.release()
 

@@ -23,7 +23,7 @@ import FormMobile
 progressbar = None
 graph3D = None
 currentframe = None
-SMALLSCREEN = False
+SMALLSCREEN = True
 
 
 class Application(tk.Frame):
@@ -98,10 +98,10 @@ class Application(tk.Frame):
 
         self.timedelta = time.time() - self.timedelta
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
-        if ((time.time() - self.lastStatus) > 60.0):
-            self.lastStatus = time.time()
-            USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
-            USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
+        # if ((time.time() - self.lastStatus) > 60.0):
+        #     self.lastStatus = time.time()
+        #     USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
+        #     USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
 
         self.master.after(1000,self.eventloop)
 
