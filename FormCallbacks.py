@@ -92,8 +92,8 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        hd = (180.0 / 90.0) - 0.01
-        vd = (180.0 / 10.0) - 0.01
+        hd = (180.0 / 45.0) - 0.01
+        vd = (160.0 / 5.0) - 0.01
         clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0

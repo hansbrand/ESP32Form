@@ -1,6 +1,6 @@
 import numpy
 import DataContainer
-
+import FormCommand
 
 hStepper = None
 vStepper = None
@@ -99,7 +99,11 @@ def getstatsCommand():
     return command
 
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180, hdelta = 1.0 ,vdelta = 5.0):
+def statusCommand(ind): 
+    command = "S" + str(ind) + ":S:"
+    return command
+
+def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 160, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
   round = 0;
 
@@ -149,7 +153,8 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 1
     hindex += hdelta
     round += 1
     if ((round % 3) == 0):
-        commandList.append(ESPDevices().statusCommand())
+        commandList.append(statusCommand(1))
+        commandList.append(statusCommand(2))
   commandList.append(getstatsCommand())
 
   message = "C1:" + str(C_STEPPERCALIBRATE) + ":" 
@@ -182,6 +187,12 @@ def isSensor(message):
             return False
         if (parts[1][0] == "S"):
             DataContainer.StatusList.append(parts[1])
+            if (parts[0][1] == '1'):
+                sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
+                sbar["text"] = parts[1]
+            if (parts[0][1] == '2'):
+                sbar = FormCommand.FormCommand.getWidgetByName("STATUS2")
+                sbar["text"] = parts[1]
             return False
         return (parts[1][0] in ['D','F','M'])
     except Exception as exc:
