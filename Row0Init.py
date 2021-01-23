@@ -23,6 +23,7 @@ class Row0Init(tk.Frame):
     "STOP",
     "RESUME",
     "FULLSCAN",
+    "QUICKSCAN",
     "SAVE_FILE",
     "LOAD_FILE",
     "CLEAR",

@@ -11,8 +11,10 @@ import atexit
 import os
 
 import FormBuild
+import FormCallbacks
 import FormCommand
 import USBCommunicator
+import TCPCommunicator
 from DataContainer  import initDataContainer 
 import ESPDevices
 import Graph3D
@@ -24,6 +26,8 @@ progressbar = None
 graph3D = None
 currentframe = None
 SMALLSCREEN = True
+ISLINUXOS = False
+communicator = None
 
 
 class Application(tk.Frame):
@@ -35,22 +39,25 @@ class Application(tk.Frame):
     canvas_width = None
     canvas_height = None
 
+    @classmethod
     def cleanup(self):
         print("exit")
-        os.system("sudo poweroff")
+        TCPCommunicator.TCP_close()
+        time.sleep(10)
+        #os.system("sudo poweroff")
         time.sleep(10)
 
 
-    # def createNewWindow(self):
-    #     global currentCanvas
+    def createNewWindow(self):
+        global currentCanvas
 
-    #     if (tk.Toplevel.winfo_exists(self.newwin) == False):
-    #         self.newwin = tk.Toplevel(self.master, 
-    #             width=self.canvas_width ,
-    #             height=self.canvas_height)
-    #         self.newwin.config(bg='#202020')
+        if (tk.Toplevel.winfo_exists(self.newwin) == False):
+            self.newwin = tk.Toplevel(self.master, 
+                width=self.canvas_width ,
+                height=self.canvas_height)
+            self.newwin.config(bg='#202020')
 
-    #     graph3D = Graph3D(self.newwin)
+        graph3D = Graph3D(self.newwin)
 
 
 
@@ -76,10 +83,10 @@ class Application(tk.Frame):
 
 
         self.lwin.config(bg='#202020')
-        graph3D = Graph3D.Graph3D(self.newwin)
+        #graph3D = Graph3D.Graph3D(self.newwin)
 
         
-        currentframe = graph3D
+        #currentframe = graph3D
 
         self.newwin.iconify()
 
@@ -94,30 +101,42 @@ class Application(tk.Frame):
 
         self.timedelta = time.time() - self.timedelta
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
-        USBCommunicator.updateSend()
+
+        #USBCommunicator.updateSend()
+        TCPCommunicator.updateSend()
 
         self.timedelta = time.time() - self.timedelta
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
-        # if ((time.time() - self.lastStatus) > 60.0):
-        #     self.lastStatus = time.time()
-        #     USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
-        #     USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
+        if ((time.time() - self.lastStatus) > 60.0):
+            self.lastStatus = time.time()
+#            USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
+#           USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
+            # TCPCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
+            # TCPCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
 
-        self.master.after(1000,self.eventloop)
+        self.master.after(300,self.eventloop)
 
 
     def __init__(self, master=None):
         global SMALLSCREEN
+        global ISLINUXOS
+        global communicator
         super().__init__(master)
         #master.attributes('-fullscreen', True)
         #master.update()
+
+
         self.master = master
         self.screen_width = self.master.winfo_screenwidth()
         self.screen_height = self.master.winfo_screenheight()
 
-        self.master.title( "ESP32 Controller")
+        self.master.title( "ESP32 Controller");
         self.timeman = 0
-        communicator =  USBCommunicator.USBCommunicator()
+
+        #communicator =  USBCommunicator.USBCommunicator()
+        tcpc =  TCPCommunicator.TCPCommunicator()
+
+        fc = FormCallbacks.FormCallbacks("TCPCommunicator")
 
         if (SMALLSCREEN):
             fb = FormMobile.FormMobile(master)
@@ -125,6 +144,10 @@ class Application(tk.Frame):
         else:
             fb = FormBuild.FormBuild(master)
         fb.genCallBacks()
+
+        TCPCommunicator.startserverThread()
+        time.sleep(2)
+
 
         initDataContainer()
         ESPDevices.initDevices()
@@ -162,9 +185,18 @@ class Application(tk.Frame):
 
 
 def Main():
+    global ISLINUXOS
+
     root = tk.Tk()
-#tcpserver.initServer()
-    #tcpserver.startserverThread()
+    if sys.platform.startswith('win'):
+        ISLINUXOS = False
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ISLINUXOS = True
+    else:
+        raise environmenterror('unsupported platform')
+
+    #tcpserver.initServer()
     app = Application(master=root)
     app.mainloop()
 

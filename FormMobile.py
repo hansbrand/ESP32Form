@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter.ttk import *
 import FormCommand 
 import FormCallbacks
-from USBCommunicator import USBCommunicator
-
 RowMobile = None
 
 class FormMobile(tk.Frame):
@@ -11,6 +9,8 @@ class FormMobile(tk.Frame):
 
     master = None
     fc = None
+    interface = None
+
 
     servercommand=(
     "INIT",
@@ -18,6 +18,8 @@ class FormMobile(tk.Frame):
     "STOP",
     "RESUME",
     "FULLSCAN",
+    "QUICKSCAN",
+    "SHOW",
     "SAVE_FILE",
     "LOAD_FILE",
     "CLEAR",
@@ -34,7 +36,6 @@ class FormMobile(tk.Frame):
 
         self.fc = FormCommand.FormCommand(master)
 
-
         self.screen_width = self.master.winfo_screenwidth()
         self.screen_height = self.master.winfo_screenheight()
         self.scalelength = int(self.screen_height / 5.0 )
@@ -44,9 +45,9 @@ class FormMobile(tk.Frame):
         #self.canvas_width =  master.winfo_width() 
         self.canvas_height = self.screen_height / 2
         self.colmax = self.canvas_width
-        self.buttonheight = int(self.screen_height / 300 )
-        self.buttonwidth = int(self.screen_width/ 150 )
-        self.scalelength = int(self.screen_height / 5 )
+        self.buttonheight = int(self.screen_height / 250 )
+        self.buttonwidth = int(self.screen_width/ 120 )
+        self.scalelength = int(self.screen_height / 2 )
 
 
         self.master = master
@@ -72,7 +73,7 @@ class FormMobile(tk.Frame):
                 bt["bd"]=5
                 #bt["command"] = lambda par=c:interpreter(par)
                 bt.config(height = bheight, width= bwidth)
-                l = len(s) / 2
+                l = len(s) / 3
             
                 #if c == "ADJUST":
                  #   bt.bind("<ButtonPress>", on_press)
@@ -94,12 +95,12 @@ class FormMobile(tk.Frame):
 
 
             MINDEGREE = 0.225
-            hentry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "cyan", length =  self.scalelength,digits =  5)
+            hentry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "cyan", length =  self.scalelength,digits =  5, width =45)
             hentry.grid(row = 1,column = 0,sticky=tk.W , ipadx = 2, ipady=2,rowspan = 5)
             self.fc.addWidget(hentry,"HSCALE",1)
 
 
-            ventry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "brown", length =  self.scalelength ,digits = 5)
+            ventry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "brown", length =  self.scalelength ,digits = 5, width =45)
             ventry.grid(row = 1,column = 1,sticky=tk.W , ipadx = 2, ipady=2,rowspan = 5)
             self.fc.addWidget(ventry,"VSCALE",1)
 
@@ -113,7 +114,7 @@ class FormMobile(tk.Frame):
             clientlabel["fg"] = "blue"
             clientlabel.grid(row = 0,column = 0,sticky=tk.W,columnspan = 1)
             self.fc.addWidget(clientlabel,"CLIENTLABEL",0)
-            progressbar = Progressbar(labelframe, orient = tk.HORIZONTAL, length = 100, mode = 'determinate') 
+            progressbar = Progressbar(labelframe, orient = tk.HORIZONTAL, length = 200, mode = 'determinate') 
             self.fc.addWidget(progressbar,"PROGRESSBAR",0)
             progressbar.grid(row=0,column = 2,sticky=tk.E,columnspan = 4,padx =1,ipadx =1)
 

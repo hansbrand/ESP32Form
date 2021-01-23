@@ -21,6 +21,7 @@ def addPoint(dp):
     global PointDict
 
     PointCloud.append(dp);
+    return
     PointDict = sorted(PointCloud, key=lambda d: (d['hAngle'], d['vAngle']))
     pass
 

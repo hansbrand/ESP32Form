@@ -13,6 +13,9 @@ SENSOR = "Sensor"
 C_STEPPERCALIBRATE = 32000
 C_SYSTEMINIT       =  32001
 C_TURN2ZERO        =   32002
+C_STARTTIMER       =  32003
+C_GETSTATS        =   32004
+C_EMERGENCY        =   32005
 
 commandList = []
 deviceList = ["S1","S2","M1","M2","M3","C1"]
@@ -85,13 +88,25 @@ def addScanning(counter):
   commandList.append(message)
 
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 160, hdelta = 5.175 ,vdelta = 9.9):
+def starttimerCommand():
+    global C_STARTTIMER
+    command = "C1:" + str(C_STARTTIMER) + ":"
+    return command
+
+def getstatsCommand():
+    global C_GETSTATS
+    command = "C1:" + str(C_GETSTATS) + ":"
+    return command
+
+
+def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180, hdelta = 1.0 ,vdelta = 5.0):
   global commandList
+  round = 0;
 
   message = ""
 
   counter = 0
-
+  commandList.append(starttimerCommand())
   hindex = hstart
   while  (hindex < hend):
     if (scanning):
@@ -113,13 +128,14 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 1
       vindex += vdelta
     
     hindex += hdelta
-    if (hindex > 360.0):
+    if (hindex > hend):
         break
 
     message = "M1:" + str(hindex) + ":" 
     counter +=1
     commandList.append(message)
-    vindex = vend
+    vindex -= vdelta
+
     while (vindex >= vstart):
       if (scanning):
         addScanning(counter)
@@ -131,12 +147,13 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 1
       commandList.append(message)
       vindex -= vdelta
     hindex += hdelta
-    
-  
+    round += 1
+    if ((round % 3) == 0):
+        commandList.append(ESPDevices().statusCommand())
+  commandList.append(getstatsCommand())
+
   message = "C1:" + str(C_STEPPERCALIBRATE) + ":" 
   commandList.append(message)
-  #for c in commandList:
-    #print(c)
 
   return commandList
 
@@ -145,23 +162,30 @@ def handleMotor(message):
 
 def isSensor(message):
     global deviceList
-    if (message[0] == 'M'):
-       handleMotor(message)
-       return False
-    #if (message[0] != 'S'):return False
-    st = message[0:2]
-    if ((st in deviceList) != True): return False
-    parts = message.split("|")
-    #print(parts)
-    if ( len (parts) < 3):return False
-    if ("Er" in message):
-        DataContainer.ErrorList.append(parts[1])
-        return False
-    if (parts[1][0] == "S"):
-        DataContainer.StatusList.append(parts[1])
-        return False
-    return (parts[1][0] in ['D','F','M'])
+    try:
+        if (message[0] == 'M'):
+            handleMotor(message)
+            return False
+        st = message[0:2]
+        if ("C1" == st):
+            print(message)
+            return False
+        if (message[0] != 'S'):return False
+        if ((st in deviceList) != True): return False
+        # TODO
+        parts = message.split("|")
+        #parts = message.split(":")
 
+        if ( len (parts) < 3):return False
+        if ("Er" in parts[1]):
+            DataContainer.ErrorList.append(parts[1])
+            return False
+        if (parts[1][0] == "S"):
+            DataContainer.StatusList.append(parts[1])
+            return False
+        return (parts[1][0] in ['D','F','M'])
+    except Exception as exc:
+        print(exc)
 
 
 def initDevices():
@@ -191,15 +215,26 @@ def adjustCommand():
     command = "C1:" + str(C_TURN2ZERO) + ":"
     return command
 
+def emergencyCommand():
+    global C_EMERGENCY
+    command = "C1:" + str(C_EMERGENCY) + ":"
+    return command
+
 def getMessageID(message):
-    parts = message.split("|")
-    if len(parts) < 4:
+    try:
+        parts = message.split("|")
+        #parts = message.split(":")
+
+        print( parts)
+        if len(parts) < 3:
+            return -1
+        #return int(parts[3])
+        if (message.startswith("M")):
+            return int(parts[3])
+        if (message.startswith("S")):
+            return int(parts[2])
         return -1
-    print( parts)
-    if (message.startswith("M")):
-        return int(parts[3])
-    if (message.startswith("S")):
-        return int(parts[2])
-    return -1
+    except Exception as exc:
+        print(exc)
 
 

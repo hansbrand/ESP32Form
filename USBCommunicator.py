@@ -36,7 +36,7 @@ isConnected = False
 queuelock = threading.RLock() 
 commandlock = threading.RLock() 
 
-MAXBUFFERSIZE = 20
+MAXBUFFERSIZE = 10
 current2send = 1
 alreadysent = 1
 
@@ -73,58 +73,45 @@ class USBCommunicator(StoppableThread):
       #isError=False
       #acceptmessages = False
 
-    def appendReceived(self,message):
+    def appendReceived(self,mess):
         global receiveList
         global receiveCounter
         global currentCommands
         global commandlock
 
-        ident = message[0:2]
-        if ident in ESPDevices.deviceList:
-            #print("Device found :" + message)
-            message = message[:-1]
-            receiveList +=[ message]
-            if (ESPDevices.isSensor(message)):
-                dp = DataPoint(message)
-                #print(dp)
-                addPoint(dp)
+        parts = mess.split("\n")
+        print(parts)
+        for message in parts:
+            
+            ident = message[0:2]
+            if ident in ESPDevices.deviceList:
+                print("Device found :" + message)
+                receiveList += message
+                if (ESPDevices.isSensor(message)):
+                    dp = DataPoint(message)
+                    addPoint(dp)
 
-            commandlock.acquire()
-            key = ESPDevices.getMessageID(message)
-            if key in currentCommands.keys():
-                print("Delete :" + currentCommands[key] +">"+str(currentCommands))
-                del currentCommands[key]
-            commandlock.release()
-            receiveCounter += 1
+                commandlock.acquire()
+                key = ESPDevices.getMessageID(message)
+                if key in currentCommands.keys():
+                    del currentCommands[key]
+                commandlock.release()
+                receiveCounter += 1
 
 
     def run(self,c):
           #global COMSerial
           try:
             while True:
-                response = ""
-                sertest = c.in_waiting
-                while (sertest):
-                    ch = c.read()
-                    #print(ch)
-                    try:
-                        ch = ch.decode("utf-8")
-                    except Exception as deco:
-                        print(deco)
-                        continue
-                    response = response + ch
-                    if (ch == '\n'):
-                        response.strip()
-                        if  response != '':
-                            print("got : >" + response + "<")
-                            self.appendReceived(response)
-                            time.sleep(0.2)
-                        response = ""
-                        sertest = c.in_waiting
-                    else:
-                        sertest = True                        
+                ch = c.readline()
+                #print(ch)
+                ch = ch.decode("utf-8")
+                ch.strip()
+                if  ch != '':
+                    print("got : >" + ch + "<")
+                    self.appendReceived(ch)
+                    time.sleep(0.2);
           except Exception as inst:
-
                 print(inst)
 
           pass
@@ -135,33 +122,33 @@ class USBCommunicator(StoppableThread):
         global COMPortList
         return COMPortList
 
-    def serial_ports(self):
-        """ Lists serial port names
+    #def serial_ports(self):
+    #    """ Lists serial port names
 
-            :raises EnvironmentError:
-                On unsupported or unknown platforms
-            :returns:
-                A list of the serial ports available on the system
-        """
-        if sys.platform.startswith('win'):
-            ports = ['COM%s' % (i + 1) for i in range(256)]
-        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
-            # this excludes your current terminal "/dev/tty"
-            ports = glob.glob('/dev/tty[A-Za-z]*')
-        elif sys.platform.startswith('darwin'):
-            ports = glob.glob('/dev/tty.*')
-        else:
-            raise EnvironmentError('Unsupported platform')
+    #        :raises EnvironmentError:
+    #            On unsupported or unknown platforms
+    #        :returns:
+    #            A list of the serial ports available on the system
+    #    """
+    #    if sys.platform.startswith('win'):
+    #        ports = ['COM%s' % (i + 1) for i in range(256)]
+    #    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    #        # this excludes your current terminal "/dev/tty"
+    #        ports = glob.glob('/dev/tty[A-Za-z]*')
+    #    elif sys.platform.startswith('darwin'):
+    #        ports = glob.glob('/dev/tty.*')
+    #    else:
+    #        raise EnvironmentError('Unsupported platform')
 
-        result = []
-        for port in ports:
-            try:
-                s = serial.Serial(port)
-                s.close()
-                result.append(port)
-            except (OSError, serial.SerialException):
-                pass
-        return result
+    #    result = []
+    #    for port in ports:
+    #        try:
+    #            s = serial.Serial(port)
+    #            s.close()
+    #            result.append(port)
+    #        except (OSError, serial.SerialException):
+    #            pass
+    #    return result
 
     def __init__(self):
 
@@ -170,8 +157,8 @@ class USBCommunicator(StoppableThread):
         self.current_message=""
         #print(list(serial.tools.list_ports.comports()))
         #ls = list(serial.tools.list_ports.comports())[0]
-        USBCommunicator.COMPortList = self.serial_ports()
-        print(USBCommunicator.COMPortList)
+        #USBCommunicator.COMPortList = self.serial_ports()
+        #print(USBCommunicator.COMPortList)
 
         #with serial.Serial(com, 115200, timeout=1) as ser:
         #    s = ser.read(10) 
@@ -237,8 +224,7 @@ def updateSend():
         alreadysent += 1
         pbar = FormCommand.FormCommand.getWidgetByName("PROGRESSBAR")
         pbar["value"]=int(alreadysent / current2send * 100.0)
-        pbar.update()
-        print(s +">" + str(sendList)+"<")
+        pbar.update();
         sendSingleCommand(s)
     queuelock.release()
 
@@ -297,7 +283,9 @@ def startserverThread():
         startme=True
         #com = FormCommand.FormCommand.getWidgetByName("COMPortList").get()
         #print(com)
-        COMSerial = serial.Serial('COM7', 115200, timeout=1)
+        COMSerial = serial.Serial('COM3', 115200, timeout=1)
+        time.sleep(2);
+
         sth = Thread(target=startServer)
         sth.start()
         print("Server thread started")

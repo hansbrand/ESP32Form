@@ -5,10 +5,12 @@ import os
 import json 
 import queue
 import time
+import sys
 from FileHandler import filestat 
 import ESPDevices
 import DataContainer
 from DataPoint import DataPoint 
+#import ESP32Form
 
 def analyse(line):
     mi = messageInfo()
@@ -136,12 +138,27 @@ def saveCSV(x,y,z,ext):
             f.write(line)
 
 def saveCSVlist(slist,ext):
+    try:
+        dirname = os.path.dirname(__file__)
+        ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
+        if ISLINUXOS:
+            filename = os.path.join(dirname, 'dist/') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".csv"
+        else:
+            filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".csv"
+        with open(filename, 'wt+') as f:
+            for l in slist:
+                #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
+                #l = l.replace("|",";")
+                f.write(l)
+        if ISLINUXOS:
+            filename = os.path.join(dirname, 'dist/') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".xyz"
+        else:
+            filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext + ".xyz"
+        with open(filename, 'wt+') as f:
+            for l in DataContainer.PointCloud:
 
-    dirname = os.path.dirname(__file__)
-    filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".csv"
-    with open(filename, 'wt+') as f:
-        for l in slist:
-            #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
-            #l = l.replace("|",";")
-            f.write(l)
-
+                line = str(l.x) + " " + str(l.y) + " " + str(l.z) + "\n"
+                #l = l.replace("|",";")
+                f.write(line)
+    except Exception as exc:
+        print(exc)

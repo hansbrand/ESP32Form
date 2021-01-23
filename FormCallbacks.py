@@ -1,16 +1,22 @@
 import os
+from time import sleep
 import USBCommunicator
 import ESPDevices
 import FormCommand
 import FileManager
 import USBCommunicator
+import TCPCommunicator
 import ESP32Form
 
 checkButtonval = None
 
 class FormCallbacks(object):
+    com = None
+    classname = ""
     """description of class"""
-    def __init__(self):
+    def __init__(self, classname):
+        self.classname = classname
+
         pass
 
     @classmethod
@@ -20,29 +26,46 @@ class FormCallbacks(object):
     @classmethod
     def callbackINIT(self,button):
         print("callbackINIT")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
         #ESPDevices.initDevices()
         #ESPDevices.genSimpleCommands(False)
-        USBCommunicator.startserverThread()
-        USBCommunicator.addCommand(ESPDevices.calibrateCommand() )
-        USBCommunicator.addCommand(ESPDevices.Sensor1.openCommand())
-        USBCommunicator.addCommand(ESPDevices.Sensor2.openCommand())
+        #self.com.startserverThread()
+        self.com.addCommand(ESPDevices.calibrateCommand() )
+        self.com.addCommand(ESPDevices.Sensor1.openCommand())
+        self.com.addCommand(ESPDevices.Sensor2.openCommand())
+        self.com.addCommand(ESPDevices.Sensor1.statusCommand())
+        self.com.addCommand(ESPDevices.Sensor2.statusCommand())
 
 
     @classmethod
     def callbackCALIBRATE(self , button):
         print("callbackCALIBRATE")
-        USBCommunicator.addCommand(ESPDevices.calibrateCommand() )
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+
+        self.com.addCommand(ESPDevices.calibrateCommand() )
 
     @classmethod
     def callbackADJUST(self , button):
         print("callbackADJUST")
-        USBCommunicator.addCommand(ESPDevices.adjustCommand() )
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+
+        self.com.addCommand(ESPDevices.adjustCommand() )
 
 
 
     @classmethod
     def callbackSTOP(self , button):
         print("callbackSTOP")
+        TCPCommunicator.emergeny()
 
     @classmethod
     def callbackRESUME(self , button):
@@ -51,20 +74,44 @@ class FormCallbacks(object):
     @classmethod
     def callbackFULLSCAN(self , button):
         print("callbackFULLSCAN")
-        clist = ESPDevices.genSimpleCommands(True)
-        USBCommunicator.current2send = len(clist)
-        USBCommunicator.alreadysent = 0
-        #USBCommunicator.currentCommands = []
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        clist = ESPDevices.genSimpleCommands(False)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
 
         for s in clist:
-            USBCommunicator.addCommand(s)
+            self.com.addCommand(s)
+
+    @classmethod
+    def callbackQUICKSCAN(self , button):
+        print("callbackQUICK")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        hd = (180.0 / 90.0) - 0.01
+        vd = (180.0 / 10.0) - 0.01
+        clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
+
+        for s in clist:
+            self.com.addCommand(s)
+        pass
 
 
     @classmethod
     def callbackSAVE_FILE(self , button):
         print("callbackSAVE_FILE")
-        FileManager.saveCSVlist(USBCommunicator.receiveList, "RAW")
-        USBCommunicator.receiveList = []
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        FileManager.saveCSVlist(self.com.receiveList, "RAW")
+        self.com.receiveList = []
 
     @classmethod
     def callbackLOAD_FILE(self , button):
@@ -79,6 +126,9 @@ class FormCallbacks(object):
     @classmethod
     def callbackQUIT(self , button):
         print("callbackQUIT")
+        TCPCommunicator.emergeny()
+
+        sleep(2000)
         ESP32Form.Application.cleanup()
         #button.master.master.master.destroy()
         os._exit( 0 )
@@ -86,6 +136,10 @@ class FormCallbacks(object):
     @classmethod
     def callbackSCAN(self , button):
         print("callbackSCAN")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
         hfrom = float(FormCommand.FormCommand.getWidgetByName("HSTART").get())
         hto = float(FormCommand.FormCommand.getWidgetByName("HEND").get())
         vfrom = float(FormCommand.FormCommand.getWidgetByName("VSTART").get())
@@ -94,10 +148,10 @@ class FormCallbacks(object):
         vdelta = float(FormCommand.FormCommand.getWidgetByName("VSCALE").get())
         
         clist = ESPDevices.genSimpleCommands(True, hfrom, hto, vfrom, vto, hdelta, vdelta)
-        USBCommunicator.current2send = len(clist)
-        USBCommunicator.alreadysent = 0
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
         for s in clist:
-            USBCommunicator.addCommand(s)
+            self.com.addCommand(s)
 
 
 
