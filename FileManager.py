@@ -142,9 +142,9 @@ def saveCSVlist(slist,ext):
         dirname = os.path.dirname(__file__)
         ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
         if ISLINUXOS:
-            filename = os.path.join(dirname, 'dist/') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".csv"
+            filename = os.path.join(dirname, 'dist/') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".txt"
         else:
-            filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".csv"
+            filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".txt"
         with open(filename, 'wt+') as f:
             for l in slist:
                 #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
