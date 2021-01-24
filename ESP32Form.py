@@ -41,10 +41,15 @@ class Application(tk.Frame):
 
     @classmethod
     def cleanup(self):
+        global ISLINUXOS
+
         print("exit")
-        TCPCommunicator.TCP_close()
+        TCPCommunicator.emergeny()
         time.sleep(10)
-        #os.system("sudo poweroff")
+
+        TCPCommunicator.TCP_close()
+        if (ISLINUXOS):
+            os.system("sudo poweroff")
         time.sleep(10)
 
 

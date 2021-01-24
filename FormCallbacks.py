@@ -126,7 +126,6 @@ class FormCallbacks(object):
     @classmethod
     def callbackQUIT(self , button):
         print("callbackQUIT")
-        TCPCommunicator.emergeny()
 
         sleep(2000)
         ESP32Form.Application.cleanup()

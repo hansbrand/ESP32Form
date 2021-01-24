@@ -45,8 +45,8 @@ class FormMobile(tk.Frame):
         #self.canvas_width =  master.winfo_width() 
         self.canvas_height = self.screen_height / 2
         self.colmax = self.canvas_width
-        self.buttonheight = int(self.screen_height / 250 )
-        self.buttonwidth = int(self.screen_width/ 120 )
+        self.buttonheight = int(self.screen_height / 150 )
+        self.buttonwidth = int(self.screen_width/ 60 )
         self.scalelength = int(self.screen_height / 2 )
 
 
