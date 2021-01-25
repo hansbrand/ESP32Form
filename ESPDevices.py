@@ -103,7 +103,7 @@ def statusCommand(ind):
     command = "S" + str(ind) + ":S:"
     return command
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 160, hdelta = 2.0 ,vdelta = 10.0):
+def genSimpleCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
   round = 0;
 

@@ -40,7 +40,7 @@ class FormCallbacks(object):
         self.com.addCommand(ESPDevices.Sensor2.openCommand())
         self.com.addCommand(ESPDevices.Sensor1.statusCommand())
         self.com.addCommand(ESPDevices.Sensor2.statusCommand())
-
+        self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
 
     @classmethod
     def callbackCALIBRATE(self , button):
@@ -133,8 +133,8 @@ class FormCallbacks(object):
              self.com =  __import__("TCPCommunicator")
         # hd = (180.0 / 45.0) - 0.01
         # vd = (160.0 / 10.0) - 0.01
-        hd = 1
-        vd = 10
+        hd = 1.99
+        vd = 5.99
         clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0
