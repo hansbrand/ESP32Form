@@ -30,7 +30,7 @@ class FormCommand(object):
                     #k["command"] = (lambda: method_to_call(k))
                     k["command"] = action_with_arg
                 else:
-                    f = eval("FormCallbacks.cbdefault()")
+                    f = eval("FormCallbacks.cbdefault(k)")
                     #k["command"] = lambda: FormCallbacks.cbdefault(k)
                     k["command"] = FormCallbacks.cbdefault
                 #print("Button" + self.WidgetTable[k][0])

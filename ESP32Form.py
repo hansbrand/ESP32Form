@@ -102,6 +102,7 @@ class Application(tk.Frame):
         #print("eventloop")
         deltatime = 180
         skip = self.timeman > 0
+
         self.timedelta = time.time()
 
         self.timedelta = time.time() - self.timedelta

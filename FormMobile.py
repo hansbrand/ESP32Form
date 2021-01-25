@@ -15,15 +15,17 @@ class FormMobile(tk.Frame):
     servercommand=(
     "INIT",
     "CALIBRATE",
-    "STOP",
-    "RESUME",
+    "TO10",
+    "PIEP",
     "FULLSCAN",
     "QUICKSCAN",
     "SHOW",
     "SAVE_FILE",
-    "LOAD_FILE",
-    "CLEAR",
-    "ADJUST",
+    #"LOAD_FILE",
+    #"ADJUST",
+    "MUP",
+    "MDOWN",
+    "STOP",
     "QUIT"
     )
 
@@ -85,24 +87,24 @@ class FormMobile(tk.Frame):
 
                 counter=counter+1
 
-            scrollfram = tk.LabelFrame(RowMobile, text="Scale", relief = tk.RAISED)
-            scrollfram.grid(row = 0 ,column = 6,sticky=tk.E,columnspan = 6, padx = 10,rowspan = 4,pady = 5) 
-            lbl = tk.Label(scrollfram,text="VSteps : ")
-            lbl.grid(row = 0,column = 1,sticky=tk.W, ipadx = 5, ipady=5)
+            # scrollfram = tk.LabelFrame(RowMobile, text="Scale", relief = tk.RAISED)
+            # scrollfram.grid(row = 0 ,column = 6,sticky=tk.E,columnspan = 6, padx = 10,rowspan = 4,pady = 5) 
+            # lbl = tk.Label(scrollfram,text="VSteps : ")
+            # lbl.grid(row = 0,column = 1,sticky=tk.W, ipadx = 5, ipady=5)
 
-            lbl = tk.Label(scrollfram,text="HSteps : ")
-            lbl.grid(row = 0,column = 0,sticky=tk.W, ipadx = 5, ipady=5)
-
-
-            MINDEGREE = 0.225
-            hentry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "cyan", length =  self.scalelength,digits =  5, width =45)
-            hentry.grid(row = 1,column = 0,sticky=tk.W , ipadx = 2, ipady=2,rowspan = 5)
-            self.fc.addWidget(hentry,"HSCALE",1)
+            # lbl = tk.Label(scrollfram,text="HSteps : ")
+            # lbl.grid(row = 0,column = 0,sticky=tk.W, ipadx = 5, ipady=5)
 
 
-            ventry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "brown", length =  self.scalelength ,digits = 5, width =45)
-            ventry.grid(row = 1,column = 1,sticky=tk.W , ipadx = 2, ipady=2,rowspan = 5)
-            self.fc.addWidget(ventry,"VSCALE",1)
+            # MINDEGREE = 0.225
+            # hentry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "cyan", length =  self.scalelength,digits =  5, width =45)
+            # hentry.grid(row = 1,column = 0,sticky=tk.W , ipadx = 2, ipady=2,rowspan = 5)
+            # self.fc.addWidget(hentry,"HSCALE",1)
+
+
+            # ventry = tk.Scale(scrollfram,   from_=10.1, to=0,resolution = MINDEGREE,bg = "brown", length =  self.scalelength ,digits = 5, width =45)
+            # ventry.grid(row = 1,column = 1,sticky=tk.W , ipadx = 2, ipady=2,rowspan = 5)
+            # self.fc.addWidget(ventry,"VSCALE",1)
 
 
     def createStatusLine(self):

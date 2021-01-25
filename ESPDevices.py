@@ -248,4 +248,10 @@ def getMessageID(message):
     except Exception as exc:
         print(exc)
 
+def turnCommand(dev,degree): 
+            command = dev + ":" +  str(degree) + ":"
+            return command
 
+def piepCommand(dev): 
+            command = dev + ":D:"
+            return command

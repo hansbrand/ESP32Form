@@ -9,6 +9,8 @@ import TCPCommunicator
 import ESP32Form
 
 checkButtonval = None
+CALPOS = 90.0
+CALDELTA = .225
 
 class FormCallbacks(object):
     com = None
@@ -72,6 +74,43 @@ class FormCallbacks(object):
         print("callbackRESUME")
 
     @classmethod
+    def callbackTO10(self , button):
+        print("callbackTO10")
+        self.com.addCommand(ESPDevices.turnCommand("M2",10) )
+        self.com.addCommand(ESPDevices.turnCommand("M3",10) )
+
+
+    @classmethod
+    def callbackMUP(self , button):
+        global CALPOS
+        global CALDELTA
+        print("callbackMUP")
+        CALPOS -= CALDELTA
+        sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
+        sbar["text"] =str(CALPOS)
+        self.com.addCommand(ESPDevices.turnCommand("M2",CALPOS) )
+        self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
+
+
+
+    @classmethod
+    def callbackMDOWN(self , button):
+        global CALPOS
+        global CALDELTA
+        print("callbackMDOWN")
+        CALPOS += CALDELTA
+        sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
+        sbar["text"] = str(CALPOS)
+        self.com.addCommand(ESPDevices.turnCommand("M2",CALPOS) )
+        self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
+
+    @classmethod
+    def callbackPIEP(self , button):
+        print("callbackPIEP")
+        self.com.addCommand(ESPDevices.piepCommand("S1") )
+        self.com.addCommand(ESPDevices.piepCommand("S2"))
+
+    @classmethod
     def callbackFULLSCAN(self , button):
         print("callbackFULLSCAN")
         if (self.classname == "USBCommunicator"):
@@ -92,8 +131,10 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        hd = (180.0 / 45.0) - 0.01
-        vd = (160.0 / 10.0) - 0.01
+        # hd = (180.0 / 45.0) - 0.01
+        # vd = (160.0 / 10.0) - 0.01
+        hd = 1
+        vd = 10
         clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0
