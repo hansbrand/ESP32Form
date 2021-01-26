@@ -133,8 +133,8 @@ class FormCallbacks(object):
              self.com =  __import__("TCPCommunicator")
         # hd = (180.0 / 45.0) - 0.01
         # vd = (160.0 / 10.0) - 0.01
-        hd = 1.99
-        vd = 5.99
+        hd = 3
+        vd = 6
         clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0
