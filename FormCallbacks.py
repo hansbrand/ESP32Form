@@ -143,6 +143,81 @@ class FormCallbacks(object):
             self.com.addCommand(s)
         pass
 
+    @classmethod
+    def callbackTEST1(self , button):
+        print("callbackQUICK")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        hd = .25
+        vd = .25
+        clist = ESPDevices.genTestCommands(False, hdelta=hd,vdelta =vd)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
+
+        for s in clist:
+            self.com.addCommand(s)
+            print(s)
+        pass
+
+    @classmethod
+    def callbackTEST20(self , button):
+        print("callbackQUICK")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        hd = 5.0
+        vd = 5.0
+        clist = ESPDevices.genTestCommands(False, hdelta=hd,vdelta =vd)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
+
+        for s in clist:
+            self.com.addCommand(s)
+            print(s)
+        pass
+
+    @classmethod
+    def callbackTEST80(self , button):
+        print("callbackQUICK")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        hd = 20.0
+        vd = 20.0
+        clist = ESPDevices.genTestCommands(False, hdelta=hd,vdelta =vd)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
+
+        for s in clist:
+            self.com.addCommand(s)
+            print(s)
+        pass
+
+
+    @classmethod
+    def callbackTEST200(self , button):
+        print("callbackQUICK")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        hd = 50.0
+        vd = 50.0
+        clist = ESPDevices.genTestCommands(False, hdelta=hd,vdelta =vd)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
+
+        for s in clist:
+            self.com.addCommand(s)
+            print(s)
+        pass
+
+
+
 
     @classmethod
     def callbackSAVE_FILE(self , button):

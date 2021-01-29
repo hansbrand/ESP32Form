@@ -17,6 +17,11 @@ class FormMobile(tk.Frame):
     "CALIBRATE",
     "TO10",
     "PIEP",
+    "TEST1",
+    "TEST20",
+    "TEST80",
+    "TEST200",
+    
     "FULLSCAN",
     "QUICKSCAN",
     "SHOW",
@@ -129,6 +134,22 @@ class FormMobile(tk.Frame):
             clientlabel["fg"] = "blue"
             clientlabel.grid(row = 0,column = 7,sticky=tk.W,columnspan = 1)
             self.fc.addWidget(clientlabel,"STATUS2",0)
+
+            clientlabel =tk.Label(labelframe,text="MOTOR 1",font=("Helvetica", 12), width = 18)
+            clientlabel["fg"] = "blue"
+            clientlabel.grid(row = 0,column = 8,sticky=tk.W,columnspan = 1)
+            self.fc.addWidget(clientlabel,"MOTOR1",0)
+            
+            clientlabel =tk.Label(labelframe,text="MOTOR 2",font=("Helvetica", 12), width = 18)
+            clientlabel["fg"] = "blue"
+            clientlabel.grid(row = 0,column = 9,sticky=tk.W,columnspan = 1)
+            self.fc.addWidget(clientlabel,"MOTOR2",0)
+
+
+            clientlabel =tk.Label(labelframe,text="MOTOR 3",font=("Helvetica", 12), width = 18)
+            clientlabel["fg"] = "blue"
+            clientlabel.grid(row = 0,column = 10,sticky=tk.W,columnspan = 1)
+            self.fc.addWidget(clientlabel,"MOTOR3",0)
 
 
         

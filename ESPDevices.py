@@ -162,7 +162,74 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 2
 
   return commandList
 
+
+
+def genTestCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
+    global commandList
+    round = 0;
+
+    message = ""
+
+    counter = 0
+    commandList.append(starttimerCommand())
+    hindex = hstart
+    if (scanning):
+        addScanning(counter)
+        counter += 1
+    message = "M1:" + str(hindex) + ":" 
+    counter +=1
+    commandList.append(message)
+    vindex = vstart
+    while (vindex < vend):
+        if (scanning):
+            addScanning(counter)
+        message = "M2:" + str(vindex) + ":" 
+        counter += 1
+        commandList.append(message)
+        message = "M3:" + str(vindex) + ":" 
+        counter += 1
+        commandList.append(message)
+        vindex += vdelta
+        message = "M1:" + str(hindex) + ":" 
+        counter += 1
+        commandList.append(message)
+        hindex += hdelta
+
+    while (vindex >= 0):
+        if (scanning):
+            addScanning(counter)
+        counter +=1
+        message = "M2:" + str(vindex) + ":" 
+        commandList.append(message)
+        counter +=1
+        message = "M3:" + str(vindex) + ":" 
+        commandList.append(message)
+        vindex -= vdelta
+        counter +=1
+        message = "M1:" + str(hindex) + ":" 
+        commandList.append(message)
+        hindex -= hdelta
+    round += 1
+
+    commandList.append(getstatsCommand())
+
+
+    return commandList
+
+
+
+
+
 def handleMotor(message):
+    if (message[0][1] == '1'):
+        sbar = FormCommand.FormCommand.getWidgetByName("MOTOR1")
+        sbar["text"] = message[3]
+    if (message[0][1] == '2'):
+        sbar = FormCommand.FormCommand.getWidgetByName("MOTOR3")
+        sbar["text"] = message[3]
+    if (message[0][1] == '3'):
+        sbar = FormCommand.FormCommand.getWidgetByName("MOTOR3")
+        sbar["text"] = message[3]
     pass
 
 def isSensor(message):
