@@ -40,7 +40,7 @@ class FormCallbacks(object):
         self.com.addCommand(ESPDevices.Sensor2.openCommand())
         self.com.addCommand(ESPDevices.Sensor1.statusCommand())
         self.com.addCommand(ESPDevices.Sensor2.statusCommand())
-        self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
+        #self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
 
     @classmethod
     def callbackCALIBRATE(self , button):
@@ -133,8 +133,8 @@ class FormCallbacks(object):
              self.com =  __import__("TCPCommunicator")
         # hd = (180.0 / 45.0) - 0.01
         # vd = (160.0 / 10.0) - 0.01
-        hd = 20
-        vd = 100
+        hd = 2
+        vd = 10
         clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0
@@ -145,7 +145,7 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackTEST1(self , button):
-        print("callbackQUICK")
+        print("callbackTEST1")
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -163,7 +163,7 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackTEST20(self , button):
-        print("callbackQUICK")
+        print("callbackTEST20")
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -181,7 +181,7 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackTEST80(self , button):
-        print("callbackQUICK")
+        print("callbackTEST80")
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -200,14 +200,14 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackTEST200(self , button):
-        print("callbackQUICK")
+        print("callbackTEST200")
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
         hd = 50.0
         vd = 50.0
-        clist = ESPDevices.genTestCommands(False, hdelta=hd,vdelta =vd)
+        clist = ESPDevices.genTestCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0
 

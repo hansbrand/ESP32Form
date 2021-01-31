@@ -103,7 +103,7 @@ def statusCommand(ind):
     command = "S" + str(ind) + ":S:"
     return command
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 200, hdelta = 2.0 ,vdelta = 10.0):
+def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 170, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
   round = 0;
 
@@ -164,12 +164,12 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 2
 
 
 
-def genTestCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
+def genTestCommands(scanning = True, hstart = 0,hend = 149,vstart = 0,vend = 149, hdelta = 2.0 ,vdelta = 10.0):
     global commandList
     round = 0;
 
     message = ""
-
+    commandList=[]
     counter = 0
     commandList.append(starttimerCommand())
     hindex = hstart
@@ -213,7 +213,7 @@ def genTestCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180
 
     commandList.append(getstatsCommand())
 
-
+    print(commandList[-10:])
     return commandList
 
 
@@ -222,21 +222,25 @@ def genTestCommands(scanning = True, hstart = 0,hend = 180,vstart = 0,vend = 180
 
 def handleMotor(message):
     if (message[0][1] == '1'):
+        print("\t\t\t\t motor3 " + message[2])
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR1")
-        sbar["text"] = message[3]
+        sbar["text"] = message[4]
+        sbar.update()
     if (message[0][1] == '2'):
-        sbar = FormCommand.FormCommand.getWidgetByName("MOTOR3")
-        sbar["text"] = message[3]
+        sbar = FormCommand.FormCommand.getWidgetByName("MOTOR2")
+        sbar["text"] = message[4]
+        sbar.update()
     if (message[0][1] == '3'):
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR3")
-        sbar["text"] = message[3]
+        sbar["text"] = message[4]
+        sbar.update()
     pass
 
 def isSensor(message):
     global deviceList
     try:
         if (message[0] == 'M'):
-            handleMotor(message)
+            handleMotor(message.split("|"))
             return False
         st = message[0:2]
         if ("C1" == st):
