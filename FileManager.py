@@ -94,7 +94,6 @@ def analyse(line):
 def loadfile(filename):
     try:
 
-        qlaser=queue.Queue()
 
         DataContainer.initDataContainer()
         datafd=open(filename,"rt")
@@ -105,8 +104,9 @@ def loadfile(filename):
             if ident in ESPDevices.deviceList:
                 #print("Device found :" + message)
                 if (ESPDevices.isSensor(message)):
-                    dp = DataPoint(message)
-                    DataContainer.addPoint(dp)
+                    if (('Er' in message) == False):
+                        dp = DataPoint(message)
+                        DataContainer.addPoint(dp)
         print(DataContainer.ErrorList)
         print(DataContainer.StatusList)
         return True
@@ -119,7 +119,12 @@ def loadfile(filename):
 
 
 def openLoadFile(master):
-    filename = filedialog.askopenfilename(initialdir = "./dist",title = "Data File",filetypes = (("CSV files","*.csv"),("Data files","*.txt"),("all files","*.*")))
+    ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
+    if (ISLINUXOS):
+        filename = filedialog.askopenfilename(initialdir = "./dist",title = "Data File",filetypes = (("Data files","*.txt"),("all files","*.*")))
+    else:
+        filename = filedialog.askopenfilename(initialdir = ".\\dist",title = "Data File",filetypes = (("Data files","*.txt"),("all files","*.*")))
+
     print("Filename :", filename)
     if (filename == ''):
         return False

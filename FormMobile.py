@@ -26,7 +26,7 @@ class FormMobile(tk.Frame):
     "QUICKSCAN",
     "SHOW",
     "SAVE_FILE",
-    #"LOAD_FILE",
+    "LOAD_FILE",
     #"ADJUST",
     "MUP",
     "MDOWN",

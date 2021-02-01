@@ -222,7 +222,7 @@ def genTestCommands(scanning = True, hstart = 0,hend = 149,vstart = 0,vend = 149
 
 def handleMotor(message):
     if (message[0][1] == '1'):
-        print("\t\t\t\t motor3 " + message[2])
+        #print("\t\t\t\t motor3 " + message[2])
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR1")
         sbar["text"] = message[4]
         sbar.update()
@@ -255,7 +255,7 @@ def isSensor(message):
         if ( len (parts) < 3):return False
         if ("Er" in parts[1]):
             DataContainer.ErrorList.append(parts[1])
-            return False
+        
         if (parts[1][0] == "S"):
             DataContainer.StatusList.append(parts[1])
             if (parts[0][1] == '1'):

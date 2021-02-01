@@ -157,7 +157,7 @@ class Graph3D(Tk.Frame):
             if (changed):
                 #fig.savefig(r"c:/tmp/linegraph.png", format='png')
                 fig.savefig(buildGUI.btnRam, format='png')
-            buildGUI.btnRam.seek(0)
+            #buildGUI.btnRam.seek(0)
         except Exception as pexc:
             print("3D Error: ", pexc)
 
