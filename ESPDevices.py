@@ -254,7 +254,7 @@ def isSensor(message):
 
         if ( len (parts) < 3):return False
         if ("Er" in parts[1]):
-            DataContainer.ErrorList.append(parts[1])
+            DataContainer.ErrorList.append(message)
         
         if (parts[1][0] == "S"):
             DataContainer.StatusList.append(parts[1])

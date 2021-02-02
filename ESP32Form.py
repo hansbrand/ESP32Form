@@ -17,9 +17,11 @@ import USBCommunicator
 import TCPCommunicator
 from DataContainer  import initDataContainer 
 import ESPDevices
-import Graph3D
 import EMailer
 import FormMobile
+from Graph3D import Graph3D
+
+
 
 
 progressbar = None
@@ -28,6 +30,8 @@ currentframe = None
 SMALLSCREEN = True
 ISLINUXOS = False
 communicator = None
+changeEvent = False
+show3Dwindow = False
 
 
 class Application(tk.Frame):
@@ -71,15 +75,18 @@ class Application(tk.Frame):
         global currentframe
 
         self.master = master
-        self.canvas_width = self.screen_width / 2
+        self.screen_width = self.master.winfo_screenwidth()
+        self.screen_height = self.master.winfo_screenheight()
+
+        self.canvas_width = (self.screen_width * 7.0) / 8.0
         #self.canvas_width =  master.winfo_width() 
-        self.canvas_height = self.screen_height / 2
+        self.canvas_height = (self.screen_height * 7.0) / 8.0
         self.colmax = self.canvas_width
 
         self.newwin = tk.Toplevel(master, 
            width=self.canvas_width,
            height=self.canvas_height)
-        cwindow = self.newwin
+        #cwindow = self.newwin
         #self.clientlabel.grid(row=6,column = 1)
 
         self.lwin= tk.Frame(self.newwin, 
@@ -88,18 +95,31 @@ class Application(tk.Frame):
 
 
         self.lwin.config(bg='#202020')
+        self.newwin.update()
+        graph3D = Graph3D(self.newwin)
+    
         #graph3D = Graph3D.Graph3D(self.newwin)
 
         
         #currentframe = graph3D
 
-        self.newwin.iconify()
+        #self.newwin.iconify()
 
-
-
+    def show3D(self):
+            if tk.Toplevel.winfo_exists(self.newwin):
+                self.newwin.deiconify()
+            else:
+                self.createNewWindow()
+ 
+    @classmethod
+    def setshow3D(self):
+        show3Dwindow = True
+    
 
     def eventloop(self):
         #print("eventloop")
+        global show3Dwindow
+
         deltatime = 180
         skip = self.timeman > 0
 
@@ -113,8 +133,15 @@ class Application(tk.Frame):
 
         self.timedelta = time.time() - self.timedelta
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
-        if ((time.time() - self.lastStatus) > 60.0):
+        #print(show3Dwindow)
+        if (show3Dwindow):
+            show3Dwindow = False
+            self.show3D()
+        if ((time.time() - self.lastStatus) > 30.0):
             self.lastStatus = time.time()
+            #print(self.lastStatus)
+            #graph3D.drawDia(True)
+
 #            USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
 #           USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
             # TCPCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
@@ -159,7 +186,7 @@ class Application(tk.Frame):
         ESPDevices.initDevices()
         self.lastStatus = 0
 
-        #self.initCanvas(master)
+        self.initCanvas(master)
         atexit.register(self.cleanup)
         #sender = EMailer.Emailer()
         #sendTo = 'fdeitzer@gmail.com'

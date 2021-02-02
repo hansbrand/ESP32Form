@@ -107,8 +107,8 @@ def loadfile(filename):
                     if (('Er' in message) == False):
                         dp = DataPoint(message)
                         DataContainer.addPoint(dp)
-        print(DataContainer.ErrorList)
-        print(DataContainer.StatusList)
+        #print(DataContainer.ErrorList)
+        #print(DataContainer.StatusList)
         return True
     except Exception as pex:
         print("loadfile:",pex)
@@ -161,9 +161,9 @@ def saveCSVlist(slist,ext):
             filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext + ".xyz"
         with open(filename, 'wt+') as f:
             for l in DataContainer.PointCloud:
-
-                line = str(l.x) + " " + str(l.y) + " " + str(l.z) + "\n"
-                #l = l.replace("|",";")
-                f.write(line)
+                if (l.state == "VALID"):
+                    line = str(l.x) + " " + str(l.y) + " " + str(l.z) + "\n"
+                    #l = l.replace("|",";")
+                    f.write(line)
     except Exception as exc:
         print(exc)

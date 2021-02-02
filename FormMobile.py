@@ -24,7 +24,7 @@ class FormMobile(tk.Frame):
     
     "FULLSCAN",
     "QUICKSCAN",
-    "SHOW",
+    #"SHOW",
     "SAVE_FILE",
     "LOAD_FILE",
     #"ADJUST",

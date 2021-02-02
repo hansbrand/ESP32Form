@@ -63,8 +63,8 @@ class Graph3D(Tk.Frame):
         #fig.canvas.mpl_connect('pick_event', self.onpick3)
         fig.canvas.mpl_connect('scroll_event',self.zreset)
 
-        toolbar = NavigationToolbar2Tk(canvas, parent)
-        toolbar.update()
+        #toolbar = NavigationToolbar2Tk(canvas, parent)
+        #toolbar.update()
         canvas._tkcanvas.pack(side=Tk.TOP, fill=Tk.BOTH, expand=True)
         self.scat = None
 
@@ -82,7 +82,8 @@ class Graph3D(Tk.Frame):
 
 
         try:
-            is3D = ParamMan.show3D
+            #is3D = ParamMan.show3D
+            is3D = False
             if (len(DC.dc["0"]["scatter3D"]) > 0):
                 x1 = DC.dc["0"]["scatter3D"][0]
                 y1 = DC.dc["0"]["scatter3D"][1]

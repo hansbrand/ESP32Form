@@ -20,6 +20,8 @@ class DataPoint(object):
 
             if (len(measure.split("m,")) < 2):
                 self.state = "ERROR"
+                self.hAngle = float(parsed[4])
+                self.vAngle = float(parsed[5])
                 self.hAngle *= 0.900000000000001
                 self.vAngle *= 0.900000000000001
                 return
@@ -33,6 +35,9 @@ class DataPoint(object):
             self.hAngle *= 0.900000000000001
             self.vAngle *= 0.900000000000001
             
+            tx = xsensordelta *    math.cos(math.radians(self.hAngle))
+            ty = xsensordelta *    math.sin(math.radians(self.hAngle))
+
             if ('Er' in self.meter):
                 self.state = "Error"
                 return
@@ -44,25 +49,38 @@ class DataPoint(object):
 
             self.meter += ysensordelta
 
-            tx = xsensordelta *  math.sin(math.radians(self.vAngle)) *  math.cos(math.radians(self.hAngle))
-            ty = xsensordelta *  math.sin(math.radians(self.vAngle)) *  math.sin(math.radians(self.hAngle))
             
+
             if ((self.vAngle == 0.0)):
                 self.z = xsensordelta + self.meter
+                self.x = tx
+                self.y = ty
             elif (self.vAngle == 180.0):
                 self.z = -(xsensordelta + self.meter)
+                self.x = tx
+                self.y = ty
             else:
-                self.z = xsensordelta *  math.cos(math.radians(self.vAngle)) 
+                self.z = self.meter *  math.cos(math.radians(self.vAngle)) 
+                #TODO :umrechnung hier
+                print(str(self.meter) + ":" + str(self.z))
+                zz = (self.meter ** 2) - (abs(self.z) ** 2)
+                if (zz < 0):
+                    zz = math.sqrt((abs(self.z) ** 2) - (self.meter ** 2))
+                else:
+                    zz = math.sqrt(zz)
 
-            
-            if (ty != 0):
-                self.x = tx + self.meter * (tx / ty)
-                self.y = ty + self.meter * (tx / ty)
-            else :
-                self.x = self.meter
-                self.y = ty + self.meter
+                
+                if (ty != 0):
+                    self.x = tx + zz * (tx / ty)
+                    self.y = ty + zz * (tx / ty)
+                else :
+                    self.x = self.meter
+                    self.y = ty + self.meter
 
-            self.state = "VALID"
+            if (int(self.signal)  < 150):
+                self.state = "VALID"
+            else:
+                self.state = "INVALID"
 
         except Exception as exc:
             print (exc)
