@@ -52,7 +52,7 @@ class DataPoint(object):
             
 
             if ((self.vAngle == 0.0)):
-                self.z = xsensordelta + self.meter
+                self.z = xsensordelta+ self.meter
                 self.x = tx
                 self.y = ty
             elif (self.vAngle == 180.0):

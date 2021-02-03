@@ -137,10 +137,11 @@ class Application(tk.Frame):
         if (show3Dwindow):
             show3Dwindow = False
             self.show3D()
-        if ((time.time() - self.lastStatus) > 30.0):
+        if ((time.time() - self.lastStatus) > 10.0):
             self.lastStatus = time.time()
             #print(self.lastStatus)
-            #graph3D.drawDia(True)
+            graph3D.drawDia(True)
+            #self.newwin.update()
 
 #            USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
 #           USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
@@ -187,6 +188,7 @@ class Application(tk.Frame):
         self.lastStatus = 0
 
         self.initCanvas(master)
+        initDataContainer()
         atexit.register(self.cleanup)
         #sender = EMailer.Emailer()
         #sendTo = 'fdeitzer@gmail.com'

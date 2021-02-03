@@ -7,6 +7,7 @@ import FileManager
 import USBCommunicator
 import TCPCommunicator
 import ESP32Form
+import DataContainer as  DC
 
 checkButtonval = None
 CALPOS = 90.0
@@ -35,11 +36,13 @@ class FormCallbacks(object):
         #ESPDevices.initDevices()
         #ESPDevices.genSimpleCommands(False)
         #self.com.startserverThread()
+        DC.initDataContainer()
         self.com.addCommand(ESPDevices.calibrateCommand() )
         self.com.addCommand(ESPDevices.Sensor1.openCommand())
         self.com.addCommand(ESPDevices.Sensor2.openCommand())
         self.com.addCommand(ESPDevices.Sensor1.statusCommand())
         self.com.addCommand(ESPDevices.Sensor2.statusCommand())
+        
         #self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
 
     @classmethod
@@ -236,6 +239,8 @@ class FormCallbacks(object):
     @classmethod
     def callbackLOAD_FILE(self , button):
         print("callbackLOAD_FILE")
+        DC.initDataContainer()
+
         FileManager.openLoadFile(self)
 
     @classmethod
