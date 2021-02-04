@@ -137,7 +137,7 @@ class Application(tk.Frame):
         if (show3Dwindow):
             show3Dwindow = False
             self.show3D()
-        if ((time.time() - self.lastStatus) > 50.0):
+        if ((time.time() - self.lastStatus) > 30.0):
             self.lastStatus = time.time()
             #print(self.lastStatus)
             #graph3D.drawDia(True)

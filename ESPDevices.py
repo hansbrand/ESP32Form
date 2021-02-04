@@ -111,6 +111,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
 
   counter = 0
   commandList.append(starttimerCommand())
+  commandList.append(calibrateCommand())
   hindex = hstart
   while  (hindex < hend):
     if (scanning):

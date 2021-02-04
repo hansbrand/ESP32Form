@@ -64,8 +64,10 @@ class DataPoint(object):
                 #print(str(self.meter) + ":" + str(self.z))
 
 
-                self.x = tx
-                self.y = ty + self.meter
+                self.x = xradius
+                self.y = self.meter
+                #self.x = tx
+                #self.y = ty + self.meter
                 r2 = math.sqrt( (self.x ** 2) + (self.meter ** 2))
 
                 if (self.hAngle != 0):
