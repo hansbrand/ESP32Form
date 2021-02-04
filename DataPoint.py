@@ -65,7 +65,7 @@ class DataPoint(object):
 
 
                 self.x = xradius
-                self.y = self.meter
+                self.c = self.meter *  math.sin(math.radians(self.vAngle))  *  math.sin(math.radians(0)) 
                 #self.x = tx
                 #self.y = ty + self.meter
                 r2 = math.sqrt( (self.x ** 2) + (self.meter ** 2))

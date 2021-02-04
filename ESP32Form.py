@@ -140,7 +140,7 @@ class Application(tk.Frame):
         if ((time.time() - self.lastStatus) > 30.0):
             self.lastStatus = time.time()
             #print(self.lastStatus)
-            #graph3D.drawDia(True)
+            graph3D.drawDia(True)
 
             #self.newwin.update()
 
