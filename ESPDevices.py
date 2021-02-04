@@ -133,7 +133,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
       vindex += vdelta
     
     hindex += hdelta
-    if (hindex > hend):
+    if (hindex >= hend):
         break
 
     message = "M1:" + str(hindex) + ":" 

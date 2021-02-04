@@ -137,10 +137,11 @@ class Application(tk.Frame):
         if (show3Dwindow):
             show3Dwindow = False
             self.show3D()
-        if ((time.time() - self.lastStatus) > 60.0):
+        if ((time.time() - self.lastStatus) > 50.0):
             self.lastStatus = time.time()
             #print(self.lastStatus)
-            graph3D.drawDia(True)
+            #graph3D.drawDia(True)
+
             #self.newwin.update()
 
 #            USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
