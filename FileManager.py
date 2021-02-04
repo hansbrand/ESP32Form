@@ -107,7 +107,7 @@ def loadfile(filename):
                     if (('Er' in message) == False):
                         dp = DataPoint(message)
                         DataContainer.addPoint(dp)
-        #print(DataContainer.ErrorList)
+        print(DataContainer.getlimits3D())
         #print(DataContainer.StatusList)
         return True
     except Exception as pex:

@@ -103,7 +103,7 @@ def statusCommand(ind):
     command = "S" + str(ind) + ":S:"
     return command
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 170, hdelta = 2.0 ,vdelta = 10.0):
+def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
   round = 0;
 
@@ -115,8 +115,9 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
   while  (hindex < hend):
     if (scanning):
         addScanning(counter)
-        counter += 1
+        counter += 2
     message = "M1:" + str(hindex) + ":" 
+    #print(message)
     counter +=1
     commandList.append(message)
     vindex = vstart
@@ -136,8 +137,10 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
         break
 
     message = "M1:" + str(hindex) + ":" 
+    #print(message)
     counter +=1
     commandList.append(message)
+
     vindex -= vdelta
 
     while (vindex >= vstart):
@@ -150,14 +153,25 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
       message = "M3:" + str(vindex) + ":" 
       commandList.append(message)
       vindex -= vdelta
+
     hindex += hdelta
+    message = "M1:" + str(hindex) + ":" 
+    #print(message)
+    counter +=1
+    #commandList.append(message)
+
+
     round += 1
     if ((round % 3) == 0):
         commandList.append(statusCommand(1))
         commandList.append(statusCommand(2))
+
   commandList.append(getstatsCommand())
 
   message = "C1:" + str(C_STEPPERCALIBRATE) + ":" 
+#   for mes in commandList:
+#       print(mes)
+  print(message)
   commandList.append(message)
 
   return commandList

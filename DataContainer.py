@@ -14,8 +14,10 @@ limits3D = None
 
 
 REDLIMIT = 8.0
-YELLOWVALUE = 4.0
-GREENLIMIT = 1.0
+YELLOWVALUE = 3.0
+GREENLIMIT = 0.5
+
+errorcount = 0
 
 
 
@@ -29,7 +31,8 @@ def getMarkerColor(val):
         return("red")
 
     if val < GREENLIMIT: 
-        return("green")
+        return("green")            
+
 
     if val < YELLOWVALUE:
         refval = (YELLOWVALUE - float(val))  
@@ -62,6 +65,7 @@ def initDataContainer():
     global limits3D
     global mrows
     global mcols
+    global errorcount
 
     PointCloud = []
     PointDict = []
@@ -92,12 +96,15 @@ def addLimits(dp):
         return
     if (limits3D == None):
         limits3D = {}
-        limits3D["xmin"] = dp.x
+        limits3D["xmin"] = dp.x 
+
         limits3D["xmax"] = dp.x
         limits3D["ymin"] = dp.y
         limits3D["ymax"] = dp.y
         limits3D["zmin"] = dp.z
         limits3D["zmax"] = dp.z    
+        limits3D["hmax"] = dp.hAngle
+        limits3D["vmax"] = dp.vAngle
     else:
         limits3D["xmin"] = limits3D["xmin"] if (limits3D["xmin"] < dp.x) else dp.x
         limits3D["xmax"] = limits3D["xmax"] if (limits3D["xmax"] > dp.x) else dp.x
@@ -105,7 +112,9 @@ def addLimits(dp):
         limits3D["ymax"] = limits3D["ymax"] if (limits3D["ymax"] > dp.y) else dp.y
         limits3D["zmin"] = limits3D["zmin"] if (limits3D["zmin"] < dp.z) else dp.z
         limits3D["zmax"] = limits3D["zmax"] if (limits3D["zmax"] > dp.z) else dp.z
-
+        limits3D["hmax"] = limits3D["hmax"] if (limits3D["hmax"] > dp.hAngle) else dp.hAngle
+        limits3D["vmax"] = limits3D["vmax"] if (limits3D["vmax"] > dp.vAngle) else dp.vAngle
+        
 def addRows(dp):
     global mrows
     global mcols
@@ -125,6 +134,7 @@ def addPoint(dp):
     global PointCloud
     global PointDict
     global savelock
+    global errorcount
 
     PointCloud.append(dp);
     if (dp.state == "VALID"):
@@ -133,6 +143,9 @@ def addPoint(dp):
         addLimits(dp)
         addRows(dp)
         savelock.release()
+    else:
+        errorcount += 1
+        #print("Errors : " + str(errorcount) + "/"+ str(len(PointCloud)))
     return
     PointDict = sorted(PointCloud, key=lambda d: (d['hAngle'], d['vAngle']))
     pass
