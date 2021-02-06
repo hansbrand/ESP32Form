@@ -20,8 +20,8 @@ import ESPDevices
 import EMailer
 import FormMobile
 from Graph3D import Graph3D
-
-
+import FileManager as FM
+import Calculator
 
 
 progressbar = None
@@ -34,6 +34,7 @@ changeEvent = False
 show3Dwindow = False
 
 
+
 class Application(tk.Frame):
     master = None
     fb = None
@@ -42,6 +43,9 @@ class Application(tk.Frame):
     newwin = None
     canvas_width = None
     canvas_height = None
+    isRunning = False
+    isLoading  = False
+    drawtime = 2
 
     @classmethod
     def cleanup(self):
@@ -78,23 +82,17 @@ class Application(tk.Frame):
         self.screen_width = self.master.winfo_screenwidth()
         self.screen_height = self.master.winfo_screenheight()
 
-        self.canvas_width = (self.screen_width * 7.0) / 8.0
+        self.canvas_width = int((self.screen_width * 7.0) / 8.0)
         #self.canvas_width =  master.winfo_width() 
-        self.canvas_height = (self.screen_height * 7.0) / 8.0
+        self.canvas_height = int((self.screen_height * 7.0) / 8.0)
         self.colmax = self.canvas_width
 
         self.newwin = tk.Toplevel(master, 
-           width=self.canvas_width,
-           height=self.canvas_height)
+           width  =self.canvas_width,
+           height =self.canvas_height)
+        self.newwin.geometry(str(self.canvas_width) + "x" + str(self.canvas_height))
         #cwindow = self.newwin
         #self.clientlabel.grid(row=6,column = 1)
-
-        self.lwin= tk.Frame(self.newwin, 
-           width=self.canvas_width,
-           height=self.canvas_height)
-
-
-        self.lwin.config(bg='#202020')
         self.newwin.update()
         graph3D = Graph3D(self.newwin)
     
@@ -120,7 +118,7 @@ class Application(tk.Frame):
         #print("eventloop")
         global show3Dwindow
 
-        deltatime = 180
+        deltatime = 20
         skip = self.timeman > 0
 
         self.timedelta = time.time()
@@ -137,10 +135,32 @@ class Application(tk.Frame):
         if (show3Dwindow):
             show3Dwindow = False
             self.show3D()
-        if ((time.time() - self.lastStatus) > 30.0):
+
+        if FM.isScanning:
+            self.isLoading = True            
+        if self.isLoading:
+            if not FM.isScanning:
+                self.isLoading = False 
+                #Calculator.recomputeErrors()
+                pass
+
+        if TCPCommunicator.isScanning:
+            self.isRunning = True            
+        if self.isRunning:
+            if not TCPCommunicator.isScanning:
+                self.isRunning = False 
+                #Calculator.recomputeErrors()
+
+                pass
+
+        if ((time.time() - self.lastStatus) > self.drawtime):
             self.lastStatus = time.time()
             #print(self.lastStatus)
-            graph3D.drawDia(True)
+            if graph3D.Is2Draw():
+                graph3D.drawDia(True)
+                self.drawtime = max(self.drawtime - 1.0, 2.0)
+            else:
+                self.drawtime += 5.0
 
             #self.newwin.update()
 
@@ -155,6 +175,8 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         global SMALLSCREEN
         global ISLINUXOS
+        global graph3D
+
         global communicator
         super().__init__(master)
         #master.attributes('-fullscreen', True)

@@ -125,6 +125,12 @@ class FormMobile(tk.Frame):
             self.fc.addWidget(progressbar,"PROGRESSBAR",0)
             progressbar.grid(row=0,column = 2,sticky=tk.E,columnspan = 4,padx =1,ipadx =1)
 
+            clientlabel =tk.Label(labelframe,text="TIME",font=("Helvetica", 12), width = 18)
+            clientlabel["fg"] = "blue"
+            clientlabel.grid(row = 1,column = 0,sticky=tk.S,columnspan = 3)
+            self.fc.addWidget(clientlabel,"TIME",0)
+
+
             clientlabel =tk.Label(labelframe,text="STATUS 1",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
             clientlabel.grid(row = 0,column = 6,sticky=tk.W,columnspan = 1)

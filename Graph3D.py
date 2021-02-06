@@ -10,6 +10,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import io
 from PIL import Image
 import DataContainer as DC
+import threading
 
 matplotlib.use('TkAgg')
 
@@ -28,12 +29,23 @@ class Graph3D(Tk.Frame):
     fig = None
     canvas = None
     t,s = None,None
+    is2draw = True
+    drawlock = threading.RLock() 
+
     
     def selfdestroy(self):
         global canvas
         global toolbar
         toolbar.destroy()
         canvas.get_tk_widget().destroy()
+
+    def Is2Draw(self):
+        b = False
+        self.drawlock.acquire()
+        b = self.is2draw
+        self.drawlock.release()
+        return b
+
 
 
     def __init__(self):
@@ -46,6 +58,7 @@ class Graph3D(Tk.Frame):
         global ax
         global toolbar
         global annot
+
 
 
 
@@ -84,6 +97,10 @@ class Graph3D(Tk.Frame):
 
         try:
             #is3D = ParamMan.show3D
+            self.drawlock.acquire()
+            self.is2draw = False
+            self.drawlock.release()
+
             is3D = False
             x1 = []
             z1 = []
@@ -91,6 +108,10 @@ class Graph3D(Tk.Frame):
             y1 = []
             x1,y1,z1,m1 = DC.getPointData()
             if (x1 == []) :
+                self.drawlock.acquire()
+                self.is2draw = True
+                self.drawlock.release()
+
                 return
            
 
@@ -125,6 +146,12 @@ class Graph3D(Tk.Frame):
             # annot.set_visible(False)
 
             fig.canvas.draw()
+            self.drawlock.acquire()
+
+            self.is2draw = True
+
+            self.drawlock.release()
+
         except Exception as pexc:
             print("3D Error: ", pexc)
 

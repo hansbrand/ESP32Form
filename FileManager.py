@@ -10,6 +10,7 @@ from FileHandler import filestat
 import ESPDevices
 import DataContainer
 from DataPoint import DataPoint 
+isScanning = False
 #import ESP32Form
 
 def analyse(line):
@@ -92,9 +93,11 @@ def analyse(line):
 
 
 def loadfile(filename):
+    global isScanning
     try:
 
-
+        counter = 0
+        isScanning = True
         DataContainer.initDataContainer()
         datafd=open(filename,"rt")
         buffer = datafd.readlines()
@@ -102,12 +105,16 @@ def loadfile(filename):
         for message in buffer:
             ident = message[0:2]
             if ident in ESPDevices.deviceList:
+                counter = (counter + 1) % 10
+                if (counter == 0):
+                    time.sleep(.01)
                 #print("Device found :" + message)
                 if (ESPDevices.isSensor(message)):
-                    if (('Er' in message) == False):
+                    #if (('Er' in message) == False):
                         dp = DataPoint(message)
                         DataContainer.addPoint(dp)
         print(DataContainer.getlimits3D())
+        isScanning = False
         #print(DataContainer.StatusList)
         return True
     except Exception as pex:

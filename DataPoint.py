@@ -10,9 +10,14 @@ class DataPoint(object):
     y=None
     z=None
     state = ""
+    hnewdeg = None
+    vnewdeg = None
+    hkey = ""
+    vkey = ""
 
     def __init__(self,line):
         try:
+            #print(line)
             xradius =0.096
             ysensordelta =0.017
             parsed = line.split("|")
@@ -22,6 +27,10 @@ class DataPoint(object):
                 self.state = "ERROR"
                 self.hAngle = float(parsed[4])
                 self.vAngle = float(parsed[5])
+                self.hkey = str(self.hAngle)
+                self.vkey = str(self.vAngle)
+                self.hnewdeg = self.hAngle
+                self.vnewdeg =self.vAngle
                 self.hAngle *= 0.900000000000001
                 self.vAngle *= 0.900000000000001
                 return
@@ -32,6 +41,12 @@ class DataPoint(object):
             self.hAngle = float(parsed[4])
             self.vAngle = float(parsed[5])
 
+            self.hnewdeg = self.hAngle
+            self.vnewdeg =self.vAngle
+            self.hkey = str(self.hAngle)
+            self.vkey = str(self.vAngle)
+
+
             self.hAngle *= 0.900000000000001
             self.vAngle *= 0.900000000000001
             
@@ -39,7 +54,7 @@ class DataPoint(object):
             ty = xradius *    math.sin(math.radians(self.hAngle))
             #print(math.sqrt(tx ** 2 + ty ** 2))
             if ('Er' in self.meter):
-                self.state = "Error"
+                self.state = "ERROR"
                 return
             try:
                 self.meter = float(self.meter)
@@ -65,7 +80,7 @@ class DataPoint(object):
 
 
                 self.x = xradius
-                self.c = self.meter *  math.sin(math.radians(self.vAngle))  *  math.sin(math.radians(0)) 
+                self.y = self.meter *  math.sin(math.radians(self.vAngle))  *  math.sin(math.radians(0)) 
                 #self.x = tx
                 #self.y = ty + self.meter
                 r2 = math.sqrt( (self.x ** 2) + (self.meter ** 2))
@@ -95,8 +110,8 @@ class DataPoint(object):
         pass
 
     def __getitem__(self, key): 
-        if key == "hAngle": return self.hAngle
-        if key == "vAngle": return self.vAngle
+        if key == "hnewdeg": return self.hnewdeg
+        if key == "vnewdeg": return self.vnewdeg
         return None
 
 

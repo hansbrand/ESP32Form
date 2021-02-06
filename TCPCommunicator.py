@@ -42,8 +42,10 @@ commandlock = threading.RLock()
 MAXBUFFERSIZE = 10
 current2send = 1
 alreadysent = 1
+scanstarttime = 0
 
 port = 7165
+isScanning = False
 
 class StoppableThread(threading.Thread):
     """Thread class with a stop() method. The thread itself has to check
@@ -65,6 +67,7 @@ class StoppableThread(threading.Thread):
 
 class TCPCommunicator(StoppableThread):
     """USB Communication"""
+    
 
     def __init__(self):
       """
@@ -83,6 +86,7 @@ class TCPCommunicator(StoppableThread):
         global currentCommands
         global commandlock
         global isConnected
+        global isScanning
         try:
             parts = mess.split('\n');
             for message in parts:
@@ -99,6 +103,8 @@ class TCPCommunicator(StoppableThread):
                     if key in currentCommands.keys():
                         print("currentcom :" + str(currentCommands))
                         del currentCommands[key]
+                        if isScanning:
+                            isScanning = len(currentCommands) > 0
                     commandlock.release()
                     receiveCounter += 1
         except Exception as exc:
@@ -195,6 +201,7 @@ def sendSingleCommand(command):
     global currentCommands
     global commandlock
     global isConnected
+    global scanstarttime
 
 
     try:
@@ -209,6 +216,7 @@ def sendSingleCommand(command):
         if (str(ESPDevices.C_GETSTATS) in command):
             del currentCommands[sendCounter]
         if (str(ESPDevices.C_STARTTIMER) in command):
+            scanstarttime = time.time()
             del currentCommands[sendCounter]
 
 
@@ -261,6 +269,7 @@ def updateSend():
     global alreadysent
     global current2send
     global isConnected
+    global scanstarttime
 
     try:
         queuelock.acquire()
@@ -289,6 +298,15 @@ def updateSend():
             print(str(alreadysent) + " / " + str (current2send))
             pbar = FormCommand.FormCommand.getWidgetByName("PROGRESSBAR")
             pbar["value"]=int(alreadysent / current2send * 100.0)
+            st = time.time() - scanstarttime
+            tdone = float(st)
+            if  (alreadysent != 0):
+                single = st / float(alreadysent)
+                diff = float(current2send - alreadysent) * single
+                tfield = FormCommand.FormCommand.getWidgetByName("TIME")
+
+                tfield["text"] = str(int(st / 60.0)) + " / " + str(int(diff / 60.0))
+
             if (alreadysent == (current2send - 1) ):
                 saveCSVlist(receiveList, "RAW")
 

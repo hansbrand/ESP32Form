@@ -1,4 +1,5 @@
 import threading 
+import Calculator
 
 
 PointCloud = None
@@ -26,6 +27,8 @@ savelock = threading.RLock()
 
 
 def getMarkerColor(val):
+    if val == -30000:
+        return ("black")
 
     if val > REDLIMIT: 
         return("red")
@@ -47,7 +50,7 @@ def getMarkerColor(val):
         refquot = refval / delta
         if (refquot > 1):
             refquot = 1
-        return((1.0 , 1.0 - refquot, 0))
+        return((1.0 , 1.0 - refquot, refquot))
 
 
 
@@ -85,10 +88,13 @@ def addArr(dp):
     global zarr
     global marr
     
-    xarr.append(dp.x)
-    yarr.append(dp.y)
-    zarr.append(dp.z)
-    marr.append(getMarkerColor(int(dp.meter)))
+    if (dp.state == "VALID"):
+        xarr.append(dp.x)
+        yarr.append(dp.y)
+        zarr.append(dp.z)
+        marr.append(getMarkerColor(int(dp.meter)))
+
+
 
 def addLimits(dp):
     global limits3D
@@ -103,8 +109,8 @@ def addLimits(dp):
         limits3D["ymax"] = dp.y
         limits3D["zmin"] = dp.z
         limits3D["zmax"] = dp.z    
-        limits3D["hmax"] = dp.hAngle
-        limits3D["vmax"] = dp.vAngle
+        limits3D["hmax"] = dp.hnewdeg
+        limits3D["vmax"] = dp.vnewdeg
     else:
         limits3D["xmin"] = limits3D["xmin"] if (limits3D["xmin"] < dp.x) else dp.x
         limits3D["xmax"] = limits3D["xmax"] if (limits3D["xmax"] > dp.x) else dp.x
@@ -112,22 +118,22 @@ def addLimits(dp):
         limits3D["ymax"] = limits3D["ymax"] if (limits3D["ymax"] > dp.y) else dp.y
         limits3D["zmin"] = limits3D["zmin"] if (limits3D["zmin"] < dp.z) else dp.z
         limits3D["zmax"] = limits3D["zmax"] if (limits3D["zmax"] > dp.z) else dp.z
-        limits3D["hmax"] = limits3D["hmax"] if (limits3D["hmax"] > dp.hAngle) else dp.hAngle
-        limits3D["vmax"] = limits3D["vmax"] if (limits3D["vmax"] > dp.vAngle) else dp.vAngle
+        limits3D["hmax"] = limits3D["hmax"] if (limits3D["hmax"] > dp.hnewdeg) else dp.hnewdeg
+        limits3D["vmax"] = limits3D["vmax"] if (limits3D["vmax"] > dp.vnewdeg) else dp.vnewdeg
         
 def addRows(dp):
     global mrows
     global mcols
 
-    if (str(dp.vAngle) in mrows.keys()):
-        mrows[str(dp.vAngle)].append(dp)
+    if (dp.vkey in mrows.keys()):
+        mrows[dp.vkey].append(dp)
     else:
-        mrows[str(dp.vAngle)] = [dp]
+        mrows[dp.vkey] = [dp]
 
-    if (str(dp.hAngle) in mcols.keys()):
-        mcols[str(dp.hAngle)].append(dp)
+    if (dp.hkey in mcols.keys()):
+        mcols[dp.hkey].append(dp)
     else:
-        mcols[str(dp.hAngle)] = [dp]
+        mcols[dp.hkey] = [dp]
 
 
 def addPoint(dp):
@@ -135,18 +141,25 @@ def addPoint(dp):
     global PointDict
     global savelock
     global errorcount
+    global ErrorList
 
-    PointCloud.append(dp);
-    if (dp.state == "VALID"):
+    try:
+        PointCloud.append(dp);
         savelock.acquire()
         addArr(dp)
         addLimits(dp)
         addRows(dp)
+        if (dp.state != "VALID"):
+            ErrorList.append(dp)
+            errorcount += 1
+            #print("Errors : " + str(errorcount) + "/"+ str(len(PointCloud)))
         savelock.release()
-    else:
-        errorcount += 1
-        #print("Errors : " + str(errorcount) + "/"+ str(len(PointCloud)))
-    return
+        
+        return
+
+    except Exception as exc:
+        print(exc)
+        return
     PointDict = sorted(PointCloud, key=lambda d: (d['hAngle'], d['vAngle']))
     pass
 
@@ -175,4 +188,7 @@ def getlimits3D():
     savelock.release()
     pass
 
+def getAllData():
+    global ErrorList,mrows, mcols
 
+    return ErrorList,mrows,mcols

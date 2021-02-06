@@ -254,6 +254,7 @@ def handleMotor(message):
 def isSensor(message):
     global deviceList
     try:
+        #print(message)
         if (message[0] == 'M'):
             handleMotor(message.split("|"))
             return False
@@ -268,8 +269,6 @@ def isSensor(message):
         #parts = message.split(":")
 
         if ( len (parts) < 3):return False
-        if ("Er" in parts[1]):
-            DataContainer.ErrorList.append(message)
         
         if (parts[1][0] == "S"):
             DataContainer.StatusList.append(parts[1])
