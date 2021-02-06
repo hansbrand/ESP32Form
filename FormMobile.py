@@ -77,6 +77,8 @@ class FormMobile(tk.Frame):
             for c in s:
                 bt=tk.Button(labelframe,underline=0)
                 bt["text"]=c
+                if (c == "INIT"):
+                    bt["bg"] = "red"
                 bt["bd"]=5
                 #bt["command"] = lambda par=c:interpreter(par)
                 bt.config(height = bheight, width= bwidth)

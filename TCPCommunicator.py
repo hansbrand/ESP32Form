@@ -301,11 +301,18 @@ def updateSend():
             st = time.time() - scanstarttime
             tdone = float(st)
             if  (alreadysent != 0):
-                single = st / float(alreadysent)
-                diff = float(current2send - alreadysent) * single
+                tsingle = float(st) / float(alreadysent)
+                tdiff = float(current2send - alreadysent) * tsingle
                 tfield = FormCommand.FormCommand.getWidgetByName("TIME")
+                dtime = int(st)
+                ltime = int(tdiff)
+                dmin = int(dtime % 60)
+                lmin = int(ltime % 60)
+                
+                dtime = str(int(dtime / 60)) + ":" + f'{dmin:02}'
+                ltime = str(int(ltime / 60)) + ":" + f'{lmin:02}'
 
-                tfield["text"] = str(int(st / 60.0)) + " / " + str(int(diff / 60.0))
+                tfield["text"] = dtime + " / " + ltime
 
             if (alreadysent == (current2send - 1) ):
                 saveCSVlist(receiveList, "RAW")

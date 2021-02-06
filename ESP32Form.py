@@ -45,7 +45,7 @@ class Application(tk.Frame):
     canvas_height = None
     isRunning = False
     isLoading  = False
-    drawtime = 2
+    drawtime = 10
 
     @classmethod
     def cleanup(self):
@@ -90,7 +90,7 @@ class Application(tk.Frame):
         self.newwin = tk.Toplevel(master, 
            width  =self.canvas_width,
            height =self.canvas_height)
-        self.newwin.geometry(str(self.canvas_width) + "x" + str(self.canvas_height))
+        #self.newwin.geometry(str(self.canvas_width) + "x" + str(self.canvas_height))
         #cwindow = self.newwin
         #self.clientlabel.grid(row=6,column = 1)
         self.newwin.update()

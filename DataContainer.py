@@ -172,7 +172,7 @@ def getPointData():
 
 
     savelock.acquire()
-    print(str(len(xarr)) + " / " + str(len(yarr)) + " / " + str(len(zarr)) + " / " + str(len(marr)))
+    #print(str(len(xarr)) + " / " + str(len(yarr)) + " / " + str(len(zarr)) + " / " + str(len(marr)))
     xl = list(xarr)
     yl = list(yarr)
     zl = list(zarr)
@@ -184,8 +184,10 @@ def getPointData():
 def getlimits3D():
     global limits3D
     savelock.acquire()
-    return dict(limits3D)
+    d= dict(limits3D)
     savelock.release()
+    return d
+
     pass
 
 def getAllData():

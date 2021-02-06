@@ -29,6 +29,7 @@ class FormCallbacks(object):
     @classmethod
     def callbackINIT(self,button):
         print("callbackINIT")
+        button["bg"] ="green"
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -140,8 +141,8 @@ class FormCallbacks(object):
              self.com =  __import__("TCPCommunicator")
         # hd = (180.0 / 45.0) - 0.01
         # vd = (160.0 / 10.0) - 0.01
-        hd = 10
-        vd = 20
+        hd = 5
+        vd = 15
         clist = ESPDevices.genSimpleCommands(True, hdelta=hd,vdelta =vd)
         self.com.current2send = len(clist)
         self.com.alreadysent = 0

@@ -63,6 +63,10 @@ class DataPoint(object):
                 return
 
             self.meter += ysensordelta
+            if (self.meter > 7):
+                print(self.meter)
+                print(self.signal)
+                pass
 
  
             if ((self.vAngle == 0.0)):
@@ -91,7 +95,7 @@ class DataPoint(object):
 
     
 
-            if (int(self.signal)  < 300):
+            if (int(self.signal)  < 300) and (self.meter < 9):
                 self.state = "VALID"
                 # if (abs(self.x) > 6):
                 #         print(self.meter)
