@@ -14,8 +14,8 @@ limits3D = None
 
 
 
-REDLIMIT = 8.0
-YELLOWVALUE = 3.0
+REDLIMIT = 3.0
+BLUEVALUE = 8.0
 GREENLIMIT = 0.5
 
 errorcount = 0
@@ -37,20 +37,20 @@ def getMarkerColor(val):
         return("green")            
 
 
-    if val < YELLOWVALUE:
-        refval = (YELLOWVALUE - float(val))  
-        delta = float(YELLOWVALUE - GREENLIMIT)  
+    if val < REDLIMIT:
+        refval = (REDLIMIT - float(val))  
+        delta = float(REDLIMIT - GREENLIMIT)  
         refquot = refval / delta
         if (refquot > 1):
             refquot = 1
-        return((1.0 - refquot, refquot, 0.0))
+        return((refquot,1.0 - refquot, 0.0))
     else:
-        refval =  (float(val) - YELLOWVALUE) 
-        delta =  (REDLIMIT - YELLOWVALUE) 
+        refval =  (float(val) - REDLIMIT) 
+        delta =  (BLUEVALUE - REDLIMIT) 
         refquot = refval / delta
         if (refquot > 1):
             refquot = 1
-        return((1.0 , 1.0 - refquot, refquot))
+        return((1 - refquot , 0, refquot))
 
 
 
@@ -194,3 +194,13 @@ def getAllData():
     global ErrorList,mrows, mcols
 
     return ErrorList,mrows,mcols
+
+def addComputedPoints(plist):
+    savelock.acquire()
+    for p in plist:
+        xarr.append(p.x)
+        yarr.append(p.y)
+        zarr.append(p.z)
+        marr.append("black")
+
+    savelock.release()

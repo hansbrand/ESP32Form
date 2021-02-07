@@ -15,7 +15,7 @@ class FormMobile(tk.Frame):
     servercommand=(
     "INIT",
     "CALIBRATE",
-    "TO10",
+#    "TO10",
     "PIEP",
     # "TEST1",
     # "TEST20",
@@ -129,7 +129,7 @@ class FormMobile(tk.Frame):
 
             clientlabel =tk.Label(labelframe,text="TIME",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
-            clientlabel.grid(row = 1,column = 0,sticky=tk.S,columnspan = 3)
+            clientlabel.grid(row = 1,column = 1,sticky=tk.S,columnspan = 4)
             self.fc.addWidget(clientlabel,"TIME",0)
 
 

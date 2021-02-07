@@ -141,7 +141,7 @@ class Application(tk.Frame):
         if self.isLoading:
             if not FM.isScanning:
                 self.isLoading = False 
-                #Calculator.recomputeErrors()
+                Calculator.recomputeErrors()
                 pass
 
         if TCPCommunicator.isScanning:
