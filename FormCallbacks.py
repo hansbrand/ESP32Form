@@ -8,6 +8,7 @@ import USBCommunicator
 import TCPCommunicator
 import ESP32Form
 import DataContainer as  DC
+import ScanStrategy as SS
 
 checkButtonval = None
 CALPOS = 90.0
@@ -294,3 +295,16 @@ class FormCallbacks(object):
         ESP32Form.Application.setshow3D()
 
 
+    @classmethod
+    def callbackS30x70(self , button):
+        print("callbackS30x70")
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        targetwidth = 30
+        targetheight = 70
+        maxturns = 1
+        SS.startScan(targetwidth, targetheight, maxturns, self.com)
+
+        pass

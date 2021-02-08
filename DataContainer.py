@@ -5,6 +5,7 @@ import Calculator
 PointCloud = None
 PointDict = None
 ErrorList = None
+ComputedPoints = None
 StatusList = None
 xarr = []
 yarr = []
@@ -15,7 +16,7 @@ limits3D = None
 
 
 REDLIMIT = 3.0
-BLUEVALUE = 8.0
+BLUEVALUE = 6.0
 GREENLIMIT = 0.5
 
 errorcount = 0
@@ -30,8 +31,8 @@ def getMarkerColor(val):
     if val == -30000:
         return ("black")
 
-    if val > REDLIMIT: 
-        return("red")
+    if val > BLUEVALUE: 
+        return("blue")
 
     if val < GREENLIMIT: 
         return("green")            
@@ -43,7 +44,7 @@ def getMarkerColor(val):
         refquot = refval / delta
         if (refquot > 1):
             refquot = 1
-        return((refquot,1.0 - refquot, 0.0))
+        return((1 - refquot, refquot, 0.0))
     else:
         refval =  (float(val) - REDLIMIT) 
         delta =  (BLUEVALUE - REDLIMIT) 
@@ -68,12 +69,13 @@ def initDataContainer():
     global limits3D
     global mrows
     global mcols
-    global errorcount
+    global errorcount, ComputedPoints
 
     PointCloud = []
     PointDict = []
     ErrorList = []
     StatusList = []
+    ComputedPoints = []
     xarr = []
     yarr = []
     zarr = []   
@@ -191,16 +193,19 @@ def getlimits3D():
     pass
 
 def getAllData():
-    global ErrorList,mrows, mcols
+    global ErrorList,mrows, mcols,ComputedPoints
 
-    return ErrorList,mrows,mcols
+    return ErrorList, ComputedPoints,mrows,mcols
 
 def addComputedPoints(plist):
+    global ComputedPoints
     savelock.acquire()
+    ComputedPoints = plist
     for p in plist:
         xarr.append(p.x)
         yarr.append(p.y)
         zarr.append(p.z)
         marr.append("black")
+
 
     savelock.release()

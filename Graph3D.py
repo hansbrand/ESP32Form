@@ -70,6 +70,7 @@ class Graph3D(Tk.Frame):
         canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
 
         ax=fig.add_subplot(111,projection='3d')
+        ax.view_init(azim=0, elev=90)
         #ax = Axes3D(fig)
 
         fig.subplots_adjust(bottom=0.25)

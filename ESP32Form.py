@@ -149,7 +149,7 @@ class Application(tk.Frame):
         if self.isRunning:
             if not TCPCommunicator.isScanning:
                 self.isRunning = False 
-                #Calculator.recomputeErrors()
+                Calculator.recomputeErrors()
 
                 pass
 
@@ -246,9 +246,8 @@ def Main():
     global ISLINUXOS
 
     root = tk.Tk()
-    if sys.platform.startswith('win'):
-        ISLINUXOS = False
-    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    ISLINUXOS = False
+    if sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
         ISLINUXOS = True
     else:

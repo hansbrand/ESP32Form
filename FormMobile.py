@@ -17,6 +17,7 @@ class FormMobile(tk.Frame):
     "CALIBRATE",
 #    "TO10",
     "PIEP",
+    "STOP",
     # "TEST1",
     # "TEST20",
     # "TEST80",
@@ -27,10 +28,10 @@ class FormMobile(tk.Frame):
     #"SHOW",
     "SAVE_FILE",
     "LOAD_FILE",
+    "S30x70",
     #"ADJUST",
-    "MUP",
-    "MDOWN",
-    "STOP",
+    #"MUP",
+    #"MDOWN",
     "QUIT"
     )
 

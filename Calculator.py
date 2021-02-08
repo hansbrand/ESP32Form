@@ -62,15 +62,14 @@ def estimate(err, mrows, mcols):
     err.y = 0
     err.z = 0
 
-    if (rindex > 0):
-        m1 = mrows[rindex - 1 ]
-        if (Hestimate(err,m1) == "VALID"):
-            validcounter += 1;
+    m1 = mrows[rindex - 1 ]
+    if (Hestimate(err,m1) == "VALID"):
+        validcounter += 1;
 
-    if (rindex < (len(mrows) - 1)):
-        m1 = mrows[rindex + 1 ]
-        if (Hestimate(err,m1) == "VALID"):
-            validcounter += 1;
+    l = len(mrows)
+    m1 = mrows[(rindex + 1) % l ]
+    if (Hestimate(err,m1) == "VALID"):
+        validcounter += 1;
 
     if (vindex > 0):
         m1 = mcols[vindex - 1 ]
@@ -106,17 +105,15 @@ def interpolate(err, mrows, mcols):
     err.y = 0
     err.z = 0
     
-    if (rindex > 1):
-        m1 = mrows[rindex - 1 ]
-        m2 = mrows[rindex - 2 ]
-        if (Hcalchpoint(err,m1,m2) == "VALID"):
-            validcounter += 1;
+    m1 = mrows[rindex - 1 ]
+    m2 = mrows[rindex - 2 ]
+    if (Hcalchpoint(err,m1,m2) == "VALID"):
+          validcounter += 1;
 
-    
-    if (rindex < (len(mrows) - 2)):
-        m1 = mrows[rindex + 1 ]
-        m2 = mrows[rindex + 2 ]
-        if (Hcalchpoint(err,m1,m2) == "VALID"):
+    l = len(mrows)
+    m1 = mrows[(rindex + 1) % l ]
+    m2 = mrows[(rindex + 2) % l ]
+    if (Hcalchpoint(err,m1,m2) == "VALID"):
             validcounter += 1;
             
     if (vindex > 1):
@@ -155,7 +152,7 @@ def printall(plist):
 def recomputeErrors():
     try:
         resultlist = []
-        el,mrows,mcols = DC.getAllData()
+        el,cp,mrows,mcols = DC.getAllData()
         for k in mrows.keys():
             #printall(mrows[k])
             mrows[k] = sorted(mrows[k],key=lambda d: (d['hnewdeg']) )
@@ -164,7 +161,20 @@ def recomputeErrors():
                 #printall(mcols[k])
                 mcols[k] = sorted(mcols[k],key=lambda d: (d['vnewdeg']) )
                 #printall(mcols[k])
+
     
+        for err in cp:
+            col = mcols.get(err.hkey)
+            row = mrows.get(err.vkey)
+            if (interpolate(err, row, col) == "COMPUTED"):
+                resultlist.append(err)
+                el.remove(err)
+            else:
+                print(err)
+                pass
+
+
+
         for err in el:
             col = mcols.get(err.hkey)
             row = mrows.get(err.vkey)
@@ -174,6 +184,8 @@ def recomputeErrors():
             else:
                 #print(err)
                 pass
+
+
 
         for err in el:
             col = mcols.get(err.hkey)

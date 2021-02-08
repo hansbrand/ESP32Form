@@ -152,18 +152,30 @@ def saveCSV(x,y,z,ext):
 def saveCSVlist(slist,ext):
     try:
         dirname = os.path.dirname(__file__)
+        datestr = time.strftime("%y_%m_%d")
+
         ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
         if ISLINUXOS:
-            filename = os.path.join(dirname, 'dist/') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".txt"
+            directory =os.path.join(dirname, 'dist/') + datestr
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename = directory + "/DIST" + time.strftime("%H_%M_%S")+"_" + ext +".txt"
         else:
-            filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".txt"
+            directory =os.path.join(dirname, 'dist\\') + datestr
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename = directory + "DIST" + time.strftime("%H_%M_%S")+"_" + ext +".txt"
+ 
         with open(filename, 'wt+') as f:
             for l in slist:
                 #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
                 #l = l.replace("|",";")
                 f.write(l)
         if ISLINUXOS:
-            filename = os.path.join(dirname, 'dist/') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".xyz"
+            directory =os.path.join(dirname, 'dist/') + datestr
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename = directory + "/DIST" + time.strftime("%H_%M_%S")+"_" + ext +".xyz"
         else:
             filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext + ".xyz"
         with open(filename, 'wt+') as f:

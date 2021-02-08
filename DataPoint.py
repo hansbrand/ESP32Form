@@ -84,14 +84,22 @@ class DataPoint(object):
 
 
                 self.x = xradius
-                self.y = self.meter *  math.sin(math.radians(self.vAngle))  *  math.sin(math.radians(0)) 
+                ytemp = self.meter *  math.sin(math.radians(self.vAngle))  
                 #self.x = tx
                 #self.y = ty + self.meter
-                r2 = math.sqrt( (self.x ** 2) + (self.meter ** 2))
+                r2 = math.sqrt( (xradius ** 2) + (self.meter ** 2))
+                # auf z = 0 projezieren
+                r1 = math.sqrt(r2 ** 2 - self.z ** 2)
+                r3 = math.sqrt(r1 ** 2 - xradius ** 2)
+                r4 = math.sqrt(self.meter ** 2 - self.z ** 2)
+                
 
                 if (self.hAngle != 0):
-                    self.x = r2 *    math.cos(math.radians(self.hAngle))
-                    self.y = r2 *    math.sin(math.radians(self.hAngle))
+                    self.x = r2 *  math.cos(math.radians(self.hAngle)) * math.sin(math.radians(self.vAngle))
+                    self.y = r2 *  math.sin(math.radians(self.hAngle)) #* math.sin(math.radians(self.vAngle))
+                else:
+                    self.x = xradius
+                    self.y = ytemp
 
     
 

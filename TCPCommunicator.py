@@ -43,6 +43,7 @@ MAXBUFFERSIZE = 10
 current2send = 1
 alreadysent = 1
 scanstarttime = 0
+scanrunning = False
 
 port = 7165
 isScanning = False
@@ -86,7 +87,8 @@ class TCPCommunicator(StoppableThread):
         global currentCommands
         global commandlock
         global isConnected
-        global isScanning
+        global isScanning,scanrunning
+
         try:
             parts = mess.split('\n');
             for message in parts:
@@ -105,6 +107,8 @@ class TCPCommunicator(StoppableThread):
                         del currentCommands[key]
                         if isScanning:
                             isScanning = len(currentCommands) > 0
+                            scanrunning = len(currentCommands) > 0
+
                     commandlock.release()
                     receiveCounter += 1
         except Exception as exc:
@@ -200,8 +204,7 @@ def sendSingleCommand(command):
     global sendCounter
     global currentCommands
     global commandlock
-    global isConnected
-    global scanstarttime
+    global scanstarttime,scanrunning,isConnected
 
 
     try:
@@ -217,6 +220,7 @@ def sendSingleCommand(command):
             del currentCommands[sendCounter]
         if (str(ESPDevices.C_STARTTIMER) in command):
             scanstarttime = time.time()
+            scanrunning = True
             del currentCommands[sendCounter]
 
 

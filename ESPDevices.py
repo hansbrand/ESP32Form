@@ -340,3 +340,88 @@ def turnCommand(dev,degree):
 def piepCommand(dev): 
             command = dev + ":D:"
             return command
+
+
+def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
+  global commandList
+  round = 0;
+
+  message = ""
+
+  counter = 0
+  commandList.append(starttimerCommand())
+  commandList.append(calibrateCommand())
+  hindex = hstart
+  while  (hindex < hend):
+    if (scanning):
+        addScanning(counter)
+        counter += 2
+    message = "M1:" + str(hindex) + ":" 
+    #print(message)
+    counter +=1
+    commandList.append(message)
+    vindex = vstart
+    while (vindex < vend):
+      message = "M2:" + str(vindex) + ":" 
+      counter += 1
+      commandList.append(message)
+      message = "M3:" + str(vindex) + ":" 
+      counter += 1
+      commandList.append(message)
+      if (scanning):
+            addScanning(counter)
+      vindex += vdelta
+    
+    if (vindex > vend):
+      message = "M2:" + str(vend) + ":" 
+      counter += 1
+      commandList.append(message)
+      message = "M3:" + str(vend) + ":" 
+      counter += 1
+      commandList.append(message)
+      if (scanning):
+            addScanning(counter)
+
+    hindex += hdelta
+    if (hindex >= hend):
+        break
+
+    message = "M1:" + str(hindex) + ":" 
+    #print(message)
+    counter +=1
+    commandList.append(message)
+
+    vindex -= vdelta
+
+    while (vindex >= vstart):
+      if (scanning):
+        addScanning(counter)
+      counter +=1
+      message = "M2:" + str(vindex) + ":" 
+      commandList.append(message)
+      counter +=1
+      message = "M3:" + str(vindex) + ":" 
+      commandList.append(message)
+      vindex -= vdelta
+
+
+    hindex += hdelta
+    message = "M1:" + str(hindex) + ":" 
+    #print(message)
+    counter +=1
+    #commandList.append(message)
+
+
+    round += 1
+    if ((round % 3) == 0):
+        commandList.append(statusCommand(1))
+        commandList.append(statusCommand(2))
+
+  commandList.append(getstatsCommand())
+
+#   for mes in commandList:
+#       print(mes)
+#  print(message)
+
+  return commandList
+
