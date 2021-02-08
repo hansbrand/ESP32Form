@@ -164,7 +164,7 @@ def saveCSVlist(slist,ext):
             directory =os.path.join(dirname, 'dist\\') + datestr
             if  not os.path.isdir(directory):
                 os.mkdir(directory)
-            filename = directory + "DIST" + time.strftime("%H_%M_%S")+"_" + ext +".txt"
+            filename = directory + "\\DIST" + time.strftime("%H_%M_%S")+"_" + ext +".txt"
  
         with open(filename, 'wt+') as f:
             for l in slist:
@@ -177,7 +177,11 @@ def saveCSVlist(slist,ext):
                 os.mkdir(directory)
             filename = directory + "/DIST" + time.strftime("%H_%M_%S")+"_" + ext +".xyz"
         else:
-            filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext + ".xyz"
+            directory =os.path.join(dirname, 'dist\\') + datestr
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename = directory + "\\DIST" + time.strftime("%H_%M_%S")+"_" + ext +".xyz"
+ 
         with open(filename, 'wt+') as f:
             for l in DataContainer.PointCloud:
                 if (l.state == "VALID"):

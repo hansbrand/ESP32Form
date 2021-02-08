@@ -22,6 +22,7 @@ import FormMobile
 from Graph3D import Graph3D
 import FileManager as FM
 import Calculator
+import ScanStrategy as SS
 
 
 progressbar = None
@@ -136,15 +137,18 @@ class Application(tk.Frame):
             show3Dwindow = False
             self.show3D()
 
-        if FM.isScanning:
+        if SS.strategyActive:
+            SS.nextTurn()
+
+        elif FM.isScanning:
             self.isLoading = True            
-        if self.isLoading:
+        elif self.isLoading:
             if not FM.isScanning:
                 self.isLoading = False 
                 Calculator.recomputeErrors()
                 pass
 
-        if TCPCommunicator.isScanning:
+        elif TCPCommunicator.isScanning:
             self.isRunning = True            
         if self.isRunning:
             if not TCPCommunicator.isScanning:
@@ -247,11 +251,9 @@ def Main():
 
     root = tk.Tk()
     ISLINUXOS = False
-    if sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    if sys.platform == ('Linux') :
         # this excludes your current terminal "/dev/tty"
         ISLINUXOS = True
-    else:
-        raise environmenterror('unsupported platform')
 
     #tcpserver.initServer()
     app = Application(master=root)

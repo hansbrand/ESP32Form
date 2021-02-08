@@ -1,5 +1,6 @@
 from math import modf
 import ESPDevices as ED
+import Calculator 
 
 strategyActive = False
 currentturns = 0
@@ -39,7 +40,7 @@ def startScan( width, height, turns, connector):
     connect = connector
     reversescan = False
 
-    hdegree = 20
+    hdegree = 10
     vdegree = hdegree + hdegree * (targetheight / targetwidth)
     vdegree = adjust(vdegree)
 
@@ -55,3 +56,16 @@ def startScan( width, height, turns, connector):
 
 
     strategyActive = True
+
+def nextTurn():
+    global strategyActive, currentturns,targetwidth
+    global targetheight,maxturns,connect,reversescan
+
+    if connect.scanrunning:
+        return
+
+    Calculator.recomputeErrors()
+    
+
+
+
