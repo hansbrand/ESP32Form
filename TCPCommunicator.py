@@ -105,9 +105,10 @@ class TCPCommunicator(StoppableThread):
                     if key in currentCommands.keys():
                         print("currentcom :" + str(currentCommands))
                         del currentCommands[key]
+                        if scanrunning:
+                            scanrunning = len(currentCommands) > 0
                         if isScanning:
                             isScanning = len(currentCommands) > 0
-                            scanrunning = len(currentCommands) > 0
 
                     commandlock.release()
                     receiveCounter += 1
