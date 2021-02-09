@@ -1,6 +1,7 @@
 import numpy
 import DataContainer
 import FormCommand
+import FormMobile
 
 hStepper = None
 vStepper = None
@@ -275,9 +276,13 @@ def isSensor(message):
             if (parts[0][1] == '1'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
                 sbar["text"] = parts[1]
+                FormMobile.FormMobile.enableButtons(True)
+
             if (parts[0][1] == '2'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS2")
                 sbar["text"] = parts[1]
+                FormMobile.FormMobile.enableButtons(True)
+
             return False
         return (parts[1][0] in ['D','F','M'])
     except Exception as exc:

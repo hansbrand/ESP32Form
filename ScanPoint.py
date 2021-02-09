@@ -1,7 +1,7 @@
 import math
 
 class ScanPoint(object):
-    def __init__(hangle, vangle):
+    def __init__(self, hangle, vangle):
         self.hor_angle = hangle
         self.ver_angle = vangle
         self.realH = hangle

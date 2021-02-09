@@ -131,15 +131,15 @@ def addRows(dp):
     global mrows
     global mcols
 
-    if (dp.vkey in mrows.keys()):
-        mrows[dp.vkey].append(dp)
+    if (dp.vnewdeg in mrows.keys()):
+        mrows[dp.vnewdeg].append(dp)
     else:
-        mrows[dp.vkey] = [dp]
+        mrows[dp.vnewdeg] = [dp]
 
-    if (dp.hkey in mcols.keys()):
-        mcols[dp.hkey].append(dp)
+    if (dp.hnewdeg in mcols.keys()):
+        mcols[dp.hnewdeg].append(dp)
     else:
-        mcols[dp.hkey] = [dp]
+        mcols[dp.hnewdeg] = [dp]
 
 
 def addPoint(dp):
@@ -170,7 +170,7 @@ def addPoint(dp):
     except Exception as exc:
         print(exc)
         return
-    PointDict = sorted(PointCloud, key=lambda d: (d['hAngle'], d['vAngle']))
+    #PointDict = sorted(PointCloud, key=lambda d: (d['hAngle'], d['vAngle']))
     pass
 
 def getPointData():

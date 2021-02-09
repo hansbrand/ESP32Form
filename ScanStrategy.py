@@ -1,4 +1,4 @@
-from time import time
+import time
 from ScanPoint import ScanPoint
 from math import modf
 from tkinter.constants import CURRENT
@@ -7,6 +7,9 @@ import Calculator
 import DataContainer as DC
 import FileManager as FM
 import FormCommand
+import operator
+from collections import OrderedDict
+
 
 strategyActive = False
 currentturns = 0
@@ -65,80 +68,89 @@ def startScan( width, height, turns, connector):
     difftime = time.monotonic() - starttime
     ds ="{:8.4f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
-    passtext = "PASS " + str(currentturns + 1) + ":" + ds
+    passtext = "PASS " + str(currentturns + 1) + ":" + ds + "/" + str(len(clist))
     passfield["text"] = passtext
 
 
     strategyActive = True
 
-def getHorAngles(row, horset):
+def getHorAngles(row):
     global targetwidth
     index = 0
-    for index in range(1, len(row) - 1):
+    horset = set()
+    l = len(row)
+    for index in range(0, l - 1):
         p = row[index]
         if p.state in ["VALID","COMPUTED"]:
             #minimal degree                    
-            dh = abs( row[index - 1].hnewdeg - p.hnewdeg)
-            if row[index - 1].state in ["VALID","COMPUTED"] and (dh > 0.25):
-                dist = Calculator.get3Ddist(p,row[index - 1])
+            np =  row[index - 1]
+            dh = abs( np.hnewdeg - p.hnewdeg)
+            if np.state in ["VALID","COMPUTED"] and (dh > 0.25):
+                dist = Calculator.get3Ddist(p,np)
                 if dist > targetwidth:
                     #halfit
-                    hd = (p.hnewdeg + row[index - 1].hnewdeg) / 2.0
+                    hd = (p.hnewdeg + np.hnewdeg) / 2.0
                     hd = adjust(hd)
                     horset.add(hd)
             #minimal degree                    
             dh = abs( row[index + 1].hnewdeg - p.hnewdeg)
-            if row[index + 1].state in ["VALID","COMPUTED"] and (dh > 0.25):
-                dist = Calculator.get3Ddist(p,row[index + 1])
+            np = row[(index + 1) % l]
+            if np.state in ["VALID","COMPUTED"] and (dh > 0.25):
+                dist = Calculator.get3Ddist(p,np)
                 if dist > targetwidth:
                     #halfit
-                    hd = (p.hnewdeg + row[index + 1].hnewdeg) / 2.0
+                    hd = (p.hnewdeg + np.hnewdeg) / 2.0
                     hd = adjust(hd)
                     horset.add(hd)
-        index += 1
+    return horset
 
-
-def getVerAngles(row, verset):
+def getVerAngles(row):
     global targetheight
     index = 1
-    for p in row:
+    verset = set()
+    l = len(row)
+
+    for index in range(1, l - 2):
+        p = row[index]
         if p.state in ["VALID","COMPUTED"]:
-            #minimal degree                    
-            dh = abs( row[index - 1].vnewdeg - p.vnewdeg)
-            if row[index - 1].state in ["VALID","COMPUTED"] and (dh > 0.25):
-                dist = Calculator.get3Ddist(p,row[index - 1])
+            #minimal degree       
+            np =   row[index - 1]           
+            dh = abs( np.vnewdeg - p.vnewdeg)
+            if np.state in ["VALID","COMPUTED"] and (dh > 0.25):
+                dist = Calculator.get3Ddist(p,np)
                 if dist > targetheight:
                     #halfit
-                    hd = (p.vnewdeg + row[index - 1].vnewdeg) / 2.0
+                    hd = (p.vnewdeg + np.vnewdeg) / 2.0
                     hd = adjust(hd)
                     verset.add(hd)
             #minimal degree                    
             dh = abs( row[index + 1].vnewdeg - p.vnewdeg)
-            if row[index + 1].state in ["VALID","COMPUTED"] and (dh > 0.25):
-                dist = Calculator.get3Ddist(p,row[index + 1])
+            np = row[index + 1]
+            if np.state in ["VALID","COMPUTED"] and (dh > 0.25):
+                dist = Calculator.get3Ddist(p,np)
                 if dist > targetheight:
                     #halfit
-                    hd = (p.vnewdeg + row[index + 1].vnewdeg) / 2.0
+                    hd = (p.vnewdeg +np.vnewdeg) / 2.0
                     hd = adjust(hd)
                     verset.add(hd)
-        index += 1
+    return verset
 
 def createScanPoints(HorSet,VerSet):
     retlist = []
-    hdict = {}
-    vdict = {}
+    hdict = dict()
+    vdict = dict()
     for h in HorSet:
         for v in VerSet:
             sp = ScanPoint(h,v)
             retlist.append(sp)
-        if (v in hdict.keys()):
-            hdict[v].append(sp)
-        else:
-            hdict[v] = [sp]            
-        if (h in vdict.keys()):
-            vdict[h].append(sp)
-        else:
-            vdict[h] = [sp]    
+            if (v in hdict.keys()):
+                hdict[v].append(sp)
+            else:
+                hdict[v] = [sp]            
+            if (h in vdict.keys()):
+                vdict[h].append(sp)
+            else:
+                vdict[h] = [sp]    
     return retlist, hdict, vdict        
 
 def addScanning(commandList):
@@ -188,7 +200,7 @@ def nextTurn():
     if connect.scanrunning:
         return
     starttime = time.monotonic()
-    FM.SaveTurn(connect.receiveList,targetwidth,targetheight,currentturns)
+    FM.SaveTurn(connect.receiveList,int(targetwidth *100),int(targetheight*100),currentturns)
     Calculator.recomputeErrors()
     currentturns += 1
     if (currentturns > maxturns):
@@ -200,14 +212,14 @@ def nextTurn():
 
     #mrows and mcols already sorted!!!!
     reversescan = not reversescan
-    HorSet = {}
-    VerSet = {}
+    HorSet = set()
+    VerSet = set()
     #row by row
     for key  in DC.mrows.keys():
-        getHorAngles(DC.mrows[key], HorSet)
+        HorSet.update(getHorAngles(DC.mrows[key]))
     # colums not closed
     for key in DC.mcols.keys():
-        getHorAngles(DC.mcols[key], VerSet)
+        VerSet.update(getVerAngles(DC.mcols[key]))
     
     HorSet = sorted(HorSet,reverse=reversescan)
     VerSet = sorted(VerSet,reverse=reversescan)
@@ -215,14 +227,14 @@ def nextTurn():
     scanlist,scanrows,scancols = createScanPoints(HorSet,VerSet)
 
     # sort in horizontal order
-    scancols  = sorted(scancols,key=lambda d: (d['realH']),reverse = reversescan)
+    #scancols = {k:v for k,v in sorted(scancols.items(), key = lambda item[1].realH,,reverse = reversescan)}
     #getcommands
     commands = createCommandList(scancols,scanrows,not S1reverse,not S2reverse)
     #print("Computed" + str(time.monotonic() - starttime))
     difftime = time.monotonic() - starttime
     ds ="{:8.4f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
-    passtext = "PASS " + str(currentturns + 1) + ":" + ds
+    passtext = "PASS " + str(currentturns + 1) + ":" + ds + "/" + str(len(commands))
     passfield["text"] = passtext
     return
     

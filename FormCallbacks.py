@@ -31,8 +31,7 @@ class FormCallbacks(object):
     @classmethod
     def callbackINIT(self,button):
         print("callbackINIT")
-        button["bg"] ="green"
-        FormMobile.enableButtons(True)
+        #button["bg"] ="green"
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -306,8 +305,8 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        targetwidth = 30
-        targetheight = 70
+        targetwidth = 0.3
+        targetheight = 0.7
         maxturns = 1
         SS.startScan(targetwidth, targetheight, maxturns, self.com)
 

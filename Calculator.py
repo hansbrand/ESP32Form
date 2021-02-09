@@ -1,6 +1,9 @@
 import DataContainer as DC
 import DataPoint as DP
 import math
+import operator
+from collections import OrderedDict
+
 
 errorscalculated = False
 
@@ -171,6 +174,8 @@ def recomputeErrors():
         resultlist = []
         errorscalculated = False
         el,cp,mrows,mcols = DC.getAllData()
+        mcols = OrderedDict(sorted(mcols.items()))
+        mrows = OrderedDict(sorted(mrows.items()))
         for k in mrows.keys():
             #printall(mrows[k])
             mrows[k] = sorted(mrows[k],key=lambda d: (d['hnewdeg']) )
@@ -182,8 +187,8 @@ def recomputeErrors():
 
     
         for err in cp:
-            col = mcols.get(err.hkey)
-            row = mrows.get(err.vkey)
+            col = mcols.get(err.hnedeg)
+            row = mrows.get(err.vnewdeg)
             if (interpolate(err, row, col) == "COMPUTED"):
                 resultlist.append(err)
                 el.remove(err)
@@ -194,8 +199,8 @@ def recomputeErrors():
 
 
         for err in el:
-            col = mcols.get(err.hkey)
-            row = mrows.get(err.vkey)
+            col = mcols.get(err.hnewdeg)
+            row = mrows.get(err.vnewdeg)
             if (interpolate(err, row, col) == "COMPUTED"):
                 resultlist.append(err)
                 el.remove(err)
@@ -206,8 +211,8 @@ def recomputeErrors():
 
 
         for err in el:
-            col = mcols.get(err.hkey)
-            row = mrows.get(err.vkey)
+            col = mcols.get(err.hnewdeg)
+            row = mrows.get(err.vnewdeg)
             if (estimate(err, row, col) == "COMPUTED"):
                 resultlist.append(err)
                 el.remove(err)
@@ -218,7 +223,7 @@ def recomputeErrors():
         errorscalculated = True
         DC.addComputedPoints(resultlist)
     except Exception as pexc:
-                       print("3D Error: ", pexc)
+            print("3D Error: ", pexc)
 
     pass
 
