@@ -190,3 +190,25 @@ def saveCSVlist(slist,ext):
                     f.write(line)
     except Exception as exc:
         print(exc)
+
+def SaveTurn(slist,width, height,turn):
+        dirname = os.path.dirname(__file__)
+        datestr = time.strftime("%y_%m_%d")
+
+        ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
+        if ISLINUXOS:
+            directory =os.path.join(dirname, 'TURN/')
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename= directory + str(width) + "_" + str(height) + "_" + str(turn) + ".txt" 
+        else:
+            directory =os.path.join(dirname, 'TURN\\')
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename= directory + str(width) + "_" + str(height) + "_" + str(turn) + ".txt" 
+ 
+        with open(filename, 'wt+') as f:
+            for l in slist:
+                #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
+                #l = l.replace("|",";")
+                f.write(l)

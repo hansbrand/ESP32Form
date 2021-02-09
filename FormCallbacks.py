@@ -9,6 +9,7 @@ import TCPCommunicator
 import ESP32Form
 import DataContainer as  DC
 import ScanStrategy as SS
+from FormMobile import FormMobile 
 
 checkButtonval = None
 CALPOS = 90.0
@@ -31,6 +32,7 @@ class FormCallbacks(object):
     def callbackINIT(self,button):
         print("callbackINIT")
         button["bg"] ="green"
+        FormMobile.enableButtons(True)
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -73,6 +75,8 @@ class FormCallbacks(object):
     def callbackSTOP(self , button):
         print("callbackSTOP")
         TCPCommunicator.emergeny()
+        FormMobile.enableButtons(False)
+
 
     @classmethod
     def callbackRESUME(self , button):

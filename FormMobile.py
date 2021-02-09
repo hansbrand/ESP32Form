@@ -10,6 +10,7 @@ class FormMobile(tk.Frame):
     master = None
     fc = None
     interface = None
+    buttonlist = []
 
 
     servercommand=(
@@ -77,6 +78,10 @@ class FormMobile(tk.Frame):
 
             for c in s:
                 bt=tk.Button(labelframe,underline=0)
+                if c in ["INIT",  "QUIT","LOAD_FILE"]:
+                    bt["state"] = tk.NORMAL
+                else:                    
+                    bt["state"] = tk.DISABLED
                 bt["text"]=c
                 if (c == "INIT"):
                     bt["bg"] = "red"
@@ -92,6 +97,7 @@ class FormMobile(tk.Frame):
 
                 bt.grid(row=int(counter/l),column=int(counter%l), ipadx = 10, ipady=10, padx = 5, pady=10)
                 self.fc.addWidget(bt,c,None)
+                self.buttonlist.append(bt)
 
                 counter=counter+1
 
@@ -133,6 +139,11 @@ class FormMobile(tk.Frame):
             clientlabel.grid(row = 1,column = 1,sticky=tk.S,columnspan = 4)
             self.fc.addWidget(clientlabel,"TIME",0)
 
+            clientlabel =tk.Label(labelframe,text="PASS",font=("Helvetica", 12), width = 18)
+            clientlabel["fg"] = "blue"
+            clientlabel.grid(row = 1,column = 0,sticky=tk.S,columnspan = 2)
+            self.fc.addWidget(clientlabel,"PASS",0)
+
 
             clientlabel =tk.Label(labelframe,text="STATUS 1",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
@@ -164,6 +175,22 @@ class FormMobile(tk.Frame):
         
     def genCallBacks(self):
         self.fc.createCallbacks()
+
+    @classmethod
+    def enableButtons(self,toenable):
+        for bt in self.buttonlist:
+                if toenable:
+                    bt["state"] = tk.NORMAL
+                    if bt["text"] == "INIT":
+                        bt["bg"] = "green"
+                else:
+                    if bt["text"] == "INIT":
+                        bt["bg"] = "red"
+                    if bt["text"] in ["INIT",  "QUIT","LOAD_FILE"]:
+                            bt["state"] = tk.NORMAL
+                    else:                    
+                        bt["state"] = tk.DISABLED
+
 
 
 

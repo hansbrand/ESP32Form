@@ -2,6 +2,8 @@ import DataContainer as DC
 import DataPoint as DP
 import math
 
+errorscalculated = False
+
 def get3Ddist(m1,m2):
     mx = (m1.x -m2.x) ** 2
     my = (m1.y -m2.y) ** 2
@@ -33,9 +35,9 @@ def Vcalcvpoint (err,m1,m2):
                 dz = m1.z - m2.z
                 d1 = m1.vnewdeg - m2.vnewdeg
                 d2 = err.vnewdeg - m1.vnewdeg
-                if (d1 == 0): 
+                if (d2 == 0): 
                     return "INVALID"
-                k = d2 / d1
+                k = d1 / d2
 
                 err.x = m1.x + dx 
                 err.y = m1.y + dy 
@@ -61,25 +63,32 @@ def estimate(err, mrows, mcols):
     err.x = 0
     err.y = 0
     err.z = 0
+    #print()
+    #print("points")
 
     m1 = mrows[rindex - 1 ]
     if (Hestimate(err,m1) == "VALID"):
         validcounter += 1;
+        #print ("hl : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
 
     l = len(mrows)
     m1 = mrows[(rindex + 1) % l ]
     if (Hestimate(err,m1) == "VALID"):
         validcounter += 1;
+        #print ("hr : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
+
 
     if (vindex > 0):
         m1 = mcols[vindex - 1 ]
         if (Hestimate(err,m1) == "VALID"):
             validcounter += 1;
+            #print ("vu : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
 
     if (vindex < (len(mcols) - 1)):
         m1 = mcols[vindex + 1 ]
         if (Hestimate(err,m1) == "VALID"):
             validcounter += 1;
+            #print ("vo : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
 
     if (validcounter == 0):
         return("INVALID")
@@ -88,6 +97,8 @@ def estimate(err, mrows, mcols):
     err.y = err.y / float(validcounter)
     err.z = err.z / float(validcounter)
     err.state = "COMPUTED"
+    #print (str(err.x) + ":" + str(err.y) + ":" + str(err.z))
+
     return("COMPUTED")
 
 
@@ -104,23 +115,26 @@ def interpolate(err, mrows, mcols):
     err.x = 0
     err.y = 0
     err.z = 0
-    
+    #print("points")
     m1 = mrows[rindex - 1 ]
     m2 = mrows[rindex - 2 ]
     if (Hcalchpoint(err,m1,m2) == "VALID"):
           validcounter += 1;
+          #print ("hl : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
 
     l = len(mrows)
     m1 = mrows[(rindex + 1) % l ]
     m2 = mrows[(rindex + 2) % l ]
     if (Hcalchpoint(err,m1,m2) == "VALID"):
             validcounter += 1;
+            #print ("hr : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
             
     if (vindex > 1):
         m1 = mcols[vindex - 1 ]
         m2 = mcols[vindex - 2 ]
         if (Vcalcvpoint(err,m1,m2) == "VALID"):
             validcounter += 1;
+            #print ("hu : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
 
     
     if (vindex < (len(mcols) - 2)):
@@ -128,6 +142,7 @@ def interpolate(err, mrows, mcols):
         m2 = mcols[vindex + 2 ]
         if (Vcalcvpoint(err,m1,m2) == "VALID"):
             validcounter += 1;
+            #print ("ho : " + str(m1.x) + ":" + str(m1.y) + ":" + str(m1.z))
 
     if (validcounter == 0):
         return("INVALID")
@@ -136,6 +151,7 @@ def interpolate(err, mrows, mcols):
     err.y = err.y / float(validcounter)
     err.z = err.z / float(validcounter)
     err.state = "COMPUTED"
+    #print (str(err.x) + ":" + str(err.y) + ":" + str(err.z))
     return("COMPUTED")
         
 
@@ -150,8 +166,10 @@ def printall(plist):
         print (str(plist[i].hnewdeg) + "--" + str(plist[i].vnewdeg))
 
 def recomputeErrors():
+    global errorscalculated
     try:
         resultlist = []
+        errorscalculated = False
         el,cp,mrows,mcols = DC.getAllData()
         for k in mrows.keys():
             #printall(mrows[k])
@@ -197,9 +215,18 @@ def recomputeErrors():
                 #print(err)
                 pass
 
-
+        errorscalculated = True
         DC.addComputedPoints(resultlist)
     except Exception as pexc:
                        print("3D Error: ", pexc)
 
     pass
+
+def getErrors():
+    global errorscalculated
+
+    if errorscalculated:
+        errorscalculated = False
+        return (True)
+    else:
+        return(False)        

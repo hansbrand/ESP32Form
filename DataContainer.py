@@ -12,6 +12,10 @@ yarr = []
 zarr = []
 marr = []
 limits3D = None
+mrows = None
+mcols = None
+lastS1 = None
+lastS2 = None
 
 
 
@@ -139,7 +143,7 @@ def addRows(dp):
 
 
 def addPoint(dp):
-    global PointCloud
+    global PointCloud,lastS1,lastS2
     global PointDict
     global savelock
     global errorcount
@@ -147,6 +151,10 @@ def addPoint(dp):
 
     try:
         PointCloud.append(dp);
+        if (dp.hnewdeg < 200):
+            lastS1 = dp
+        else:
+            lastS2 = dp
         savelock.acquire()
         addArr(dp)
         addLimits(dp)

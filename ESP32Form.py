@@ -118,7 +118,7 @@ class Application(tk.Frame):
     def eventloop(self):
         #print("eventloop")
         global show3Dwindow
-
+        allowdraw = False
         deltatime = 20
         skip = self.timeman > 0
 
@@ -137,11 +137,17 @@ class Application(tk.Frame):
             show3Dwindow = False
             self.show3D()
 
+        if (Calculator.getErrors()):
+           allowdraw = True
+
         if SS.strategyActive:
             SS.nextTurn()
+            allowdraw = True
 
         elif FM.isScanning:
-            self.isLoading = True            
+            self.isLoading = True   
+            allowdraw = True
+
         elif self.isLoading:
             if not FM.isScanning:
                 self.isLoading = False 
@@ -149,7 +155,9 @@ class Application(tk.Frame):
                 pass
 
         elif TCPCommunicator.isScanning:
-            self.isRunning = True            
+            self.isRunning = True       
+            allowdraw = True
+
         if self.isRunning:
             if not TCPCommunicator.isScanning:
                 self.isRunning = False 
@@ -161,8 +169,9 @@ class Application(tk.Frame):
             self.lastStatus = time.time()
             #print(self.lastStatus)
             if graph3D.Is2Draw():
-                graph3D.drawDia(True)
-                self.drawtime = max(self.drawtime - 1.0, 2.0)
+                if allowdraw:
+                    graph3D.drawDia(True)
+                    self.drawtime = max(self.drawtime - 1.0, 2.0)
             else:
                 self.drawtime += 5.0
 
