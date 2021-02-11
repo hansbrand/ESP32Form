@@ -207,10 +207,11 @@ def getAllData():
 
     return ErrorList, ComputedPoints,mrows,mcols
 
-def addComputedPoints(plist,mr,mc):
-    global ComputedPoints,mrows,mcols
+def addComputedPoints(plist,clist,mr,mc):
+    global ComputedPoints,mrows,mcols,ErrorList
     savelock.acquire()
     ComputedPoints = plist
+    ErrorList = clist
     for p in plist:
         xarr.append(p.x)
         yarr.append(p.y)

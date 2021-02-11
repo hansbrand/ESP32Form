@@ -133,6 +133,8 @@ class FormCallbacks(object):
 
         for s in clist:
             self.com.addCommand(s)
+        FormMobile.enableButtons(True, True)
+        
         pass
 
 
@@ -153,6 +155,8 @@ class FormCallbacks(object):
 
         for s in clist:
             self.com.addCommand(s)
+        FormMobile.enableButtons(True, True)
+
         pass
 
     @classmethod
@@ -281,6 +285,8 @@ class FormCallbacks(object):
         self.com.alreadysent = 0
         for s in clist:
             self.com.addCommand(s)
+        FormMobile.enableButtons(False, True)
+
 
 
 
@@ -305,11 +311,13 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        targetwidth = 0.3
-        targetheight = 0.7
-        maxturns = 1
+        targetwidth = 0.64
+        targetheight = 1.28
+        maxturns = 10
         minwidth = 0.1
         minheight = 0.2
         SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight)
+        FormMobile.enableButtons(True, True)
+
 
         pass

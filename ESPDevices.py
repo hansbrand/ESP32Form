@@ -272,7 +272,7 @@ def isSensor(message):
         if ( len (parts) < 3):return False
         
         if (parts[1][0] == "S"):
-            DataContainer.StatusList.append(parts[1])
+            DC.StatusList.append(parts[1])
             if (parts[0][1] == '1'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
                 sbar["text"] = parts[1]

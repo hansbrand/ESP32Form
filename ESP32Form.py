@@ -142,6 +142,8 @@ class Application(tk.Frame):
 
         if SS.strategyActive:
             SS.nextTurn()
+            SS.showTotalTime()
+
             allowdraw = True
 
         elif FM.isScanning:

@@ -79,7 +79,7 @@ class FormMobile(tk.Frame):
             for c in s:
                 boldFont = tkFont.Font (size = 12, weight = "bold")
                 bt=tk.Button(labelframe,underline=0, font = boldFont)
-                if c in ["INIT",  "QUIT","LOAD_FILE","S30x70"]:
+                if c in ["INIT",  "QUIT","LOAD_FILE"]:#,"S30x70"]:
                     bt["state"] = tk.NORMAL
                 else:                    
                     bt["state"] = tk.DISABLED
@@ -137,13 +137,18 @@ class FormMobile(tk.Frame):
 
             clientlabel =tk.Label(labelframe,text="TIME",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
-            clientlabel.grid(row = 1,column = 1,sticky=tk.S,columnspan = 4)
+            clientlabel.grid(row = 1,column = 4,sticky=tk.S,columnspan = 2)
             self.fc.addWidget(clientlabel,"TIME",0)
 
             clientlabel =tk.Label(labelframe,text="PASS",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
-            clientlabel.grid(row = 1,column = 0,sticky=tk.S,columnspan = 2)
+            clientlabel.grid(row = 1,column = 0,sticky=tk.S,columnspan = 3)
             self.fc.addWidget(clientlabel,"PASS",0)
+
+            clientlabel =tk.Label(labelframe,text="TOTALTIME",font=("Helvetica", 12), width = 18)
+            clientlabel["fg"] = "blue"
+            clientlabel.grid(row = 1,column = 7,sticky=tk.S,columnspan = 2)
+            self.fc.addWidget(clientlabel,"TOTALTIME",0)
 
 
             clientlabel =tk.Label(labelframe,text="STATUS 1",font=("Helvetica", 12), width = 18)
@@ -183,8 +188,15 @@ class FormMobile(tk.Frame):
                 if toenable:
                     bt["state"] = tk.NORMAL
                     if bt["text"] == "INIT":
-                        bt["bg"] = "green"
+                        bt["bg"] = "darkgrey"
                         bt["state"] = tk.DISABLED
+                    if (isscanning):
+                        if bt["text"] in ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE"]:
+                            bt["state"] = tk.DISABLED
+                            bt["bg"] = "darkgrey"
+                        else:
+                            bt["state"] = tk.NORMAL
+
                 else:
                     if bt["text"] == "INIT":
                         bt["bg"] = "red"
@@ -192,6 +204,7 @@ class FormMobile(tk.Frame):
                             bt["state"] = tk.NORMAL
                     else:                    
                         bt["state"] = tk.DISABLED
+
 
 
 

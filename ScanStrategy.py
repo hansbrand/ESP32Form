@@ -10,6 +10,7 @@ import FormCommand
 import operator
 from collections import OrderedDict
 from DataPoint import DataPoint
+from FormMobile import FormMobile 
 
 
 strategyActive = False
@@ -21,6 +22,7 @@ connect = None
 reversescan = False
 MINWIDTH = 0.1
 MINHEIGHT = 0.2
+totaltime = None
 
 def adjust(deg):
     f,g = modf(deg)
@@ -45,6 +47,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
     global MINWIDTH, MINHEIGHT
+    global totaltime
 
     targetwidth = width
     targetheight = height
@@ -56,18 +59,20 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     MINHEIGHT = minheight
 
     hdegree = 10
-    vdegree = hdegree * (targetheight / targetwidth)
+    factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
+    vdegree = hdegree * factor
     vdegree = adjust(vdegree)
-    FM.LoadTurn(int(targetwidth * 100),int(targetheight * 100) , currentturns)
-    time.sleep(1)
+    #FM.LoadTurn(int(targetwidth * 100),int(targetheight * 100) , currentturns)
+    #time.sleep(1)
     strategyActive   =  True
-    return
     starttime = time.monotonic()
+    totaltime = time.time()
 
     clist = ED.genStrategyCommands(True, hdelta = hdegree, vdelta = vdegree)
 
     connect.current2send = len(clist)
     connect.alreadysent = 0
+    FormMobile.enableButtons(True,True)
 
     for s in clist:
         connect.addCommand(s)
@@ -80,7 +85,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     passtext = "PASS " + str(currentturns + 1) + ":" + ds + "/" + str(len(clist))
     passfield["text"] = passtext
 
-
+    sleep(2)
     strategyActive = True
 
 def getHorPoints( p1, p2, div, upper):
@@ -372,19 +377,21 @@ def createRange(PointSet,reversescan, HorSet, VerSet):
 def nextTurn():
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
-    global MINWIDTH, MINHEIGHT
+    global MINWIDTH, MINHEIGHT,totaltime
 
 
 
     if connect.scanrunning:
         return
     starttime = time.monotonic()
-    #FM.SaveTurn(connect.receiveList,int(targetwidth *100),int(targetheight*100),currentturns)
-    Calculator.recomputeErrors()
+    FM.SaveTurn(connect.receiveList,int(targetwidth *100),int(targetheight*100),currentturns)
     currentturns += 1
     if (currentturns > maxturns):
         strategyActive = False
+        FormMobile.enableButtons(True,False)
+
         return
+    Calculator.recomputeErrors()
 
     reversescan = not reversescan
     HorSet = set()
@@ -392,42 +399,42 @@ def nextTurn():
     PointSet = set()
 
     commands =createRange(PointSet, reversescan, HorSet, VerSet)
+    if (len(commands) < 100):
+        targetwidth = targetwidth / 2.0
+        targetheight = targetheight / 2.0
+        if (targetwidth >= MINWIDTH) and (targetheight > MINHEIGHT):
+            commands =createRange(PointSet, reversescan, HorSet, VerSet)
+
     for c in commands:
         connect.addCommand(c)
-    # #row by row
-    # for k  in DC.mrows.keys():
-    #     hset , pset = getHorAngles(DC.mrows[k])
-    #     HorSet.update(hset)
-    #     PointSet.update(pset)
-    # # colums not closed
-    # for k in DC.mcols.keys():
-    #     vset , pset = getVerAngles(DC.mcols[k])
-    #     VerSet.update(vset)
-    #     PointSet.update(connect.addCommand(s)pset)
-    
-    # # create scanpoints connect.addCommand(s)from angle sets
-    # PointSet, horlist, s1dict, s2dict = createOpposits(PointSet, reversescan)
-    # #scanlist,scanrows,scancols = createScanPoints(HorSet,VerSet)
-
-    # # sort in horizontal order with horpos
-    # #scancols = sorted(scancols.items(), key = getRealh ,reverse = reversescan)
-    # # for k in scancols.keys():     
-    # #     scancols[k] = sorted(scancols[k],key=lambda d: (d['realH'], d['hor_angle']) )
-
-    # difftime = time.monotonic() - starttime
-    # ds ="{:8.4f}".format(difftime)
-    # print(ds)
-
-    # #getcommands
-    # commands = createCommandList(horlist, s1dict,s2dict)
-    #print("Computed" + str(time.monotonic() - starttime))
+    connect.current2send = len(commands)
+    connect.alreadysent = 0
 
     difftime = time.monotonic() - starttime
     ds ="{:8.4f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
-    passtext = "PASS " + str(currentturns + 1) + ":" + ds + "/" + str(len(commands))
+    passtext = "PASS " + str(currentturns + 1) + "(" + str(maxturns + 1) + "): " + str(len(commands))
+    passfield["text"] = passtext
+
+    totaldiff = time.time() - totaltime
+    ds ="{:8.4f}".format(totaldiff)
+    passfield = FormCommand.FormCommand.getWidgetByName("TOTALTIME")
+    passtext = "TOTALTIME " + ds 
     passfield["text"] = passtext
     return
+
+def showTotalTime():
+    global totaltime
+    totaldiff = time.time() - totaltime
+    f,g = modf(totaldiff)
+    minutes = int(g / 60)
+    seconds = int(g % 60)
+    #ds ="{:8.4f}".format(totaldiff)
+    ds = str(minutes) + " : " + str(seconds)
+    passfield = FormCommand.FormCommand.getWidgetByName("TOTALTIME")
+    passtext = ds 
+    passfield["text"] = passtext
+
     
 
     

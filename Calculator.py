@@ -186,20 +186,16 @@ def recomputeErrors():
                 mcols[k] = sorted(mcols[k],key=lambda d: (d['vnewdeg'], d['hnewdeg']) )
                 #printall(mcols[k])
 
-    
-        for err in cp:
+        cplist = list(cp)
+        for err in cplist:
             col = mcols.get(err.hnewdeg)
             row = mrows.get(err.vnewdeg)
-            if (interpolate(err, row, col) == "COMPUTED"):
-                resultlist.append(err)
-                el.remove(err)
-            else:
-                print(err)
-                pass
+            interpolate(err, row, col)
+            resultlist.append(err)
 
-
-
-        for err in el:
+        
+        elist = list(el)
+        for err in elist:
             col = mcols.get(err.hnewdeg)
             row = mrows.get(err.vnewdeg)
             if (interpolate(err, row, col) == "COMPUTED"):
@@ -210,8 +206,9 @@ def recomputeErrors():
                 pass
 
 
-
-        for err in el:
+        elist = list(el)
+        
+        for err in elist:
             col = mcols.get(err.hnewdeg)
             row = mrows.get(err.vnewdeg)
             if (estimate(err, row, col) == "COMPUTED"):
@@ -222,7 +219,7 @@ def recomputeErrors():
                 pass
 
         errorscalculated = True
-        DC.addComputedPoints(resultlist, mrows, mcols)
+        DC.addComputedPoints(resultlist,el, mrows, mcols)
     except Exception as pexc:
             print("3D Error: ", pexc)
 
