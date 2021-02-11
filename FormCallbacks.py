@@ -308,6 +308,8 @@ class FormCallbacks(object):
         targetwidth = 0.3
         targetheight = 0.7
         maxturns = 1
-        SS.startScan(targetwidth, targetheight, maxturns, self.com)
+        minwidth = 0.1
+        minheight = 0.2
+        SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight)
 
         pass

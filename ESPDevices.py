@@ -1,5 +1,5 @@
 import numpy
-import DataContainer
+import DataContainer as DC
 import FormCommand
 import FormMobile
 
@@ -357,7 +357,9 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
   commandList.append(starttimerCommand())
   commandList.append(calibrateCommand())
   hindex = hstart
+  vindex = vstart
   while  (hindex < hend):
+
     if (scanning):
         addScanning(counter)
         counter += 2
@@ -366,23 +368,35 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
     counter +=1
     commandList.append(message)
     vindex = vstart
+    DC.pointDone.update([hindex,vindex])
+    DC.pointDone.update([hindex+200,vindex])
     while (vindex < vend):
       message = "M2:" + str(vindex) + ":" 
       counter += 1
       commandList.append(message)
+      DC.pointDone.update([hindex,vindex])
       message = "M3:" + str(vindex) + ":" 
       counter += 1
       commandList.append(message)
+      DC.pointDone.update([hindex,vindex])
+      DC.pointDone.update([hindex + 200,vindex])
+
       if (scanning):
             addScanning(counter)
       vindex += vdelta
     
     if (vindex > vend):
       message = "M2:" + str(vend) + ":" 
+      DC.pointDone.update([hindex,vindex])
+      DC.pointDone.update([hindex + 200,vindex])
+
       counter += 1
       commandList.append(message)
       message = "M3:" + str(vend) + ":" 
       counter += 1
+      DC.pointDone.update([hindex,vend])
+      DC.pointDone.update([hindex + 200,vend])
+
       commandList.append(message)
       if (scanning):
             addScanning(counter)
@@ -393,19 +407,27 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
 
     message = "M1:" + str(hindex) + ":" 
     #print(message)
-    counter +=1
+    counter += 1
     commandList.append(message)
 
     vindex -= vdelta
+    DC.pointDone.update([hindex,vend])
+    DC.pointDone.update([hindex + 200,vend])
+
 
     while (vindex >= vstart):
       if (scanning):
         addScanning(counter)
       counter +=1
       message = "M2:" + str(vindex) + ":" 
+      DC.pointDone.update([hindex,vindex])
+      DC.pointDone.update([hindex + 200,vindex])
+
       commandList.append(message)
       counter +=1
       message = "M3:" + str(vindex) + ":" 
+      DC.pointDone.update([hindex,vindex])
+      DC.pointDone.update([hindex + 200,vindex])
       commandList.append(message)
       vindex -= vdelta
 

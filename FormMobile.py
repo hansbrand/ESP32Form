@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font as tkFont
 from tkinter.ttk import *
 import FormCommand 
 import FormCallbacks
@@ -75,10 +76,10 @@ class FormMobile(tk.Frame):
             labelframe = tk.LabelFrame(RowMobile, text="Commands", relief = tk.RAISED)
             labelframe.grid(row = 0 ,column = 0,sticky=tk.W,columnspan = 5, padx = 10,rowspan = 4,pady = 5)
             #labelframe.pack(fill=tk.BOTH, expand=tk.YES)
-
             for c in s:
-                bt=tk.Button(labelframe,underline=0)
-                if c in ["INIT",  "QUIT","LOAD_FILE"]:
+                boldFont = tkFont.Font (size = 12, weight = "bold")
+                bt=tk.Button(labelframe,underline=0, font = boldFont)
+                if c in ["INIT",  "QUIT","LOAD_FILE","S30x70"]:
                     bt["state"] = tk.NORMAL
                 else:                    
                     bt["state"] = tk.DISABLED
@@ -177,12 +178,13 @@ class FormMobile(tk.Frame):
         self.fc.createCallbacks()
 
     @classmethod
-    def enableButtons(self,toenable):
+    def enableButtons(self,toenable,isscanning = False):
         for bt in self.buttonlist:
                 if toenable:
                     bt["state"] = tk.NORMAL
                     if bt["text"] == "INIT":
                         bt["bg"] = "green"
+                        bt["state"] = tk.DISABLED
                 else:
                     if bt["text"] == "INIT":
                         bt["bg"] = "red"

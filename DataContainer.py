@@ -16,6 +16,7 @@ mrows = None
 mcols = None
 lastS1 = None
 lastS2 = None
+pointDone = set()
 
 
 
@@ -62,7 +63,7 @@ def getMarkerColor(val):
 
 
 def initDataContainer():
-    global PointCloud
+    global PointCloud,pointDone
     global PointDict
     global ErrorList
     global StatusList
@@ -87,6 +88,7 @@ def initDataContainer():
     limits3D = None
     mrows =  {}
     mcols =  {}
+    pointDone = set()
 
 def addArr(dp):
     global xarr
@@ -205,8 +207,8 @@ def getAllData():
 
     return ErrorList, ComputedPoints,mrows,mcols
 
-def addComputedPoints(plist):
-    global ComputedPoints
+def addComputedPoints(plist,mr,mc):
+    global ComputedPoints,mrows,mcols
     savelock.acquire()
     ComputedPoints = plist
     for p in plist:
@@ -214,6 +216,8 @@ def addComputedPoints(plist):
         yarr.append(p.y)
         zarr.append(p.z)
         marr.append("black")
+    mrows = mr
+    mcols = mc
 
 
     savelock.release()

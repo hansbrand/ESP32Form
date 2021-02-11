@@ -124,5 +124,5 @@ class DataPoint(object):
         if key == "vnewdeg": return self.vnewdeg
         return None
 
-
+    
 

@@ -13,6 +13,7 @@ def get3Ddist(m1,m2):
     mz = (m1.z -m2.z) ** 2
     return(math.sqrt(mx + my + mz))
 
+
 # m1 is closer
 def Hcalchpoint (err,m1,m2):
             if ((m1.state == "VALID") and (m2.state == "VALID")):
@@ -178,16 +179,16 @@ def recomputeErrors():
         mrows = OrderedDict(sorted(mrows.items()))
         for k in mrows.keys():
             #printall(mrows[k])
-            mrows[k] = sorted(mrows[k],key=lambda d: (d['hnewdeg']) )
+            mrows[k] = sorted(mrows[k],key=lambda d: (d['hnewdeg'],d['vnewdeg']) )
             #printall(mrows[k])
         for k in mcols.keys():     
                 #printall(mcols[k])
-                mcols[k] = sorted(mcols[k],key=lambda d: (d['vnewdeg']) )
+                mcols[k] = sorted(mcols[k],key=lambda d: (d['vnewdeg'], d['hnewdeg']) )
                 #printall(mcols[k])
 
     
         for err in cp:
-            col = mcols.get(err.hnedeg)
+            col = mcols.get(err.hnewdeg)
             row = mrows.get(err.vnewdeg)
             if (interpolate(err, row, col) == "COMPUTED"):
                 resultlist.append(err)
@@ -221,7 +222,7 @@ def recomputeErrors():
                 pass
 
         errorscalculated = True
-        DC.addComputedPoints(resultlist)
+        DC.addComputedPoints(resultlist, mrows, mcols)
     except Exception as pexc:
             print("3D Error: ", pexc)
 
