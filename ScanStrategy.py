@@ -402,7 +402,7 @@ def nextTurn():
     if (len(commands) < 100):
         targetwidth = targetwidth / 2.0
         targetheight = targetheight / 2.0
-        if (targetwidth >= MINWIDTH) and (targetheight > MINHEIGHT):
+        if (targetwidth >= MINWIDTH) and (targetheight >= MINHEIGHT):
             commands =createRange(PointSet, reversescan, HorSet, VerSet)
 
     for c in commands:
