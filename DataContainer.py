@@ -20,9 +20,14 @@ pointDone = set()
 
 
 
-REDLIMIT = 3.0
-BLUEVALUE = 6.0
-GREENLIMIT = 0.5
+# REDLIMIT = 3.0
+# BLUEVALUE = 6.0
+# GREENLIMIT = 0.5
+
+REDLIMIT = 0.3
+BLUEVALUE = 1.0
+GREENLIMIT = 0.01
+
 
 errorcount = 0
 
@@ -100,7 +105,8 @@ def addArr(dp):
         xarr.append(dp.x)
         yarr.append(dp.y)
         zarr.append(dp.z)
-        marr.append(getMarkerColor(int(dp.meter)))
+        #marr.append(getMarkerColor((dp.meter)))
+        marr.append(getMarkerColor((abs(dp.z))))
 
 
 
@@ -108,26 +114,30 @@ def addLimits(dp):
     global limits3D
     if (dp.state != "VALID"):
         return
-    if (limits3D == None):
-        limits3D = {}
-        limits3D["xmin"] = dp.x 
+    try:
+        if (limits3D == None):
+            limits3D = {}
+            limits3D["xmin"] = dp.x 
 
-        limits3D["xmax"] = dp.x
-        limits3D["ymin"] = dp.y
-        limits3D["ymax"] = dp.y
-        limits3D["zmin"] = dp.z
-        limits3D["zmax"] = dp.z    
-        limits3D["hmax"] = dp.hnewdeg
-        limits3D["vmax"] = dp.vnewdeg
-    else:
-        limits3D["xmin"] = limits3D["xmin"] if (limits3D["xmin"] < dp.x) else dp.x
-        limits3D["xmax"] = limits3D["xmax"] if (limits3D["xmax"] > dp.x) else dp.x
-        limits3D["ymin"] = limits3D["ymin"] if (limits3D["ymin"] < dp.y) else dp.y
-        limits3D["ymax"] = limits3D["ymax"] if (limits3D["ymax"] > dp.y) else dp.y
-        limits3D["zmin"] = limits3D["zmin"] if (limits3D["zmin"] < dp.z) else dp.z
-        limits3D["zmax"] = limits3D["zmax"] if (limits3D["zmax"] > dp.z) else dp.z
-        limits3D["hmax"] = limits3D["hmax"] if (limits3D["hmax"] > dp.hnewdeg) else dp.hnewdeg
-        limits3D["vmax"] = limits3D["vmax"] if (limits3D["vmax"] > dp.vnewdeg) else dp.vnewdeg
+            limits3D["xmax"] = dp.x
+            limits3D["ymin"] = dp.y
+            limits3D["ymax"] = dp.y
+            limits3D["zmin"] = dp.z
+            limits3D["zmax"] = dp.z    
+            limits3D["hmax"] = dp.hnewdeg
+            limits3D["vmax"] = dp.vnewdeg
+        else:
+            limits3D["xmin"] = limits3D["xmin"] if (limits3D["xmin"] < dp.x) else dp.x
+            limits3D["xmax"] = limits3D["xmax"] if (limits3D["xmax"] > dp.x) else dp.x
+            limits3D["ymin"] = limits3D["ymin"] if (limits3D["ymin"] < dp.y) else dp.y
+            limits3D["ymax"] = limits3D["ymax"] if (limits3D["ymax"] > dp.y) else dp.y
+            limits3D["zmin"] = limits3D["zmin"] if (limits3D["zmin"] < dp.z) else dp.z
+            limits3D["zmax"] = limits3D["zmax"] if (limits3D["zmax"] > dp.z) else dp.z
+            limits3D["hmax"] = limits3D["hmax"] if (limits3D["hmax"] > dp.hnewdeg) else dp.hnewdeg
+            limits3D["vmax"] = limits3D["vmax"] if (limits3D["vmax"] > dp.vnewdeg) else dp.vnewdeg
+    except Exception as exc:
+        print(exc)
+        return
         
 def addRows(dp):
     global mrows

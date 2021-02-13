@@ -11,6 +11,7 @@ import ESPDevices
 import DataContainer
 from DataPoint import DataPoint 
 isScanning = False
+isLoaded = False
 #import ESP32Form
 
 def analyse(line):
@@ -89,11 +90,19 @@ def analyse(line):
         return None
 
 
+def isloaded():
+    global isLoaded
+    if isLoaded:
+        isLoaded = False
+        return True
+    return False
 
 
 
 def loadfile(filename):
     global isScanning
+    global isLoaded
+
     try:
 
         counter = 0
@@ -104,17 +113,20 @@ def loadfile(filename):
         datafd.close()
         for message in buffer:
             ident = message[0:2]
-            if ident in ESPDevices.deviceList:
+            if ident in   ESPDevices.deviceList:
                 counter = (counter + 1) % 10
-                if (counter == 0):
-                    time.sleep(.01)
+                # if (counter == 0):
+                #     time.sleep(.01)
                 #print("Device found :" + message)
                 if (ESPDevices.isSensor(message)):
                     #if (('Er' in message) == False):
                         dp = DataPoint(message)
                         DataContainer.addPoint(dp)
         print(DataContainer.getlimits3D())
+        time.sleep(2)
         isScanning = False
+        isLoaded = True
+
         #print(DataContainer.StatusList)
         return True
     except Exception as pex:

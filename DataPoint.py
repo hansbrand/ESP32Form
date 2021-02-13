@@ -1,4 +1,5 @@
 import math
+from tkinter import PhotoImage
 
 class DataPoint(object):
     """description of class"""
@@ -70,38 +71,34 @@ class DataPoint(object):
 
  
             if ((self.vAngle == 0.0)):
-                self.z = xradius+ self.meter
+                self.z = self.meter
                 self.x = tx
                 self.y = ty
             elif (self.vAngle == 180.0):
-                self.z = -(xradius + self.meter)
+                self.z = -(self.meter)
                 self.x = tx
                 self.y = ty
             else:
-                self.z = self.meter *  math.cos(math.radians(self.vAngle)) 
+                phi = self.vAngle
+                scanned = self.meter
+                self.z = self.meter *  math.cos(math.radians(phi))
+             
                 #TODO :umrechnung hier
-                #print(str(self.meter) + ":" + str(self.z))
+                self.x = xradius *  math.cos(math.radians(self.hAngle))# * math.sin(math.radians(phi))
+            #exchange x and z axis
+            #rotate x degree
+                tradius = abs(scanned * math.sin(math.radians(self.hAngle)))
+            #start with 45 degree
+                yradius = math.sqrt( 2 * (tradius ** 2))
+                self.y = yradius * math.cos(math.radians(phi + 45))
 
+                yradius = math.sqrt((scanned ** 2) + (xradius ** 2))
+                newh = self.hAngle + 180.0
+                if (newh > 360.0):
+                    newh -= 180
+                self.y = yradius *  math.cos(math.radians(newh)) * math.sin(math.radians(phi - 90.0))
 
-                self.x = xradius
-                ytemp = self.meter *  math.sin(math.radians(self.vAngle))  
-                #self.x = tx
-                #self.y = ty + self.meter
-                r2 = math.sqrt( (xradius ** 2) + (self.meter ** 2))
-                # auf z = 0 projezieren
-                r1 = math.sqrt(r2 ** 2 - self.z ** 2)
-                
-
-                if (self.hAngle != 0):
-                    self.x = r2 *  math.cos(math.radians(self.hAngle)) * math.sin(math.radians(self.vAngle))
-                    self.y = r2 *  math.sin(math.radians(self.hAngle)) #* math.sin(math.radians(self.vAngle))
-                else:
-                    self.x = xradius
-                    self.y = ytemp
-
-    
-
-            if (int(self.signal)  < 300) and (self.meter < 9) and (self.z > -1.5):
+            if (int(self.signal)  < 1000) and (self.meter < 9) and (self.z > -1.5):
                 self.state = "VALID"
                 # if (abs(self.x) > 6):
                 #         print(self.meter)
