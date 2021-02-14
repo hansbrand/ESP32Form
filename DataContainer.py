@@ -20,7 +20,7 @@ pointDone = set()
 
 
 
-# REDLIMIT = 3.0
+# REDLIMIT = 3.0REDLIMIT
 # BLUEVALUE = 6.0
 # GREENLIMIT = 0.5
 
@@ -37,9 +37,16 @@ from operator import itemgetter
 savelock = threading.RLock() 
 
 
-def getMarkerColor(val):
+def getMarkerColor(val,limits = None):
+    global REDLIMIT, GREENLIMIT,BLUEVALUE
+
     if val == -30000:
         return ("black")
+
+    if (limits != None):
+        BLUEVALUE = max(limits["zmax"],-limits["zmin"])
+        REDLIMIT = BLUEVALUE * 0.3
+        GREENLIMIT = BLUEVALUE * 0.05
 
     if val > BLUEVALUE: 
         return("blue")
@@ -106,7 +113,8 @@ def addArr(dp):
         yarr.append(dp.y)
         zarr.append(dp.z)
         #marr.append(getMarkerColor((dp.meter)))
-        marr.append(getMarkerColor((abs(dp.z))))
+        #marr.append(getMarkerColor((abs(dp.z))))
+        marr.append(getMarkerColor(abs(dp.z), getlimits3D()))
 
 
 
@@ -206,7 +214,10 @@ def getPointData():
 def getlimits3D():
     global limits3D
     savelock.acquire()
-    d= dict(limits3D)
+    if (limits3D != None):
+        d= dict(limits3D)
+    else: 
+        d = None
     savelock.release()
     return d
 

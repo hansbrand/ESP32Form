@@ -80,25 +80,31 @@ class DataPoint(object):
                 self.y = ty
             else:
                 phi = self.vAngle
-                scanned = self.meter
-                self.z = self.meter *  math.cos(math.radians(phi))
+                rho = self.hAngle
+                scanned = self.meter + ysensordelta
+                zr = math.sqrt((scanned ** 2) + (xradius ** 2))
+
+                x1 = xradius
+                y1 = scanned * math.sin(math.radians(phi))
+                zr = scanned *  math.cos(math.radians(phi))
+                r = math.sqrt((y1 ** 2) + (x1 ** 2) + (zr ** 2))
+
+                x1 = r *  math.cos(math.radians(rho))  *  math.sin(math.radians(phi))
+                y1 = r *  math.sin(math.radians(rho))  *  math.sin(math.radians(phi))
+
+                self.x = x1
+                self.y = y1
+
+                #zr = math.sqrt((scanned ** 2) + (xradius ** 2))
+                self.z = r *  math.cos(math.radians(phi))
+                #self.z = zr *  math.cos(math.radians(phi))
              
-                #TODO :umrechnung hier
-                self.x = xradius *  math.cos(math.radians(self.hAngle))# * math.sin(math.radians(phi))
-            #exchange x and z axis
-            #rotate x degree
-                tradius = abs(scanned * math.sin(math.radians(self.hAngle)))
-            #start with 45 degree
-                yradius = math.sqrt( 2 * (tradius ** 2))
-                self.y = yradius * math.cos(math.radians(phi + 45))
 
-                yradius = math.sqrt((scanned ** 2) + (xradius ** 2))
-                newh = self.hAngle + 180.0
-                if (newh > 360.0):
-                    newh -= 180
-                self.y = yradius *  math.cos(math.radians(newh)) * math.sin(math.radians(phi - 90.0))
+                # yradius = math.sqrt((scanned ** 2) + (xradius ** 2))
+                # #self.y = scanned *  math.cos(math.radians(phi)) * math.sin(math.radians(self.hAngle)) + xradius * math.cos(math.radians(self.hAngle))
+                # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
-            if (int(self.signal)  < 1000) and (self.meter < 9) and (self.z > -1.5):
+            if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
                 self.state = "VALID"
                 # if (abs(self.x) > 6):
                 #         print(self.meter)
