@@ -193,7 +193,7 @@ def getVerAngles(row):
                 dist = Calculator.get3Ddist(p,np)
                 if dist > targetheight:
                     #halfit
-                    div = int(dist / targetwidth)
+                    div = int(dist / targetheight)
 
                     hd = (p.vnewdeg + np.vnewdeg) / 2.0
                     pset = getVerPoints(p,np,div)

@@ -312,10 +312,10 @@ class FormCallbacks(object):
         else:
              self.com =  __import__("TCPCommunicator")
         targetwidth = 0.32
-        targetheight = 0.96
-        maxturns = 10
-        minwidth = 0.1
-        minheight = 0.2
+        targetheight = 0.64
+        maxturns = 8
+        minwidth = 0.08
+        minheight = 0.16
         SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight)
         FormMobile.enableButtons(True, True)
 
