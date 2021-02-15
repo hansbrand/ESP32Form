@@ -18,6 +18,7 @@ import ESPDevices
 from FileManager import saveCSVlist
 from DataPoint import DataPoint 
 from DataContainer import addPoint
+import ScanStrategy as SS
 
 
 startme=True
@@ -307,7 +308,8 @@ def updateSend():
             tdone = float(st)
             if  (alreadysent != 0):
                 tsingle = float(st) / float(alreadysent)
-                tdiff = float(current2send - alreadysent) * tsingle
+                tdouble = tsingle / 2.0  + 1.0
+                tdiff = float(current2send - alreadysent) * tdouble
                 tfield = FormCommand.FormCommand.getWidgetByName("TIME")
                 dtime = int(st)
                 ltime = int(tdiff)
@@ -319,7 +321,7 @@ def updateSend():
 
                 tfield["text"] = dtime + " / " + ltime
 
-            if (alreadysent == (current2send - 1) ):
+            if ((alreadysent == (current2send - 1)) and not SS.strategyActive):
                 saveCSVlist(receiveList, "RAW")
 
             pbar.update();

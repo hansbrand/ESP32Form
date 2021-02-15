@@ -11,7 +11,7 @@ import operator
 from collections import OrderedDict
 from DataPoint import DataPoint
 from FormMobile import FormMobile 
-
+import EMailer
 
 strategyActive = False
 currentturns = 0
@@ -58,7 +58,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     MINWIDTH = minwidth
     MINHEIGHT = minheight
 
-    hdegree = 10
+    hdegree = 8
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
@@ -371,7 +371,17 @@ def createRange(PointSet,reversescan, HorSet, VerSet):
 
     #getcommands
     commands = createCommandList(horlist, s1dict,s2dict)
-    return commands
+    return commands,PointSet
+
+def sendMail():
+        datestr = time.strftime("%d.%m.%y")
+        timestr = time.strftime("%H:%M:%S")
+        sender = EMailer.Emailer()
+        sendTo = 'fdeitzer@gmail.com'
+        emailSubject = "Hello World"
+        emailContent = "Die Messung wurde am " + datestr + " um " + timestr + " abgeschlossen." 
+        sender.sendmail(sendTo, emailSubject, emailContent)  
+
 
 
 def nextTurn():
@@ -388,6 +398,7 @@ def nextTurn():
     currentturns += 1
     if (currentturns > maxturns):
         strategyActive = False
+        sendMail()
         FormMobile.enableButtons(True,False)
 
         return
@@ -398,12 +409,12 @@ def nextTurn():
     VerSet = set()
     PointSet = set()
 
-    commands =createRange(PointSet, reversescan, HorSet, VerSet)
+    commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
     if (len(commands) < 100):
         targetwidth = targetwidth / 2.0
         targetheight = targetheight / 2.0
         if (targetwidth >= MINWIDTH) and (targetheight >= MINHEIGHT):
-            commands =createRange(PointSet, reversescan, HorSet, VerSet)
+            commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
 
     for c in commands:
         connect.addCommand(c)

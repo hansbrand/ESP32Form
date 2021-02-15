@@ -238,26 +238,6 @@ class Application(tk.Frame):
 
         self.master.after(0,self.eventloop)
 
-        #self.pack()
-        #initDataPool()
-        #self.filelabel=None
-        #self.create_widgets(master)
-        #ParamMan.initParams(master,self.buttonheight,self.buttonwidth, self.scalelength)
-        #self.valueindex=0
-        #self.diamax=0
-        #self.lastmessage=""
-        #self.tupellist =[]
-        #DC.init()
-        #self.datareset = False
-
-        #self.timeman = 0
-
-        #self.timedelta = 0
-        #setPause(False)
-        #self.fileloaded = False
-
-
-
 
 def Main():
     global ISLINUXOS

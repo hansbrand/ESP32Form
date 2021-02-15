@@ -212,12 +212,20 @@ def SaveTurn(slist,width, height,turn):
             directory =os.path.join(dirname, 'TURN/')
             if  not os.path.isdir(directory):
                 os.mkdir(directory)
-            filename= directory + str(width) + "_" + str(height) + "_" + str(turn) + ".txt" 
+            dirname = str(width) + "_" + str(height) + "_" + str(turn) 
+            directory = directory + dirname + "/"
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename= directory + dirname + ".txt" 
         else:
             directory =os.path.join(dirname, 'TURN\\')
             if  not os.path.isdir(directory):
                 os.mkdir(directory)
-            filename= directory + str(width) + "_" + str(height) + "_" + str(turn) + ".txt" 
+            dirname = str(width) + "_" + str(height) + "_" + str(turn) 
+            directory = directory + dirname + "\\"
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename= directory + dirname + ".txt" 
  
         with open(filename, 'wt+') as f:
             for l in slist:

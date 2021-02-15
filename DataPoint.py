@@ -104,7 +104,9 @@ class DataPoint(object):
                 # #self.y = scanned *  math.cos(math.radians(phi)) * math.sin(math.radians(self.hAngle)) + xradius * math.cos(math.radians(self.hAngle))
                 # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
-            if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
+            #if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
+            if  (self.meter < 8.0) and (self.z > -1.5):
+
                 self.state = "VALID"
                 # if (abs(self.x) > 6):
                 #         print(self.meter)
