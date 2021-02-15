@@ -308,7 +308,7 @@ def updateSend():
             tdone = float(st)
             if  (alreadysent != 0):
                 tsingle = float(st) / float(alreadysent)
-                tdouble = tsingle / 2.0  + 1.0
+                tdouble = tsingle / 4.0  + 1.0
                 tdiff = float(current2send - alreadysent) * tdouble
                 tfield = FormCommand.FormCommand.getWidgetByName("TIME")
                 dtime = int(st)

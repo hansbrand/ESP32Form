@@ -58,7 +58,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     MINWIDTH = minwidth
     MINHEIGHT = minheight
 
-    hdegree = 8
+    hdegree = 10
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
@@ -88,15 +88,16 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     sleep(2)
     strategyActive = True
 
+
 def getHorPoints( p1, p2, div, upper):
     pset = set()
 
     delta = abs(upper - p1.hnewdeg)
     #minimize
-    for div1 in range(div,1,-1):
-        d = delta / div1
+    for div1 in range(div,0,-1):
+        d = delta / (div1 + 1)
         if (d > (0.25 * div1)):
-            for i in range(0,div1 ):
+            for i in range(1,div1 + 1):
                 nx = adjust(p1.hnewdeg + float(d * i))
                 ny = p1.vnewdeg
                 if not (nx,ny) in DC.pointDone:                    
@@ -163,13 +164,12 @@ def getVerPoints( p1, p2, div):
 
     delta = abs(p2.vnewdeg - p1.vnewdeg)
     #minimize
-    for div1 in range(div,1,-1):
-        d = delta / div1
+    for div1 in range(div,0,-1):
+        d = delta / (div1 + 1)
         if (d > (0.25 * div1)):
-            for i in range(0,div1 ):
+            for i in range(1,div1 + 1 ):
                 ny = adjust(p1.vnewdeg + float(d * i))
                 nx = p1.hnewdeg
-                ny = p1.vnewdeg
                 if not (nx,ny) in DC.pointDone:                    
                     DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
@@ -196,7 +196,7 @@ def getVerAngles(row):
                     div = int(dist / targetheight)
 
                     hd = (p.vnewdeg + np.vnewdeg) / 2.0
-                    pset = getVerPoints(p,np,div)
+                    pset = getVerPoints(np,p,div)
                     if len(pset) > 0:
                         pointset.update(pset)
                         hd = adjust(hd)
@@ -212,7 +212,7 @@ def getVerAngles(row):
                     div = int(dist / targetheight)
 
                     hd = (p.vnewdeg +np.vnewdeg) / 2.0
-                    pset = getVerPoints(np,p,div)
+                    pset = getVerPoints(p,np,div)
                     if len(pset) > 0:
                         pointset.update(pset)
                         hd = adjust(hd)
@@ -255,8 +255,16 @@ def createCommandList(angles, s1dict,s2dict):
         #horiontal turn
         message = "M1:" + str(a) + ":"
         commands.append(message)
-        s1list =  list(s1dict[a])
-        s2list =  list(s2dict[a])
+        if (a in s1dict.keys()):
+            s1list =  list(s1dict[a])
+        else:
+            s1list = list()
+
+        if (a in s2dict.keys()):
+            s2list =  list(s2dict[a])
+        else:
+            s2list = list()            
+
         l1 = len(s1list)
         l2 = len(s2list)
 
@@ -398,7 +406,7 @@ def nextTurn():
     currentturns += 1
     if (currentturns > maxturns):
         strategyActive = False
-        sendMail()
+        #sendMail()
         FormMobile.enableButtons(True,False)
 
         return
@@ -441,7 +449,7 @@ def showTotalTime():
     minutes = int(g / 60)
     seconds = int(g % 60)
     #ds ="{:8.4f}".format(totaldiff)
-    ds = str(minutes) + " : " + str(seconds)
+    ds = str(minutes) + " : " +f'{seconds:02}'
     passfield = FormCommand.FormCommand.getWidgetByName("TOTALTIME")
     passtext = ds 
     passfield["text"] = passtext

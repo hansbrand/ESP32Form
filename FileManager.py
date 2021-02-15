@@ -152,15 +152,6 @@ def openLoadFile(master):
 
     return check
 
-def saveCSV(x,y,z,ext):
-
-    dirname = os.path.dirname(__file__)
-    filename = os.path.join(dirname, 'dist\\') + "DIST"+time.strftime("%H_%M_%S")+"_" + ext +".csv"
-    with open(filename, 'wt+') as f:
-        for l in range(0,len(x)):
-            line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
-            f.write(line)
-
 def saveCSVlist(slist,ext):
     try:
         dirname = os.path.dirname(__file__)
