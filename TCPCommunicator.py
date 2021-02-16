@@ -104,7 +104,7 @@ class TCPCommunicator(StoppableThread):
                     commandlock.acquire()
                     key = ESPDevices.getMessageID(message)
                     if key in currentCommands.keys():
-                        print("currentcom :" + str(currentCommands))
+                        #print("currentcom :" + str(currentCommands))
                         del currentCommands[key]
                         if scanrunning:
                             scanrunning = len(currentCommands) > 0
@@ -211,7 +211,7 @@ def sendSingleCommand(command):
 
     try:
         command += str(sendCounter)+"\n"
-        print("send : " + command)
+        #print("send : " + command)
         commandlock.acquire()
         # if ("C1" in command ):
         #     print(command)
@@ -301,7 +301,7 @@ def updateSend():
 
         for s in sendList:
             alreadysent += 1
-            print(str(alreadysent) + " / " + str (current2send))
+            #print(str(alreadysent) + " / " + str (current2send))
             pbar = FormCommand.FormCommand.getWidgetByName("PROGRESSBAR")
             pbar["value"]=int(alreadysent / current2send * 100.0)
             st = time.time() - scanstarttime
@@ -327,7 +327,7 @@ def updateSend():
             pbar.update();
             
             if (isConnected):
-                print("sendlist" + str(sendList))
+                #print("sendlist" + str(sendList))
                 sendSingleCommand(s)
 
         queuelock.release()

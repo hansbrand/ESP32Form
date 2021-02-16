@@ -312,12 +312,15 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        targetwidth = 0.16
-        targetheight = 0.32
-        maxturns = 10
-        minwidth = 0.04
-        minheight = 0.08
+        targetwidth = 0.32
+        targetheight = 0.64
+        maxturns = 1000
+        minwidth = 0.08
+        minheight = 0.16
         SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight)
-
-
         pass
+
+    @classmethod
+    def callbackMESH(self , button):
+        print("callbackMESH")
+        return

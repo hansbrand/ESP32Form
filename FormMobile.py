@@ -22,7 +22,7 @@ class FormMobile(tk.Frame):
     "STOP",
     # "TEST1",
     # "TEST20",
-    # "TEST80",
+    "TEST80",
     # "TEST200",
     
     "FULLSCAN",
@@ -34,6 +34,7 @@ class FormMobile(tk.Frame):
     #"ADJUST",
     #"MUP",
     #"MDOWN",
+    "MESH",
     "QUIT"
     )
 

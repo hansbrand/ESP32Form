@@ -23,6 +23,7 @@ reversescan = False
 MINWIDTH = 0.1
 MINHEIGHT = 0.2
 totaltime = None
+passtime = -1.0
 
 def adjust(deg):
     f,g = modf(deg)
@@ -47,7 +48,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
     global MINWIDTH, MINHEIGHT
-    global totaltime
+    global totaltime,passtime
 
     targetwidth = width
     targetheight = height
@@ -65,7 +66,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     #FM.LoadTurn(int(targetwidth * 100),int(targetheight * 100) , currentturns)
     #time.sleep(1)
     strategyActive   =  True
-    starttime = time.monotonic()
+    starttime = time.time()
     totaltime = time.time()
 
     clist = ED.genStrategyCommands(True, hdelta = hdegree, vdelta = vdegree)
@@ -79,13 +80,15 @@ def startScan( width, height, turns, connector, minwidth, minheight):
         print(s)
         pass
 
-    difftime = time.monotonic() - starttime
+    difftime = time.time() - starttime
     ds ="{:8.4f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
     passtext = "PASS " + str(currentturns + 1) + ":" + ds + "/" + str(len(clist))
     passfield["text"] = passtext
 
-    sleep(2)
+    time.sleep(2)
+    passtime = time.time()        
+
     strategyActive = True
 
 
@@ -395,7 +398,7 @@ def sendMail():
 def nextTurn():
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
-    global MINWIDTH, MINHEIGHT,totaltime
+    global MINWIDTH, MINHEIGHT,totaltime,passtime
 
 
 
@@ -410,6 +413,16 @@ def nextTurn():
         FormMobile.enableButtons(True,False)
 
         return
+    pdiff = time.time() - passtime
+    f,g = modf(pdiff)
+    minutes = int(g / 60.0)
+    seconds = int(g) % 60
+    #ds ="{:8.4f}".format(totaldiff)
+    ds = str(minutes) + " : " +f'{seconds:02}'
+
+    FM.ilog("PASS " + str(currentturns) + ", Time :" + ds)
+    passtime = time.time()        
+    logTotalTime()
     Calculator.recomputeErrors()
 
     reversescan = not reversescan
@@ -419,10 +432,20 @@ def nextTurn():
 
     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
     if (len(commands) < 100):
-        targetwidth = targetwidth / 2.0
-        targetheight = targetheight / 2.0
-        if (targetwidth >= MINWIDTH) and (targetheight >= MINHEIGHT):
+        tw = targetwidth / 2.0
+        th = targetheight / 2.0
+        if (tw >= MINWIDTH) and (th >= MINHEIGHT):
+            FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
+            targetwidth = tw
+            targetheigt = th
             commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+        else: 
+            strategyActive = False
+            #sendMail()
+            FormMobile.enableButtons(True,False)
+            FM.ilog("Scanning done!!!")
+            return
+            
 
     for c in commands:
         connect.addCommand(c)
@@ -442,6 +465,7 @@ def nextTurn():
     passfield["text"] = passtext
     return
 
+
 def showTotalTime():
     global totaltime
     totaldiff = time.time() - totaltime
@@ -454,6 +478,16 @@ def showTotalTime():
     passtext = ds 
     passfield["text"] = passtext
 
+def logTotalTime():
+    global totaltime
+    totaldiff = time.time() - totaltime
+    f,g = modf(totaldiff)
+    minutes = int(g / 60)
+    seconds = int(g % 60)
+    #ds ="{:8.4f}".format(totaldiff)
+    ds = "Total :" + str(minutes) + " : " +f'{seconds:02}'
+    FM.ilog(ds)
+    return
     
 
     

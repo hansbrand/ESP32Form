@@ -6,12 +6,15 @@ import json
 import queue
 import time
 import sys
+import logging
+
 from FileHandler import filestat 
 import ESPDevices
 import DataContainer
 from DataPoint import DataPoint 
 isScanning = False
 isLoaded = False
+logger = None
 #import ESP32Form
 
 def analyse(line):
@@ -242,3 +245,41 @@ def LoadTurn(width, height,turn):
             filename= directory + str(width) + "_" + str(height) + "_" + str(turn) + ".txt" 
  
         loadfile(filename)
+
+
+def startlogging():
+        global logger
+
+        dirname = os.path.dirname(__file__)
+        datestr = time.strftime("%y_%m_%d_%H_%M")
+
+        ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
+        if ISLINUXOS:
+            directory =os.path.join(dirname, 'logs/')
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename= directory + datestr + ".txt" 
+        else:
+            directory =os.path.join(dirname, 'logs\\')
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename= directory + datestr + ".txt" 
+        logger = filename
+        return
+        pass 
+
+def dlog(message):
+    global logger
+    datestr = time.strftime("%y_%m_%d_%H_%M")
+
+    with open(logger, 'at+') as f:
+        f.write("DEBUG : " +  datestr + "   " + message + "\n")
+    return
+
+def ilog(message):
+    global logger
+    datestr = time.strftime("%y_%m_%d_%H_%M")
+
+    with open(logger, 'at+') as f:
+        f.write("INFO : " +  datestr + "   " + message + "\n")
+    return

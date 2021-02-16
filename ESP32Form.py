@@ -199,6 +199,9 @@ class Application(tk.Frame):
         #master.attributes('-fullscreen', True)
         #master.update()
 
+        FM.startlogging()
+        FM.ilog("Session started")
+        FM.dlog("Session started")
 
         self.master = master
         self.screen_width = self.master.winfo_screenwidth()
