@@ -180,7 +180,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
 
 
 
-def genTestCommands(scanning = True, hstart = 0,hend = 149,vstart = 0,vend = 149, hdelta = 2.0 ,vdelta = 10.0):
+def genTestCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 149, hdelta = 2.0 ,vdelta = 10.0):
     global commandList
     round = 0;
 
@@ -196,36 +196,55 @@ def genTestCommands(scanning = True, hstart = 0,hend = 149,vstart = 0,vend = 149
     counter +=1
     commandList.append(message)
     vindex = vstart
-    while (vindex < vend):
-        if (scanning):
-            addScanning(counter)
-        message = "M2:" + str(vindex) + ":" 
-        counter += 1
-        commandList.append(message)
-        message = "M3:" + str(vindex) + ":" 
-        counter += 1
-        commandList.append(message)
-        vindex += vdelta
-        message = "M1:" + str(hindex) + ":" 
-        counter += 1
-        commandList.append(message)
+    while hindex <= hend:
+        while (vindex < vend):
+            if (scanning):
+                addScanning(counter)
+            message = "M2:" + str(vindex) + ":" 
+            counter += 1
+            commandList.append(message)
+            message = "M3:" + str(vindex) + ":" 
+            counter += 1
+            commandList.append(message)
+            vindex += vdelta
+            message = "M1:" + str(hindex) + ":" 
+            counter += 1
+            commandList.append(message)
         hindex += hdelta
+        if (hindex <= hend):
+            message = "M1:" + str(hindex) + ":" 
+            commandList.append(message)
 
-    while (vindex >= 0):
-        if (scanning):
-            addScanning(counter)
-        counter +=1
-        message = "M2:" + str(vindex) + ":" 
-        commandList.append(message)
-        counter +=1
-        message = "M3:" + str(vindex) + ":" 
-        commandList.append(message)
-        vindex -= vdelta
-        counter +=1
-        message = "M1:" + str(hindex) + ":" 
-        commandList.append(message)
-        hindex -= hdelta
-    round += 1
+        while (vindex >= 0):
+            if (scanning):
+                addScanning(counter)
+            counter +=1
+            message = "M2:" + str(vindex) + ":" 
+            commandList.append(message)
+            counter +=1
+            message = "M3:" + str(vindex) + ":" 
+            commandList.append(message)
+            vindex -= vdelta
+        hindex += hdelta
+        if (hindex <= hend):
+            message = "M1:" + str(hindex) + ":" 
+            commandList.append(message)
+
+    # while (vindex >= 0):
+    #     if (scanning):
+    #         addScanning(counter)
+    #     counter +=1
+    #     message = "M2:" + str(vindex) + ":" 
+    #     commandList.append(message)
+    #     counter +=1
+    #     message = "M3:" + str(vindex) + ":" 
+    #     commandList.append(message)
+    #     vindex -= vdelta
+    #     counter +=1
+    #     message = "M1:" + str(hindex) + ":" 
+    #     commandList.append(message)
+    #     hindex -= hdelta
+    # round += 1
 
     commandList.append(getstatsCommand())
 
@@ -271,16 +290,18 @@ def isSensor(message):
 
         if ( len (parts) < 3):return False
         
-        if (parts[1][0] == "S"):
+        if (parts[1][0] in ["O","C","S"]):
             DC.StatusList.append(parts[1])
             if (parts[0][1] == '1'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
                 sbar["text"] = parts[1]
+                sbar["bg"] = "green"
                 FormMobile.FormMobile.enableButtons(True)
 
             if (parts[0][1] == '2'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS2")
                 sbar["text"] = parts[1]
+                sbar["bg"] = "green"
                 FormMobile.FormMobile.enableButtons(True)
 
             return False

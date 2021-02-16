@@ -201,7 +201,7 @@ class Application(tk.Frame):
 
         FM.startlogging()
         FM.ilog("Session started")
-        FM.dlog("Session started")
+
 
         self.master = master
         self.screen_width = self.master.winfo_screenwidth()

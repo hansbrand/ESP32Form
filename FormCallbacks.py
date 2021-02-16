@@ -43,8 +43,8 @@ class FormCallbacks(object):
         self.com.addCommand(ESPDevices.calibrateCommand() )
         self.com.addCommand(ESPDevices.Sensor1.openCommand())
         self.com.addCommand(ESPDevices.Sensor2.openCommand())
-        self.com.addCommand(ESPDevices.Sensor1.statusCommand())
-        self.com.addCommand(ESPDevices.Sensor2.statusCommand())
+        #self.com.addCommand(ESPDevices.Sensor1.statusCommand())
+        #self.com.addCommand(ESPDevices.Sensor2.statusCommand())
         
         #self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
 

@@ -59,9 +59,7 @@ class Graph3D(Tk.Frame):
         global toolbar
         global annot
 
-
-
-
+        #fig = plt.Figure(figsize=(8,6))
         fig = plt.Figure()
 
         
@@ -70,10 +68,12 @@ class Graph3D(Tk.Frame):
         canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
 
         ax=fig.add_subplot(111,projection='3d')
+        #fig.tight_layout()
+        
         ax.view_init(azim=0, elev=90)
         #ax = Axes3D(fig)
 
-        fig.subplots_adjust(bottom=0.25)
+        fig.subplots_adjust(bottom=0.05)#,top=0.98,right = 0.98, left = 0.05)
         #fig.canvas.mpl_connect("motion_notify_event", self.hover)
         #fig.canvas.mpl_connect('pick_event', self.onpick3)
         #fig.canvas.mpl_connect('scroll_event',self.zreset)

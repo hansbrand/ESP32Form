@@ -154,11 +154,14 @@ class FormMobile(tk.Frame):
 
             clientlabel =tk.Label(labelframe,text="STATUS 1",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
+            clientlabel["bg"] = "red"
             clientlabel.grid(row = 0,column = 6,sticky=tk.W,columnspan = 1)
             self.fc.addWidget(clientlabel,"STATUS1",0)
             
             clientlabel =tk.Label(labelframe,text="STATUS 2",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
+            clientlabel["bg"] = "red"
+
             clientlabel.grid(row = 0,column = 7,sticky=tk.W,columnspan = 1)
             self.fc.addWidget(clientlabel,"STATUS2",0)
 
