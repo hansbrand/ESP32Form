@@ -188,6 +188,7 @@ class FormMobile(tk.Frame):
 
     @classmethod
     def enableButtons(self,toenable,isscanning = False):
+        scanset = ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE", "FULLSCAN","TEST80"]
         for bt in self.buttonlist:
                 if toenable:
                     bt["state"] = tk.NORMAL
@@ -195,7 +196,7 @@ class FormMobile(tk.Frame):
                         bt["bg"] = "darkgrey"
                         bt["state"] = tk.DISABLED
                     if (isscanning):
-                        if bt["text"] in ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE"]:
+                        if bt["text"] in scanset:
                             bt["state"] = tk.DISABLED
                             bt["bg"] = "darkgrey"
                         else:

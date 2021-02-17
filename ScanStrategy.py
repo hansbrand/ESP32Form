@@ -24,6 +24,7 @@ MINWIDTH = 0.1
 MINHEIGHT = 0.2
 totaltime = None
 passtime = -1.0
+passdone = True
 
 def adjust(deg):
     f,g = modf(deg)
@@ -48,7 +49,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
     global MINWIDTH, MINHEIGHT
-    global totaltime,passtime
+    global totaltime,passtime,passdone
 
     targetwidth = width
     targetheight = height
@@ -87,7 +88,8 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     passfield["text"] = passtext
 
     time.sleep(2)
-    passtime = time.time()        
+    passtime = time.time()  
+    passdone = False      
 
     strategyActive = True
 
@@ -104,7 +106,7 @@ def getHorPoints( p1, p2, div, upper):
                 nx = adjust(p1.hnewdeg + float(d * i))
                 ny = p1.vnewdeg
                 if not (nx,ny) in DC.pointDone:                    
-                    DC.pointDone.update([(nx,ny)])
+                    #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
 
 
@@ -174,7 +176,7 @@ def getVerPoints( p1, p2, div):
                 ny = adjust(p1.vnewdeg + float(d * i))
                 nx = p1.hnewdeg
                 if not (nx,ny) in DC.pointDone:                    
-                    DC.pointDone.update([(nx,ny)])
+                    #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
             break
     return (pset)
@@ -318,7 +320,7 @@ def createOpposits(points,scandir):
         xele = (pnew, p[1])
         if not xele in DC.pointDone:
             newpoints.update([xele])
-            DC.pointDone.update([xele])
+            #DC.pointDone.update([xele])
             horangles.update([pnew])
     horlist = list(sorted(horangles,reverse = reversescan))
     points.update(newpoints)
@@ -398,11 +400,11 @@ def sendMail():
 def nextTurn():
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
-    global MINWIDTH, MINHEIGHT,totaltime,passtime
+    global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone
 
 
 
-    if connect.scanrunning:
+    if not passdone:
         return
     starttime = time.monotonic()
     FM.SaveTurn(connect.receiveList,int(targetwidth *100),int(targetheight*100),currentturns)
@@ -447,11 +449,14 @@ def nextTurn():
             return
             
 
-    for c in commands:
-        connect.addCommand(c)
     connect.current2send = len(commands)
     connect.alreadysent = 0
 
+    for c in commands:
+        connect.addCommand(c)
+
+    passdone = False
+    time.sleep(1)
     difftime = time.monotonic() - starttime
     ds ="{:8.4f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
@@ -490,7 +495,10 @@ def logTotalTime():
     return
     
 
-    
+def setpassdone():
+    global passdone
+    passdone = True
+    return    
 
 
 

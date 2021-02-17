@@ -19,6 +19,7 @@ from FileManager import saveCSVlist
 from DataPoint import DataPoint 
 from DataContainer import addPoint
 import ScanStrategy as SS
+import FormMobile
 
 
 startme=True
@@ -106,6 +107,11 @@ class TCPCommunicator(StoppableThread):
                     if key in currentCommands.keys():
                         #print("currentcom :" + str(currentCommands))
                         del currentCommands[key]
+                        if (len(currentcommands) == 0) and SS.strategyActive:
+                            SS.setpassdone()
+                        elif not SS.strategyActive:
+                            FormMobile.enableButtons(True,False)
+                            
                         if scanrunning:
                             scanrunning = len(currentCommands) > 0
                         if isScanning:
@@ -308,7 +314,7 @@ def updateSend():
             tdone = float(st)
             if  (alreadysent != 0):
                 tsingle = float(st) / float(alreadysent)
-                tdouble = tsingle / 4.0  + 1.0
+                tdouble = tsingle / 20.0  + 1.0
                 tdiff = float(current2send - alreadysent) * tdouble
                 tfield = FormCommand.FormCommand.getWidgetByName("TIME")
                 dtime = int(st)

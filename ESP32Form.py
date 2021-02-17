@@ -129,7 +129,6 @@ class Application(tk.Frame):
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
 
         #USBCommunicator.updateSend()
-        TCPCommunicator.updateSend()
 
         self.timedelta = time.time() - self.timedelta
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
@@ -144,8 +143,10 @@ class Application(tk.Frame):
         if SS.strategyActive:
             SS.nextTurn()
             SS.showTotalTime()
+
             allowdraw = True
 
+        TCPCommunicator.updateSend()
 
         if FM.isloaded():
             Calculator.recomputeErrors()
@@ -156,9 +157,9 @@ class Application(tk.Frame):
         if FM.isScanning:
             allowdraw = True
 
-        if TCPCommunicator.isScanning:
-            self.isRunning = True       
-            allowdraw = True
+        # if TCPCommunicator.isScanning:
+        #     self.isRunning = True       
+        #     allowdraw = True
 
         if self.isRunning:
             if not TCPCommunicator.isScanning:

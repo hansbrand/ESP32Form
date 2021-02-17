@@ -51,6 +51,8 @@ class FormCallbacks(object):
     @classmethod
     def callbackCALIBRATE(self , button):
         print("callbackCALIBRATE")
+        FormMobile.enableButtons(True,True)
+
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -121,6 +123,8 @@ class FormCallbacks(object):
     @classmethod
     def callbackFULLSCAN(self , button):
         print("callbackFULLSCAN")
+        FormMobile.enableButtons(False,True)
+
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -141,6 +145,8 @@ class FormCallbacks(object):
     @classmethod
     def callbackQUICKSCAN(self , button):
         print("callbackQUICK")
+        FormMobile.enableButtons(True,True)
+
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
@@ -198,6 +204,8 @@ class FormCallbacks(object):
     @classmethod
     def callbackTEST80(self , button):
         print("callbackTEST80")
+        FormMobile.enableButtons(True,True)
+
         if (self.classname == "USBCommunicator"):
              self.com =  __import__("USBCommunicator")
         else:
