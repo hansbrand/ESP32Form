@@ -90,6 +90,11 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     time.sleep(2)
     passtime = time.time()  
     passdone = False      
+    FM.ilog("Strategy started")
+    FM.ilog("Start h degree : " + str(hdegree))
+    FM.ilog("Start v degree : " + str(vdegree))
+    FM.ilog("Start targetwitdth : " + str(targetwidth))
+    FM.ilog("Start targetheight : " + str(targetheight))
 
     strategyActive = True
 
@@ -439,7 +444,7 @@ def nextTurn():
         if (tw >= MINWIDTH) and (th >= MINHEIGHT):
             FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
             targetwidth = tw
-            targetheigt = th
+            targetheight = th
             commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
         else: 
             strategyActive = False

@@ -1,4 +1,0 @@
-INFO : 21_02_16_14_59   Session started
-DEBUG : 21_02_16_14_59   Session started
-INFO : 21_02_16_15_07   PASS 1, Time :26891407 : 44
-INFO : 21_02_16_15_07   Total :7 : 49

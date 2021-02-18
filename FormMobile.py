@@ -82,6 +82,7 @@ class FormMobile(tk.Frame):
                 bt=tk.Button(labelframe,underline=0, font = boldFont)
                 if c in ["INIT",  "QUIT","LOAD_FILE"]:#,"S30x70"]:
                     bt["state"] = tk.NORMAL
+                    bt["bg"] = "lightgrey"
                 else:                    
                     bt["state"] = tk.DISABLED
                 bt["text"]=c
@@ -130,11 +131,11 @@ class FormMobile(tk.Frame):
             labelframe.grid(row = 5 ,column = 0,sticky=tk.NSEW,columnspan = 10, padx = 10,rowspan = 1,pady = 5)
             clientlabel =tk.Label(labelframe,text="Disconnected",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
-            clientlabel.grid(row = 0,column = 0,sticky=tk.W,columnspan = 1)
+            clientlabel.grid(row = 0,column = 0,sticky=tk.W,columnspan = 2)
             self.fc.addWidget(clientlabel,"CLIENTLABEL",0)
             progressbar = Progressbar(labelframe, orient = tk.HORIZONTAL, length = 200, mode = 'determinate') 
             self.fc.addWidget(progressbar,"PROGRESSBAR",0)
-            progressbar.grid(row=0,column = 2,sticky=tk.E,columnspan = 4,padx =1,ipadx =1)
+            progressbar.grid(row=0,column = 3,sticky=tk.E,columnspan = 3,padx =1,ipadx =1)
 
             clientlabel =tk.Label(labelframe,text="TIME",font=("Helvetica", 12), width = 18)
             clientlabel["fg"] = "blue"
@@ -192,15 +193,17 @@ class FormMobile(tk.Frame):
         for bt in self.buttonlist:
                 if toenable:
                     bt["state"] = tk.NORMAL
+                    bt["bg"] = "lightgrey"
                     if bt["text"] == "INIT":
                         bt["bg"] = "darkgrey"
                         bt["state"] = tk.DISABLED
-                    if (isscanning):
+                    elif (isscanning):
                         if bt["text"] in scanset:
                             bt["state"] = tk.DISABLED
                             bt["bg"] = "darkgrey"
                         else:
                             bt["state"] = tk.NORMAL
+                            bt["bg"] = "lightgrey"
 
                 else:
                     if bt["text"] == "INIT":

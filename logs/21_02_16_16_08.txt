@@ -1,2 +1,0 @@
-INFO : 21_02_16_16_08   Session started
-DEBUG : 21_02_16_16_08   Session started

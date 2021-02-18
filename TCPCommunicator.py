@@ -19,7 +19,7 @@ from FileManager import saveCSVlist
 from DataPoint import DataPoint 
 from DataContainer import addPoint
 import ScanStrategy as SS
-import FormMobile
+from FormMobile import FormMobile
 
 
 startme=True
@@ -92,6 +92,7 @@ class TCPCommunicator(StoppableThread):
         global isScanning,scanrunning
 
         try:
+            #print("append : " + mess)
             parts = mess.split('\n');
             for message in parts:
                 ident = message[0:2]
@@ -101,16 +102,18 @@ class TCPCommunicator(StoppableThread):
                     if (ESPDevices.isSensor(message)):
                         dp = DataPoint(message)
                         addPoint(dp)
-
+                    #print ("append locked")
                     commandlock.acquire()
                     key = ESPDevices.getMessageID(message)
+                    #print("key:" +str(key))
                     if key in currentCommands.keys():
-                        #print("currentcom :" + str(currentCommands))
                         del currentCommands[key]
-                        if (len(currentcommands) == 0) and SS.strategyActive:
+                        #print("currentcom :" + str(currentCommands))
+
+                        if (len(currentCommands) == 0) and SS.strategyActive:
                             SS.setpassdone()
-                        elif not SS.strategyActive:
-                            FormMobile.enableButtons(True,False)
+                        # elif not SS.strategyActive:
+                        #     FormMobile.enableButtons(True,False)
                             
                         if scanrunning:
                             scanrunning = len(currentCommands) > 0
@@ -118,8 +121,10 @@ class TCPCommunicator(StoppableThread):
                             isScanning = len(currentCommands) > 0
 
                     commandlock.release()
+                    #print ("append unlocked")
                     receiveCounter += 1
         except Exception as exc:
+            commandlock.release()
             print (exc)
 
 
@@ -238,6 +243,8 @@ def sendSingleCommand(command):
             return
         for c in command:
             tcpconnection.send(c.encode('ascii'))
+        #print("Sent command :" + command)
+        #time.sleep(0.2)
         sendCounter += 1
         if (str(ESPDevices.C_STEPPERCALIBRATE) in command):
             sendCounter += 2
@@ -259,7 +266,7 @@ def emergeny():
 
     sendSingleCommand(ESPDevices.emergencyCommand());
     
-    time.sleep(5)
+    time.sleep(3)
     commandlock.acquire()
     queuelock.acquire()
     tcpconnection.close()
@@ -284,21 +291,26 @@ def updateSend():
     global scanstarttime
 
     try:
-        queuelock.acquire()
-        if (len(bufferList) == 0):
-            queuelock.release()
-            return
-        queuelock.release()
+        #print("start update")
+        # queuelock.acquire()
+        # if (len(bufferList) == 0):
+        #     queuelock.release()
+        #     return
+        # queuelock.release()
 
-
+        #print("vor commandlock")
         commandlock.acquire()
         if (len(currentCommands) >=  MAXBUFFERSIZE):
             commandlock.release()
             return
         diff= MAXBUFFERSIZE - len(currentCommands)
         commandlock.release()
+        #print("nach commandlock")
 
         queuelock.acquire()
+        if len (bufferList) == 0:
+            queuelock.release()
+            return
         sendList = []
         while (len( bufferList ) > 0):
             sendList.append(bufferList.pop(0))
@@ -337,6 +349,8 @@ def updateSend():
                 sendSingleCommand(s)
 
         queuelock.release()
+        #print("end update")
+
     except Exception as exc:
         print(exc)
 
@@ -344,7 +358,7 @@ def addCommand(message,toInsert = False):
     global queuelock
     global bufferList
     global current2send
-    #print("Scan List");
+    #print("Scan List : " + message);
 
     queuelock.acquire()
     if (toInsert):
@@ -419,6 +433,12 @@ def startServer():
             socketfd.append(c)
             sth2.start()
             isConnected = True
+            status = FormCommand.FormCommand.getWidgetByName("CLIENTLABEL")
+            
+            
+            status["text"] = 'Client:', addr[0]
+            status["bg"] = "green"
+
         s.close() 
 
     except Exception as inst:
@@ -455,8 +475,9 @@ def startserverThread():
         sth = Thread(target=startServer)
         sth.start()
         print("Server thread started")
-        status["text"] = "Connected"
-        status["bg"] = "green"
+        status["text"] = 'Waiting ...'
+        status["bg"] = "red"
+
         
     except Exception as inst:
         status["text"] = "ERROR"

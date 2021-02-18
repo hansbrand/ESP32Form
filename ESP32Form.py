@@ -115,6 +115,15 @@ class Application(tk.Frame):
     def setshow3D(self):
         show3Dwindow = True
     
+    def checkScanning(self):
+        if not FormCallbacks.initpressed:
+            return
+        if (TCPCommunicator.scanrunning):
+            FormMobile.FormMobile.enableButtons(True,True)
+        elif SS.strategyActive:
+            FormMobile.FormMobile.enableButtons(True,True)
+        else:
+            FormMobile.FormMobile.enableButtons(True,False)
 
     def eventloop(self):
         #print("eventloop")
@@ -147,6 +156,8 @@ class Application(tk.Frame):
             allowdraw = True
 
         TCPCommunicator.updateSend()
+        self.checkScanning()
+
 
         if FM.isloaded():
             Calculator.recomputeErrors()
@@ -223,8 +234,6 @@ class Application(tk.Frame):
             fb = FormBuild.FormBuild(master)
         fb.genCallBacks()
 
-        TCPCommunicator.startserverThread()
-        time.sleep(2)
 
 
         initDataContainer()
@@ -238,9 +247,12 @@ class Application(tk.Frame):
         #sendTo = 'fdeitzer@gmail.com'
         #emailSubject = "Hello World"
         #emailContent = "This is a test mail : " 
+
         #sender.sendmail(sendTo, emailSubject, emailContent)  
 
         self.master.after(0,self.eventloop)
+        TCPCommunicator.startserverThread()
+
 
 
 def Main():

@@ -14,6 +14,7 @@ from FormMobile import FormMobile
 checkButtonval = None
 CALPOS = 90.0
 CALDELTA = .225
+initpressed = False
 
 class FormCallbacks(object):
     com = None
@@ -30,6 +31,7 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackINIT(self,button):
+        global initpressed
         print("callbackINIT")
         #button["bg"] ="green"
         if (self.classname == "USBCommunicator"):
@@ -43,6 +45,7 @@ class FormCallbacks(object):
         self.com.addCommand(ESPDevices.calibrateCommand() )
         self.com.addCommand(ESPDevices.Sensor1.openCommand())
         self.com.addCommand(ESPDevices.Sensor2.openCommand())
+        initpressed = True
         #self.com.addCommand(ESPDevices.Sensor1.statusCommand())
         #self.com.addCommand(ESPDevices.Sensor2.statusCommand())
         
