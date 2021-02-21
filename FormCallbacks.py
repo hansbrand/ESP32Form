@@ -79,6 +79,7 @@ class FormCallbacks(object):
     def callbackSTOP(self , button):
         print("callbackSTOP")
         TCPCommunicator.emergeny()
+        initpressed = False
         FormMobile.enableButtons(False)
 
 
@@ -225,6 +226,29 @@ class FormCallbacks(object):
         pass
 
 
+
+    @classmethod
+    def callbackHORIZONTAL(self , button):
+        print("callbackHORIZONTAL")
+        FormMobile.enableButtons(True,True)
+
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        hd = 20.0
+        vd = 20.0
+        clist = ESPDevices.genHorizontalCommands(False, hdelta=hd,vdelta =vd)
+        self.com.current2send = len(clist)
+        self.com.alreadysent = 0
+
+        for s in clist:
+            self.com.addCommand(s)
+            print(s)
+        pass
+
+
+
     @classmethod
     def callbackTEST200(self , button):
         print("callbackTEST200")
@@ -328,6 +352,8 @@ class FormCallbacks(object):
         maxturns = 1000
         minwidth = 0.08
         minheight = 0.16
+        DC.initDataContainer()
+
         SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight)
         pass
 
