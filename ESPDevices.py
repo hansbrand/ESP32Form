@@ -254,20 +254,44 @@ def genTestCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 149
 
 
 
+def genHorizontalCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 149, hdelta = 2.0 ,vdelta = 10.0):
+    global commandList
+    round = 0;
+
+    message = ""
+    commandList=[]
+    counter = 0
+    commandList.append(starttimerCommand())
+    hindex = hstart
+    vindex = vstart
+    while hindex <= hend:
+        message = "M1:" + str(hindex) + ":" 
+        counter += 1
+        commandList.append(message)
+        hindex += hdelta
+
+    commandList.append(getstatsCommand())
+
+    print(commandList[-10:])
+    return commandList
+
+
+
+
 
 def handleMotor(message):
     if (message[0][1] == '1'):
         #print("\t\t\t\t motor3 " + message[2])
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR1")
-        sbar["text"] = message[4]
+        sbar["text"] = message[2] + " / " + message[4]
         sbar.update()
     if (message[0][1] == '2'):
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR2")
-        sbar["text"] = message[4]
+        sbar["text"] = message[2] + " / " + message[4]
         sbar.update()
     if (message[0][1] == '3'):
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR3")
-        sbar["text"] = message[4]
+        sbar["text"] = message[2] + " / " + message[4]
         sbar.update()
     pass
 

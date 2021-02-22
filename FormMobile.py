@@ -35,6 +35,7 @@ class FormMobile(tk.Frame):
     #"MUP",
     #"MDOWN",
     "MESH",
+    "HORIZONTAL",
     "QUIT"
     )
 

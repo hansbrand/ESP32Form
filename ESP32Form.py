@@ -116,12 +116,15 @@ class Application(tk.Frame):
         show3Dwindow = True
     
     def checkScanning(self):
+        global allowdraw
         if not FormCallbacks.initpressed:
             return
         if (TCPCommunicator.scanrunning):
             FormMobile.FormMobile.enableButtons(True,True)
+            allowdraw = True
         elif SS.strategyActive:
             FormMobile.FormMobile.enableButtons(True,True)
+            allowdraw = True
         else:
             FormMobile.FormMobile.enableButtons(True,False)
 
