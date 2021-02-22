@@ -23,10 +23,10 @@ from Graph3D import Graph3D
 import FileManager as FM
 import Calculator
 import ScanStrategy as SS
+from GraphicsThread import startGraphics
 
 
 progressbar = None
-graph3D = None
 currentframe = None
 SMALLSCREEN = True
 ISLINUXOS = False
@@ -34,6 +34,7 @@ communicator = None
 changeEvent = False
 show3Dwindow = False
 allowdraw = False
+graph3D = None
 
 
 
@@ -42,7 +43,6 @@ class Application(tk.Frame):
     fb = None
     timedelta = 0
     communicator = None
-    newwin = None
     canvas_width = None
     canvas_height = None
     isRunning = False
@@ -63,16 +63,6 @@ class Application(tk.Frame):
         time.sleep(10)
 
 
-    def createNewWindow(self):
-        global currentCanvas
-
-        if (tk.Toplevel.winfo_exists(self.newwin) == False):
-            self.newwin = tk.Toplevel(self.master, 
-                width=self.canvas_width ,
-                height=self.canvas_height)
-            self.newwin.config(bg='#202020')
-
-        graph3D = Graph3D(self.newwin)
 
 
 
@@ -84,19 +74,20 @@ class Application(tk.Frame):
         self.screen_width = self.master.winfo_screenwidth()
         self.screen_height = self.master.winfo_screenheight()
 
-        self.canvas_width = int((self.screen_width * 7.0) / 8.0)
+        self.canvas_width = int((self.screen_width * 5.0) / 6.0)
         #self.canvas_width =  master.winfo_width() 
-        self.canvas_height = int((self.screen_height * 7.0) / 8.0)
+        self.canvas_height = int((self.screen_height * 5.0) / 6.0)
         self.colmax = self.canvas_width
 
-        self.newwin = tk.Toplevel(master, 
-           width  =self.canvas_width,
-           height =self.canvas_height)
-        self.newwin.geometry(str(self.canvas_width) + "x" + str(self.canvas_height))
+        # self.newwin = tk.Toplevel(master, 
+        #    width  =self.canvas_width,
+        #    height =self.canvas_height)
+        # self.newwin.geometry(str(self.canvas_width) + "x" + str(self.canvas_height))
         #cwindow = self.newwin
         #self.clientlabel.grid(row=6,column = 1)
-        self.newwin.update()
-        graph3D = Graph3D(self.newwin)
+        #self.newwin.update()
+        startGraphics(master,self.canvas_width,self.canvas_height)
+        #graph3D = Graph3D(master,self.canvas_width,self.canvas_height)
     
         #graph3D = Graph3D.Graph3D(self.newwin)
 
@@ -105,11 +96,6 @@ class Application(tk.Frame):
 
         #self.newwin.iconify()
 
-    def show3D(self):
-            if tk.Toplevel.winfo_exists(self.newwin):
-                self.newwin.deiconify()
-            else:
-                self.createNewWindow()
  
     @classmethod
     def setshow3D(self):
@@ -141,13 +127,7 @@ class Application(tk.Frame):
 
         self.timedelta = time.time() - self.timedelta
         self.timeman = max(0,(self.timeman + self.timedelta - deltatime))
-        #print(show3Dwindow)
-        if (show3Dwindow):
-            show3Dwindow = False
-            self.show3D()
 
-        if (Calculator.getErrors()):
-           allowdraw = True
 
         if SS.strategyActive:
             SS.nextTurn()
@@ -179,17 +159,17 @@ class Application(tk.Frame):
 
                 pass
 
-        if ((time.time() - self.lastStatus) > self.drawtime):
-            self.lastStatus = time.time()
-            #print(self.lastStatus)
-            if graph3D.Is2Draw():
-                if allowdraw:
-                    allowdraw = False
+        # if ((time.time() - self.lastStatus) > self.drawtime):
+        #     self.lastStatus = time.time()
+        #     #print(self.lastStatus)
+        #     if graph3D.Is2Draw():
+        #         if allowdraw:
+        #             allowdraw = False
 
-                    graph3D.drawDia(True)
-                    self.drawtime = max(self.drawtime - 1.0, 2.0)
-            else:
-                self.drawtime += 5.0
+        #             graph3D.drawDia(True)
+        #             self.drawtime = max(self.drawtime - 1.0, 2.0)
+        #     else:
+        #         self.drawtime += 5.0
 
             #self.newwin.update()
 
@@ -240,8 +220,8 @@ class Application(tk.Frame):
         ESPDevices.initDevices()
         self.lastStatus = 0
 
-        self.initCanvas(master)
         initDataContainer()
+        self.initCanvas(master)
         atexit.register(self.cleanup)
         #sender = EMailer.Emailer()
         #sendTo = 'fdeitzer@gmail.com'
