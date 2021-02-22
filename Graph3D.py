@@ -51,7 +51,7 @@ class Graph3D(Tk.Frame):
     def __init__(self):
         pass
 
-    def __init__(self, parent):
+    def __init__(self, parent,w,h):
         global fig
         global canvas
         global s_time
@@ -60,28 +60,31 @@ class Graph3D(Tk.Frame):
         global annot
 
         #fig = plt.Figure(figsize=(8,6))
-        fig = plt.Figure()
+        inchsize=(w/25.4, h/25.4)
+        fig = plt.Figure((12,9))
 
-        
-        parent.title("Graph3D")
-        canvas = FigureCanvasTkAgg(fig, parent)
-        canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
-
+        canvas = FigureCanvasTkAgg(fig, master=parent)        
+        canvas.get_tk_widget().pack()
         ax=fig.add_subplot(111,projection='3d')
+        ax.view_init(azim=0, elev=90)
+        
+        #parent.title("Graph3D")
+        # canvas = FigureCanvasTkAgg(fig, parent)
+        # canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
+
         #fig.tight_layout()
         
-        ax.view_init(azim=0, elev=90)
         #ax = Axes3D(fig)
 
-        fig.subplots_adjust(bottom=0.05)#,top=0.98,right = 0.98, left = 0.05)
+        #fig.subplots_adjust(bottom=0.05)#,top=0.98,right = 0.98, left = 0.05)
         #fig.canvas.mpl_connect("motion_notify_event", self.hover)
         #fig.canvas.mpl_connect('pick_event', self.onpick3)
         #fig.canvas.mpl_connect('scroll_event',self.zreset)
 
         #toolbar = NavigationToolbar2Tk(canvas, parent)
         #toolbar.update()
-        canvas._tkcanvas.pack(side=Tk.TOP, fill=Tk.BOTH, expand=True)
-        self.scat = None
+        # canvas._tkcanvas.pack(side=Tk.TOP, fill=Tk.BOTH, expand=True)
+        # self.scat = None
 
 
 
@@ -133,12 +136,13 @@ class Graph3D(Tk.Frame):
             #     ec = DC.dc["180"]["polycolor3D"]
             #     ax.add_collection3d(Poly3DCollection(m,edgecolors=ec,facecolors = (0,0,0,0))) 
             #fig.tight_layout()
-            self.scat = ax.scatter(x1,y1,z1,c=m1,picker=True)
             b=DC.getlimits3D()
             if (b != None):
                 ax.set_xlim(b["xmin"],b["xmax"])
                 ax.set_ylim(b["ymin"],b["ymax"])
                 ax.set_zlim(b["zmin"],b["zmax"])
+
+            self.scat = ax.scatter(x1,y1,z1,c=m1,picker=True)
 
             # annot = ax.annotate("", xy=(0,0), xytext=(10,10),textcoords="offset points",
             # bbox=dict(boxstyle="round", fc="w"),

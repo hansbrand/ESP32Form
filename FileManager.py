@@ -125,8 +125,9 @@ def loadfile(filename):
                     #if (('Er' in message) == False):
                         dp = DataPoint(message)
                         DataContainer.addPoint(dp)
-        print(DataContainer.getlimits3D())
-        time.sleep(2)
+                        
+        #print(DataContainer.getlimits3D())
+        #time.sleep(2)
         isScanning = False
         isLoaded = True
 
