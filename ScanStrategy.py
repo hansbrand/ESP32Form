@@ -317,16 +317,16 @@ def createOpposits(points,scandir):
     #create opposite points and determine hangles
     for p in points:
         horangles.update([p[0]])
-        if p[0] < 200:
-            pnew = p[0] + 200
-            xele = (pnew, p[1])
-        else:
-            pnew = p[0] - 200
-        xele = (pnew, p[1])
-        if not xele in DC.pointDone:
-            newpoints.update([xele])
-            #DC.pointDone.update([xele])
-            horangles.update([pnew])
+        # if p[0] < 200:
+        #     pnew = p[0] + 200
+        #     xele = (pnew, p[1])
+        # else:
+        #     pnew = p[0] - 200
+        # xele = (pnew, p[1])
+        # if not xele in DC.pointDone:
+        #     newpoints.update([xele])
+        #     #DC.pointDone.update([xele])
+        #     horangles.update([pnew])
     horlist = list(sorted(horangles,reverse = reversescan))
     points.update(newpoints)
 
