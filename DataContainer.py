@@ -1,5 +1,7 @@
 import threading 
 import Calculator
+import operator
+from collections import OrderedDict
 
 
 PointCloud = None
@@ -244,3 +246,20 @@ def addComputedPoints(plist,clist,mr,mc):
 
 
     savelock.release()
+
+def sortRows():
+        global mrows,mcols
+        savelock.acquire()
+        mcols = OrderedDict(sorted(mcols.items()))
+        mrows = OrderedDict(sorted(mrows.items()))
+        for k in mrows.keys():
+            #printall(mrows[k])
+            mrows[k] = sorted(mrows[k],key=lambda d: (d['vnewdeg'],d['hnewdeg']) )
+            #printall(mrows[k])
+        for k in mcols.keys():     
+                #printall(mcols[k])
+                mcols[k] = sorted(mcols[k],key=lambda d: (d['hnewdeg'], d['vnewdeg']) )
+                #printall(mcols[k])
+        savelock.release()
+
+

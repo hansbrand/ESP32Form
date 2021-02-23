@@ -105,11 +105,13 @@ def getHorPoints( p1, p2, div, upper):
     delta = abs(upper - p1.hnewdeg)
     #minimize
     for div1 in range(div,0,-1):
-        d = delta / (div1 + 1)
+        d = delta / float(div1 + 1)
         if (d > (0.25 * div1)):
             for i in range(1,div1 + 1):
                 nx = adjust(p1.hnewdeg + float(d * i))
                 ny = p1.vnewdeg
+                if (ny > 200.0):
+                    print (ny)
                 if not (nx,ny) in DC.pointDone:                    
                     #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
@@ -126,6 +128,8 @@ def getHorAngles(row):
     l = len(row)
     for index in range(0, l - 1):
         p = row[index]
+        if p.vnewdeg > 200.0:
+            print(p.vnewdeg)
         if p.state in ["VALID","COMPUTED"]:
             #minimal degree                    
             np =  row[index - 1]
@@ -173,18 +177,23 @@ def getVerPoints( p1, p2, div):
     pset = set()
 
     delta = abs(p2.vnewdeg - p1.vnewdeg)
+    if (div > 2.0):
+        print(div)
+    
     #minimize
     for div1 in range(div,0,-1):
-        d = delta / (div1 + 1)
+        d = delta / float(div1 + 1)
         if (d > (0.25 * div1)):
             for i in range(1,div1 + 1 ):
                 ny = adjust(p1.vnewdeg + float(d * i))
                 nx = p1.hnewdeg
+                if (ny > 200.0):
+                    print(ny)
                 if not (nx,ny) in DC.pointDone:                    
                     #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
             break
-    return (pset)
+    return pset
 
 def getVerAngles(row):
     global targetheight
@@ -210,6 +219,7 @@ def getVerAngles(row):
                     if len(pset) > 0:
                         pointset.update(pset)
                         hd = adjust(hd)
+
                         verset.update([hd])
 
             #minimal degree                    
@@ -226,26 +236,9 @@ def getVerAngles(row):
                     if len(pset) > 0:
                         pointset.update(pset)
                         hd = adjust(hd)
+
                         verset.update([hd])
     return verset,pointset
-
-def createScanPoints(HorSet,VerSet):
-    retlist = []
-    hdict = dict()
-    vdict = dict()
-    for h in HorSet:
-        for v in VerSet:
-            sp = ScanPoint(h,v)
-            retlist.append(sp)
-            if (v in hdict.keys()):
-                hdict[v].append(sp)
-            else:
-                hdict[v] = [sp]            
-            if (h in vdict.keys()):
-                vdict[h].append(sp)
-            else:
-                vdict[h] = [sp]    
-    return retlist, hdict, vdict        
 
 def addS1Scanning(commandList):
   message = "S1:D:" 
@@ -283,12 +276,18 @@ def createCommandList(angles, s1dict,s2dict):
             if len(s1list) > 0:
                 vs1point = s1list.pop()
                 message = "M2:" + str(vs1point[1]) + ":"
+                if (int(vs1point[1]) > 200):
+                    print((vs1point[1]))
+
                 commands.append(message)
                 addS1Scanning(commands)
                 commandcounter += 1
             if len(s2list) > 0:
                 vs2point = s2list.pop()
                 message = "M3:" + str(vs2point[1]) + ":"
+                if (int(vs2point[1]) > 200):
+                    print((vs2point[1]))
+
                 commands.append(message)
                 commandcounter += 1
                 addS2Scanning(commands)
@@ -317,6 +316,8 @@ def createOpposits(points,scandir):
     #create opposite points and determine hangles
     for p in points:
         horangles.update([p[0]])
+        if p[1] > 200.0:
+            print(p)
         # if p[0] < 200:
         #     pnew = p[0] + 200
         #     xele = (pnew, p[1])
@@ -328,11 +329,11 @@ def createOpposits(points,scandir):
         #     #DC.pointDone.update([xele])
         #     horangles.update([pnew])
     horlist = list(sorted(horangles,reverse = reversescan))
-    points.update(newpoints)
+    #points.update(newpoints)
 
     #sort each column
     for h in horlist:
-        if (h < 200):
+        if (h <= 200.0):
             s1dict[h]  = [t for t in points if t[0] == h]
         else:
             s2dict[h] = [t for t in points if t[0] == h]
@@ -358,22 +359,38 @@ def createOpposits(points,scandir):
         S2reverse = last[1] > abs(last[1] - 200)
         s2dict[k] = s2
     #normalize to hangle
+    s3dict = dict()
+
     for k in s2dict.keys():
         s3dict[k - 200] = s2dict[k]
         horlist.remove(k)
     
-    
+    for h in horlist:
+        if h in s1dict.keys():
+            for s in s1dict[h]:
+                if (s[0] > 200.0) or (s[1] > 200.0): 
+                    print(s)
+        if h in s3dict.keys():
+            for s in s3dict[h]:
+                if (s[1] > 200.0): 
+                    print(s)
     return points, horlist, s1dict, s3dict
 
 def createRange(PointSet,reversescan, HorSet, VerSet):
         #row by row
-    for k  in DC.mrows.keys():
-        hset , pset = getHorAngles(DC.mrows[k])
+    DC.sortRows()
+
+    _,_,mrows,mcols = DC.getAllData()
+    mrows = dict(mrows)
+    mcols = dict(mcols)
+
+    for k  in mrows.keys():
+        hset , pset = getHorAngles(mrows[k])
         HorSet.update(hset)
         PointSet.update(pset)
     # colums not closed
-    for k in DC.mcols.keys():
-        vset , pset = getVerAngles(DC.mcols[k])
+    for k in mcols.keys():
+        vset , pset = getVerAngles(mcols[k])
         VerSet.update(vset)
         PointSet.update(pset)
     
@@ -436,6 +453,7 @@ def nextTurn():
     HorSet = set()
     VerSet = set()
     PointSet = set()
+    DC.sortRows()
 
     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
     if (len(commands) < 100):
@@ -505,5 +523,40 @@ def setpassdone():
     passdone = True
     return    
 
+
+
+def initSimulation():
+    global targetheight,targetwidth
+    targetwidth = 0.32
+    targetheight = 0.64
+
+def simulateTurn():
+    global strategyActive, currentturns,targetwidth
+    global targetheight,maxturns,connect,reversescan
+    global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone
+
+    Calculator.recomputeErrors()
+    reversescan = not reversescan
+    HorSet = set()
+    VerSet = set()
+    PointSet = set()
+    DC.sortRows()
+
+    commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+    if (len(commands) < 100):
+        tw = targetwidth / 2.0
+        th = targetheight / 2.0
+        if (tw >= MINWIDTH) and (th >= MINHEIGHT):
+            FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
+            targetwidth = tw
+            targetheight = th
+            commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+        else: 
+            strategyActive = False
+            #sendMail()
+            FormMobile.enableButtons(True,False)
+            FM.ilog("Scanning done!!!")
+            return
+            
 
 

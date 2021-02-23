@@ -34,6 +34,8 @@ class DataPoint(object):
                 self.vnewdeg =self.vAngle
                 self.hAngle *= 0.900000000000001
                 self.vAngle *= 0.900000000000001
+                if self.vnewdeg > 200.0:
+                    print(self.vnewdeg)
                 return
             measure = measure[2:]
             self.meter = measure.split("m,")[0]
@@ -44,6 +46,9 @@ class DataPoint(object):
 
             self.hnewdeg = self.hAngle
             self.vnewdeg =self.vAngle
+            if self.vnewdeg > 200.0:
+                print(self.vnewdeg)
+
             self.hkey = str(self.hAngle)
             self.vkey = str(self.vAngle)
 

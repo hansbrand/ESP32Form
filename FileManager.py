@@ -7,6 +7,8 @@ import queue
 import time
 import sys
 import logging
+import ScanStrategy as SS
+
 
 from FileHandler import filestat 
 import ESPDevices
@@ -102,6 +104,7 @@ def isloaded():
 
 
 
+
 def loadfile(filename):
     global isScanning
     global isLoaded
@@ -114,6 +117,7 @@ def loadfile(filename):
         datafd=open(filename,"rt")
         buffer = datafd.readlines()
         datafd.close()
+        SS.initSimulation()
         for message in buffer:
             ident = message[0:2]
             if ident in   ESPDevices.deviceList:
@@ -121,6 +125,8 @@ def loadfile(filename):
                 # if (counter == 0):
                 #     time.sleep(.01)
                 #print("Device found :" + message)
+                if (message[:5] == 'C1|M3'):
+                    SS.simulateTurn()
                 if (ESPDevices.isSensor(message)):
                     #if (('Er' in message) == False):
                         dp = DataPoint(message)
@@ -136,6 +142,7 @@ def loadfile(filename):
     except Exception as pex:
         print("loadfile:",pex)
         return False
+
 
 
 
