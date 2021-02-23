@@ -283,11 +283,12 @@ def handleMotor(message):
     if (message[0][1] == '1'):
         #print("\t\t\t\t motor3 " + message[2])
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR1")
-        sbar["text"] = message[2] + " / " + message[4]
+
+        sbar["text"] = message[2] + " / "+ message[4]
         sbar.update()
     if (message[0][1] == '2'):
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR2")
-        sbar["text"] = message[2] + " / " + message[4]
+        sbar["text"] = message[2] + " / "+ message[4]
         sbar.update()
     if (message[0][1] == '3'):
         sbar = FormCommand.FormCommand.getWidgetByName("MOTOR3")
