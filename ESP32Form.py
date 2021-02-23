@@ -159,7 +159,6 @@ class Application(tk.Frame):
             if not TCPCommunicator.isScanning:
                 self.isRunning = False 
                 Calculator.recomputeErrors()
-
                 pass
 
         # if ((time.time() - self.lastStatus) > self.drawtime):
