@@ -1,0 +1,20 @@
+INFO : 21_02_21_20_37   Session started
+INFO : 21_02_21_20_37   Strategy started
+INFO : 21_02_21_20_37   Start h degree : 10
+INFO : 21_02_21_20_37   Start v degree : 20.0
+INFO : 21_02_21_20_37   Start targetwitdth : 0.32
+INFO : 21_02_21_20_37   Start targetheight : 0.64
+INFO : 21_02_21_20_42   PASS 1, Time :4 : 30
+INFO : 21_02_21_20_42   Total :4 : 33
+INFO : 21_02_21_20_57   PASS 2, Time :14 : 53
+INFO : 21_02_21_20_57   Total :19 : 26
+INFO : 21_02_21_21_44   PASS 3, Time :47 : 24
+INFO : 21_02_21_21_44   Total :66 : 51
+INFO : 21_02_21_22_46   PASS 4, Time :61 : 29
+INFO : 21_02_21_22_46   Total :128 : 21
+INFO : 21_02_21_22_48   PASS 5, Time :2 : 18
+INFO : 21_02_21_22_48   Total :130 : 40
+INFO : 21_02_21_22_51   PASS 6, Time :2 : 55
+INFO : 21_02_21_22_51   Total :133 : 35
+INFO : 21_02_21_22_55   PASS 7, Time :3 : 43
+INFO : 21_02_21_22_55   Total :137 : 19

@@ -1,0 +1,11 @@
+INFO : 21_02_18_18_43   Session started
+INFO : 21_02_18_18_43   Strategy started
+INFO : 21_02_18_18_43   Start h degree : 10
+INFO : 21_02_18_18_43   Start v degree : 20.0
+INFO : 21_02_18_18_43   Start targetwitdth : 0.32
+INFO : 21_02_18_18_43   Start targetheight : 0.64
+INFO : 21_02_18_18_43   PASS 1, Time :0 : 08
+INFO : 21_02_18_18_43   Total :0 : 12
+INFO : 21_02_18_18_43   Resolution changed : 0.16 x 0.32
+INFO : 21_02_18_18_49   PASS 2, Time :5 : 07
+INFO : 21_02_18_18_49   Total :5 : 19
