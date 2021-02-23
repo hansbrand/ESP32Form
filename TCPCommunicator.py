@@ -111,8 +111,8 @@ class TCPCommunicator(StoppableThread):
                         del currentCommands[key]
                         #print("currentcom :" + str(currentCommands))
 
-                        if (len(currentCommands) == 0) and SS.strategyActive:
-                            SS.setpassdone()
+                        #if (len(currentCommands) == 0) and SS.strategyActive:
+                         #   SS.setpassdone()
                         # elif not SS.strategyActive:
                         #     FormMobile.enableButtons(True,False)
                             

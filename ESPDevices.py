@@ -305,6 +305,10 @@ def isSensor(message):
             return False
         st = message[0:2]
         if ("C1" == st):
+            if (message[:5] == 'C1|M3'):
+                SS.setpassdone()
+
+
             print(message)
             return False
         if (message[0] != 'S'):return False
