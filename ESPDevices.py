@@ -2,6 +2,8 @@ import numpy
 import DataContainer as DC
 import FormCommand
 import FormMobile
+import ScanStrategy as SS
+import threading
 
 hStepper = None
 vStepper = None
@@ -20,6 +22,9 @@ C_EMERGENCY        =   32005
 
 commandList = []
 deviceList = ["S1","S2","M1","M2","M3","C1"]
+dictDeviceTime = None
+dtimelock = threading.RLock() 
+
 
 class ESPDevices(object):
     """description of class"""
@@ -275,6 +280,35 @@ def genHorizontalCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend
     print(commandList[-10:])
     return commandList
 
+def getTimeDictvalue(k):
+    global dictDeviceTime, dtimelock
+    dtimelock.acquire()
+    if not(k in dictDeviceTime.keys()):
+        return 1.0
+    else:
+        return dictDeviceTime[k][2]
+    dtimelock.release()
+
+def handleCommands(message, start):
+    global dictDeviceTime, dtimelock
+    dtimelock.acquire()
+    if dictDeviceTime == None:
+        dictDeviceTime = dict()
+    key = start.split("|")[1]
+    if not key in ["S1","S2","M1","M2","M3"]:
+        return
+    tvalue = float(message.split("/")[1])
+    if not key in dictDeviceTime.keys():
+        dictDeviceTime[key] = [tvalue,1.0,tvalue]
+    else:
+        v = dictDeviceTime[key] 
+        v[0] += tvalue
+        v[1] += 1.0
+        v[2] = v[0] / float(v[1])
+        dictDeviceTime[key] = v
+    dtimelock.release()
+
+
 
 
 
@@ -305,9 +339,9 @@ def isSensor(message):
             return False
         st = message[0:2]
         if ("C1" == st):
+            handleCommands(message, message[:5])
             if (message[:5] == 'C1|M3'):
                 SS.setpassdone()
-
 
             print(message)
             return False

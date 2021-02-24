@@ -50,6 +50,7 @@ scanrunning = False
 
 port = 7165
 isScanning = False
+estimatedTime = None
 
 class StoppableThread(threading.Thread):
     """Thread class with a stop() method. The thread itself has to check
@@ -292,7 +293,7 @@ def updateSend():
             pbar["value"]=int(alreadysent / current2send * 100.0)
             st = time.time() - scanstarttime
             tdone = float(st)
-            if  (alreadysent != 0):
+            if  (estimatedTime == None):
                 tsingle = float(st) / float(alreadysent)
                 tdouble = tsingle / 20.0  + 1.0
                 tdiff = float(current2send - alreadysent) * tdouble
@@ -306,9 +307,28 @@ def updateSend():
                 ltime = str(int(ltime / 60)) + ":" + f'{lmin:02}'
 
                 tfield["text"] = dtime + " / " + ltime
+            else:
+                if (current2send == 0):
+                    current2send = 1
+                tdelta = estimatedTime / float(current2send)
+                tsingle = tdelta * float(alreadysent)
+                ltime = estimatedTime - tsingle
+                
+            tfield = FormCommand.FormCommand.getWidgetByName("TIME")
+            dtime = int(st)
+            ltime = int(tdiff)
+            dmin = int(dtime % 60)
+            lmin = int(ltime % 60)
+                
+            dtime = str(int(dtime / 60)) + ":" + f'{dmin:02}'
+            ltime = str(int(ltime / 60)) + ":" + f'{lmin:02}'
+
+            tfield["text"] = dtime + " / " + ltime
+
+
 
             if ((alreadysent == (current2send - 1)) and not SS.strategyActive):
-                saveCSVlist(receiveList, "RAW")
+                saveCSVlist(receiveList, "IM")
 
             pbar.update();
             

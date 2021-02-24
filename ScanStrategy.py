@@ -177,9 +177,6 @@ def getVerPoints( p1, p2, div):
     pset = set()
 
     delta = abs(p2.vnewdeg - p1.vnewdeg)
-    if (div > 2.0):
-        print(div)
-    
     #minimize
     for div1 in range(div,0,-1):
         d = delta / float(div1 + 1)
@@ -417,6 +414,10 @@ def sendMail():
         emailContent = "Die Messung wurde am " + datestr + " um " + timestr + " abgeschlossen." 
         sender.sendmail(sendTo, emailSubject, emailContent)  
 
+def genCommandTime(commands):
+    t = 0
+    for c in commands:
+        t += ED.getTimeDictvalue(c[0:2])
 
 
 def nextTurn():
@@ -474,6 +475,8 @@ def nextTurn():
 
     connect.current2send = len(commands)
     connect.alreadysent = 0
+    
+    connect.estimatedTime = genCommandTime(commands)
 
     for c in commands:
         connect.addCommand(c)
