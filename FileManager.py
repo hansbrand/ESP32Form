@@ -14,6 +14,8 @@ from FileHandler import filestat
 import ESPDevices
 import DataContainer
 from DataPoint import DataPoint 
+import MeshCreator as MC
+
 isScanning = False
 isLoaded = False
 logger = None
@@ -162,6 +164,23 @@ def openLoadFile(master):
 
 
     return check
+
+
+
+def openMeshFile(master):
+    ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
+    if (ISLINUXOS):
+        filename = filedialog.askopenfilename(initialdir = "./dist",title = "Data File",filetypes = (("Data files","*.xyz"),("all files","*.*")))
+    else:
+        filename = filedialog.askopenfilename(initialdir = ".\\dist",title = "Data File",filetypes = (("Data files","*.xyz"),("all files","*.*")))
+
+    print("Filename :", filename)
+    if (filename == ''):
+        return False
+    MC.createmesh(filename)
+
+    return check
+
 
 def saveCSVlist(slist,ext):
     try:

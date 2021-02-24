@@ -418,6 +418,7 @@ def genCommandTime(commands):
     t = 0
     for c in commands:
         t += ED.getTimeDictvalue(c[0:2])
+    return t
 
 
 def nextTurn():
@@ -476,7 +477,7 @@ def nextTurn():
     connect.current2send = len(commands)
     connect.alreadysent = 0
     
-    connect.estimatedTime = genCommandTime(commands)
+    connect.estimatedTime = genCommandTime(commands) * 1.1
 
     for c in commands:
         connect.addCommand(c)

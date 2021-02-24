@@ -284,10 +284,11 @@ def getTimeDictvalue(k):
     global dictDeviceTime, dtimelock
     dtimelock.acquire()
     if not(k in dictDeviceTime.keys()):
-        return 1.0
+        dtimelock.release()
+        return (1.0)
     else:
+        dtimelock.release()
         return dictDeviceTime[k][2]
-    dtimelock.release()
 
 def handleCommands(message, start):
     global dictDeviceTime, dtimelock
@@ -296,6 +297,8 @@ def handleCommands(message, start):
         dictDeviceTime = dict()
     key = start.split("|")[1]
     if not key in ["S1","S2","M1","M2","M3"]:
+        dtimelock.release()
+
         return
     tvalue = float(message.split("/")[1])
     if not key in dictDeviceTime.keys():

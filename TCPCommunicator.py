@@ -249,9 +249,8 @@ def emergeny():
 
 
 def updateSend():
-    global queuelock
-    global bufferList
-    global MAXBUFFERSIZE
+    global queuelock, estimatedTime
+    global bufferList,MAXBUFFERSIZE
     global currentCommands
     global commandlock
     global alreadysent
@@ -310,9 +309,11 @@ def updateSend():
             else:
                 if (current2send == 0):
                     current2send = 1
+                if st >= estimatedTime:
+                    estimatedTime += 30.0
                 tdelta = estimatedTime / float(current2send)
                 tsingle = tdelta * float(alreadysent)
-                ltime = estimatedTime - tsingle
+                tdiff = estimatedTime - tsingle
                 
             tfield = FormCommand.FormCommand.getWidgetByName("TIME")
             dtime = int(st)

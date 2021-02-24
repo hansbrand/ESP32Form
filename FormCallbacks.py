@@ -359,5 +359,10 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackMESH(self , button):
+        print("callbackLOAD_FILE")
+        DC.initDataContainer()
+
+        FileManager.openMeshFile(self)
+
         print("callbackMESH")
         return

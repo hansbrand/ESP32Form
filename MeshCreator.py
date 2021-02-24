@@ -9,10 +9,10 @@ import pyglet
 #from vtkplotter import *
 
 
-def createmesh():
+def createmesh(filename):
 
 
-    pcd = o3d.io.read_point_cloud("dist\\test8.xyz")
+    pcd = o3d.io.read_point_cloud(filename)
     pcd.estimate_normals()
 
     # estimate radius for rolling ball
