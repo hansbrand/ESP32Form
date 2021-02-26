@@ -324,7 +324,6 @@ def createCommandList(angles, s1dict,s2dict, s1next,s2next):
 
                     if (  str(a) in scans2):
                         s2list =  s2dict[a]
-
                         if firsts2:
                             firsts2 = False
                             vs2point = s2list.pop(0)
