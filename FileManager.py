@@ -14,7 +14,7 @@ from FileHandler import filestat
 import ESPDevices
 import DataContainer
 from DataPoint import DataPoint 
-import MeshCreator as MC
+#import MeshCreator as MC
 
 isScanning = False
 isLoaded = False
@@ -177,7 +177,7 @@ def openMeshFile(master):
     print("Filename :", filename)
     if (filename == ''):
         return False
-    MC.createmesh(filename)
+    #MC.createmesh(filename)
 
     return check
 

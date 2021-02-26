@@ -245,59 +245,146 @@ def addS2Scanning(commandList):
   message = "S2:D:" 
   commandList.append(message)
 
-def createCommandList(angles, s1dict,s2dict):
+def createCommandList(angles, s1dict,s2dict, s1next,s2next):
     commands = []
     message = ""
     commands.append(ED.starttimerCommand())
     commandcounter = 0
 
-    for a  in angles:
-        #horiontal turn
-        message = "M1:" + str(a) + ":"
-        commands.append(message)
-        if (a in s1dict.keys()):
-            s1list =  list(s1dict[a])
-        else:
-            s1list = list()
+    firsts1 = True
+    firsts2 = True
+    scans1 = set()
+    scans2 = set()
 
-        if (a in s2dict.keys()):
-            s2list =  list(s2dict[a])
-        else:
-            s2list = list()            
+    for ang in s1dict.keys():
+        scans1.add(str(ang))
+    for ang in s2dict.keys():
+        scans2.add(str(ang))
 
-        l1 = len(s1list)
-        l2 = len(s2list)
+    lastvangle = None
+    lastverangle = None
 
-        #generate command  per column
-        for index in range(0,max(l1,l2)):
-            if len(s1list) > 0:
-                vs1point = s1list.pop()
-                message = "M2:" + str(vs1point[1]) + ":"
-                if (int(vs1point[1]) > 200):
-                    print((vs1point[1]))
+    try:
+        for a  in angles:
+            #horiontal turn
+            message = "M1:" + str(a) + ":"
+            commands.append(message)
+    
+            if message == "M1:191.75:":
+                print ("message")
+            #generate command  per column
+            while (str(a) in scans1.union(scans2)):
+                    if (  str(a) in scans1):
+                        s1list =  s1dict[a]
 
-                commands.append(message)
-                addS1Scanning(commands)
-                commandcounter += 1
-            if len(s2list) > 0:
-                vs2point = s2list.pop()
-                message = "M3:" + str(vs2point[1]) + ":"
-                if (int(vs2point[1]) > 200):
-                    print((vs2point[1]))
+                        if firsts1:
+                            firsts1 = False
+                            vs1point = s1list.pop(0)
+                            message = "M2:" + str(vs1point[1]) + ":"
+                            lastvangle = vs1point[1]
+                            commandcounter += 1
 
-                commands.append(message)
-                commandcounter += 1
-                addS2Scanning(commands)
-            #observe sensors
-            if (commandcounter > 200):
-                commandcounter = 0
-                commands.append(ED.statusCommand(1))
-                commands.append(ED.statusCommand(2))
+                            commands.append(message)
+                        addS1Scanning(commands)
+                        commandcounter += 1
+                        if len(s1list) > 0:
+                            vs1point = s1list.pop(0)             
 
-    commands.append(ED.getstatsCommand())
+                            message = "M2:" + str(vs1point[1]) + ":"
+                            lastvangle = vs1point[1]
 
+                            commands.append(message)                        
+                            commandcounter += 1
+                        else:
+                                # liste abgearbeitet
+                                nextangle = s1next[a]
+                                if nextangle != None:
+                                    while True:
+                                        nextlist = s1dict[nextangle]
+                                        lindex = nextangle
+                                        if str(nextangle) in scans1:
+                                            break
+                                        nextangle = s1next[nextangle]
+                                        if ((nextlist != []) or  (nextlist == None)):
+                                            break
+                                    if ((nextlist != None) and (nextlist != [])):
+                                        sortedlist = sorted(s1dict[lindex],key=lambda x:x[1])
+                                        lower = sortedlist[0][1]
+                                        upper = sortedlist[-1][1]
+                                        lower = abs(lastvangle -  lower)
+                                        upper = abs(lastvangle -  upper)
+
+                                        s1dict[lindex]  = sorted(s1dict[lindex],key=lambda x:x[1],reverse= (lower > upper))
+                                        vs1point = s1dict[lindex].pop(0)
+                                        if (vs1point[1] != lastvangle):
+                                            message = "M2:" + str(vs1point[1]) + ":"
+                                            commands.append(message)
+                                        lastvangle = vs1point[1]
+                                scans1.remove(str(a))
+
+                    if (  str(a) in scans2):
+                        s2list =  s2dict[a]
+
+                        if firsts2:
+                            firsts2 = False
+                            vs2point = s2list.pop(0)
+                            message = "M3:" + str(vs2point[1]) + ":"
+                            lastverangle = vs2point[1]
+
+                            commands.append(message)
+
+                            commandcounter += 1
+                        addS2Scanning(commands)
+                        commandcounter += 1
+                        if len(s2list) > 0:
+                            vs2point = s2list.pop(0)
+                            message = "M3:" + str(vs2point[1]) + ":"
+                            lastverangle = vs2point[1]
+                            commands.append(message)                        
+                            commandcounter += 1
+
+                        else:
+                                # liste abgearbeitet
+                                nextangle = s2next[a]
+                                if nextangle != None:
+                                    while True:
+                                        nextlist = s2dict[nextangle]
+                                        lindex = nextangle
+                                        if str(nextangle) in scans2:
+                                            break
+                                        nextangle = s2next[nextangle]
+                                        if ((nextlist != []) or  (nextlist == None)):
+                                            break
+                                    if ((nextlist != None) and (nextlist != [])):
+                                        sortedlist = sorted(s2dict[lindex],key=lambda x:x[1])
+                                        lower = sortedlist[0][1]
+                                        upper = sortedlist[-1][1]
+                                        lower = abs(lastverangle -  lower)
+                                        upper = abs(lastverangle -  upper)
+
+                                        s2dict[lindex]  = sorted(s2dict[lindex],key=lambda x:x[1],reverse= (lower > upper))
+                                        vs2point = s2dict[lindex].pop(0)
+                                        if (vs2point[1] != lastverangle):
+                                            message = "M3:" + str(vs2point[1]) + ":"
+                                            commands.append(message)
+                                        lastverangle = vs2point[1]
+                                scans2.remove(str(a))
         
-    return commands
+                    #observe sensors
+                    if (commandcounter > 400):
+                        commandcounter = 0
+                        commands.append(ED.statusCommand(1))
+                        commands.append(ED.statusCommand(2))
+
+        commands.append(ED.getstatsCommand())
+        for c in commands:
+            if (c[0:2] in["M2","S1","M1"]):
+                print(c)
+        
+        return commands
+    except Exception as exc:
+        print(exc)
+        return None
 
 # def getRealh(sp):
 #     return(sp[1]['realH'])
@@ -310,21 +397,11 @@ def createOpposits(points,scandir):
     s3dict = dict()
 
 
+    reversescan = scandir
     #create opposite points and determine hangles
     for p in points:
         horangles.update([p[0]])
-        if p[1] > 200.0:
-            print(p)
-        # if p[0] < 200:
-        #     pnew = p[0] + 200
-        #     xele = (pnew, p[1])
-        # else:
-        #     pnew = p[0] - 200
-        # xele = (pnew, p[1])
-        # if not xele in DC.pointDone:
-        #     newpoints.update([xele])
-        #     #DC.pointDone.update([xele])
-        #     horangles.update([pnew])
+
     horlist = list(sorted(horangles,reverse = reversescan))
     #points.update(newpoints)
 
@@ -355,23 +432,39 @@ def createOpposits(points,scandir):
 
         S2reverse = last[1] > abs(last[1] - 200)
         s2dict[k] = s2
+
     #normalize to hangle
     s3dict = dict()
+    dictS1next = dict()
+    dictS3next = dict()
+
 
     for k in s2dict.keys():
         s3dict[k - 200] = s2dict[k]
+        if not (k - 200) in horlist:
+            horlist.append(k-200)
         horlist.remove(k)
-    
-    for h in horlist:
-        if h in s1dict.keys():
-            for s in s1dict[h]:
-                if (s[0] > 200.0) or (s[1] > 200.0): 
-                    print(s)
-        if h in s3dict.keys():
-            for s in s3dict[h]:
-                if (s[1] > 200.0): 
-                    print(s)
-    return points, horlist, s1dict, s3dict
+
+    l =  None
+    for k in s3dict.keys():
+        dictS3next[k] = None
+        if l != None:
+            if l in dictS3next.keys():
+                dictS3next[l] = k
+        l = k
+
+    l =  None
+
+    for k in s1dict.keys():
+        dictS1next[k] = None
+        if l != None:
+            if l in dictS1next.keys():
+                dictS1next[l] = k
+        l = k
+
+    horlist = list(sorted(horlist,reverse = reversescan))
+
+    return points, horlist, s1dict, s3dict,dictS1next,dictS3next
 
 def createRange(PointSet,reversescan, HorSet, VerSet):
         #row by row
@@ -392,7 +485,7 @@ def createRange(PointSet,reversescan, HorSet, VerSet):
         PointSet.update(pset)
     
     # create scanpoints from angle sets
-    PointSet, horlist, s1dict, s2dict = createOpposits(PointSet, reversescan)
+    PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
     #scanlist,scanrows,scancols = createScanPoints(HorSet,VerSet)
 
     # sort in horizontal order with horpos
@@ -402,7 +495,7 @@ def createRange(PointSet,reversescan, HorSet, VerSet):
 
 
     #getcommands
-    commands = createCommandList(horlist, s1dict,s2dict)
+    commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
     return commands,PointSet
 
 def sendMail():
