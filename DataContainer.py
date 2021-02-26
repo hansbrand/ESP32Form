@@ -261,5 +261,6 @@ def sortRows():
                 mcols[k] = sorted(mcols[k],key=lambda d: (d['hnewdeg'], d['vnewdeg']) )
                 #printall(mcols[k])
         savelock.release()
+        return mrows,mcols
 
 
