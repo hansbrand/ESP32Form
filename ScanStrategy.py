@@ -42,6 +42,14 @@ def adjust(deg):
 
     
 
+def sendMail():
+        datestr = time.strftime("%d.%m.%y")
+        timestr = time.strftime("%H:%M:%S")
+        sender = EMailer.Emailer()
+        sendTo = 'fdeitzer@gmail.com'
+        emailSubject = "Hello World"
+        emailContent = "Die Messung wurde am " + datestr + " um " + timestr + " abgeschlossen." 
+        sender.sendmail(sendTo, emailSubject, emailContent)  
     
 
 
@@ -66,6 +74,8 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     vdegree = adjust(vdegree)
     #FM.LoadTurn(int(targetwidth * 100),int(targetheight * 100) , currentturns)
     #time.sleep(1)
+    #sendMail()
+
     strategyActive   =  True
     starttime = time.time()
     totaltime = time.time()
@@ -101,7 +111,8 @@ def startScan( width, height, turns, connector, minwidth, minheight):
 
 def getHorPoints( p1, p2, div, upper):
     pset = set()
-
+    if (upper < p1.hnewdeg):
+        upper += 400
     delta = abs(upper - p1.hnewdeg)
     #minimize
     for div1 in range(div,0,-1):
@@ -109,9 +120,16 @@ def getHorPoints( p1, p2, div, upper):
         if (d > (0.25 * div1)):
             for i in range(1,div1 + 1):
                 nx = adjust(p1.hnewdeg + float(d * i))
+                f,g = modf(nx)
+                if (nx > 400):
+                    g -= 400
+                nx = float(g) + f
+
                 ny = p1.vnewdeg
                 if (ny > 200.0):
                     print (ny)
+                if (nx > 400.0):
+                    print (nx)
                 if not (nx,ny) in DC.pointDone:                    
                     #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
@@ -131,25 +149,26 @@ def getHorAngles(row):
         if p.vnewdeg > 200.0:
             print(p.vnewdeg)
         if p.state in ["VALID","COMPUTED"]:
-            #minimal degree                    
-            np =  row[index - 1]
-            upper = p.hnewdeg
-            if (upper < np.hnewdeg ):
-                upper += 400
-            
-            dh = abs( np.hnewdeg - upper)
-            if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
-                dist = Calculator.get3Ddist(p,np)
-                if dist > targetwidth:
-                    #halfit
+            #sonderfall
+            if l > 2:
+                #minimal degree                    
+                np =  row[index - 1]
+                upper = p.hnewdeg
+                lower = np.hnewdeg
+                
+                dh = abs( lower - upper)
+                if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
+                    dist = Calculator.get3Ddist(p,np)
+                    if dist > targetwidth:
+                        #halfit
 
-                    div = int(dist / targetwidth)
-                    hd = (upper + np.hnewdeg) / 2.0
-                    pset = getHorPoints(np,p,div,upper)
-                    if len(pset) > 0:
-                        pointset.update(pset)
-                        hd = adjust(hd)
-                        horset.update([hd])
+                        div = int(dist / targetwidth)
+                        hd = (upper + np.hnewdeg) / 2.0
+                        pset = getHorPoints(np,p,div,upper)
+                        if len(pset) > 0:
+                            pointset.update(pset)
+                            hd = adjust(hd)
+                            horset.update([hd])
 
 
             #minimal degree                    
@@ -376,9 +395,9 @@ def createCommandList(angles, s1dict,s2dict, s1next,s2next):
                         commands.append(ED.statusCommand(2))
 
         commands.append(ED.getstatsCommand())
-        for c in commands:
-            if (c[0:2] in["M2","S1","M1"]):
-                print(c)
+        # for c in commands:
+        #     if (c[0:2] in["M2","S1","M1"]):
+        #         print(c)
         
         return commands
     except Exception as exc:
@@ -437,12 +456,14 @@ def createOpposits(points,scandir):
     dictS1next = dict()
     dictS3next = dict()
 
+    nhlist = list(horlist)
 
     for k in s2dict.keys():
         s3dict[k - 200] = s2dict[k]
         if not (k - 200) in horlist:
-            horlist.append(k-200)
-        horlist.remove(k)
+            nhlist.append(k - 200)
+        nhlist.remove(k)
+    horlist = nhlist
 
     l =  None
     for k in s3dict.keys():
@@ -462,14 +483,16 @@ def createOpposits(points,scandir):
         l = k
 
     horlist = list(sorted(horlist,reverse = reversescan))
+    for h in horlist:
+        if h > 200.0:
+            print("failed : ", str(h))
 
     return points, horlist, s1dict, s3dict,dictS1next,dictS3next
 
 def createRange(PointSet,reversescan, HorSet, VerSet):
         #row by row
-    DC.sortRows()
+    mrows, mcols = DC.sortRows()
 
-    _,_,mrows,mcols = DC.getAllData()
     mrows = dict(mrows)
     mcols = dict(mcols)
 
@@ -497,14 +520,6 @@ def createRange(PointSet,reversescan, HorSet, VerSet):
     commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
     return commands,PointSet
 
-def sendMail():
-        datestr = time.strftime("%d.%m.%y")
-        timestr = time.strftime("%H:%M:%S")
-        sender = EMailer.Emailer()
-        sendTo = 'fdeitzer@gmail.com'
-        emailSubject = "Hello World"
-        emailContent = "Die Messung wurde am " + datestr + " um " + timestr + " abgeschlossen." 
-        sender.sendmail(sendTo, emailSubject, emailContent)  
 
 def genCommandTime(commands):
     t = 0
