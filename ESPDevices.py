@@ -23,7 +23,8 @@ C_EMERGENCY        =   32005
 commandList = []
 deviceList = ["S1","S2","M1","M2","M3","C1"]
 dictDeviceTime = None
-dtimelock = threading.RLock() 
+dtimelock = threading.RLock()
+MAXVERTICAL = 193.0 
 
 
 class ESPDevices(object):
@@ -109,7 +110,7 @@ def statusCommand(ind):
     command = "S" + str(ind) + ":S:"
     return command
 
-def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
+def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAXVERTICAL, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
   round = 0;
 
@@ -185,7 +186,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 1
 
 
 
-def genTestCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 149, hdelta = 2.0 ,vdelta = 10.0):
+def genTestCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAXVERTICAL, hdelta = 2.0 ,vdelta = 10.0):
     global commandList
     round = 0;
 
@@ -259,7 +260,7 @@ def genTestCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 149
 
 
 
-def genHorizontalCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 149, hdelta = 2.0 ,vdelta = 10.0):
+def genHorizontalCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAXVERTICAL, hdelta = 2.0 ,vdelta = 10.0):
     global commandList
     round = 0;
 
@@ -434,7 +435,7 @@ def piepCommand(dev):
             return command
 
 
-def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = 180, hdelta = 2.0 ,vdelta = 10.0):
+def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAXVERTICAL, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
   round = 0;
 
@@ -502,7 +503,9 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
     DC.pointDone.update([hindex + 200,vend])
 
 
-    while (vindex >= vstart):
+    while (vindex != 0 ):
+      if vindex < 0:
+          vindex = 0
       if (scanning):
         addScanning(counter)
       counter +=1
@@ -516,8 +519,11 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
       DC.pointDone.update([hindex,vindex])
       DC.pointDone.update([hindex + 200,vindex])
       commandList.append(message)
+      if (vindex == 0):
+          break
       vindex -= vdelta
 
+    
 
     hindex += hdelta
     message = "M1:" + str(hindex) + ":" 

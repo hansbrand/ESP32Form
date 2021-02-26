@@ -12,8 +12,8 @@ import ScanStrategy as SS
 from FormMobile import FormMobile 
 
 checkButtonval = None
-CALPOS = 90.0
-CALDELTA = .225
+CALPOS = 170.0
+CALDELTA = .2
 initpressed = False
 
 class FormCallbacks(object):
@@ -112,7 +112,8 @@ class FormCallbacks(object):
         global CALPOS
         global CALDELTA
         print("callbackMDOWN")
-        CALPOS += CALDELTA
+        CALPOS += 1
+        print(CALPOS)
         sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
         sbar["text"] = str(CALPOS)
         self.com.addCommand(ESPDevices.turnCommand("M2",CALPOS) )
