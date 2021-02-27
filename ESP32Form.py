@@ -177,7 +177,8 @@ class Application(tk.Frame):
 
 #            USBCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
 #           USBCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
-            # TCPCommunicator.addCommand(ESPDevices.Sensor1.statusCommand(),True)
+            # TCPCommunicator.addCommand(ESPDevices.
+            # Sensor1.statusCommand(),True)
             # TCPCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
 
         self.master.after(300,self.eventloop)

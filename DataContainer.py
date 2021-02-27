@@ -207,11 +207,17 @@ def getPointData():
 
 
     savelock.acquire()
+    xl = list()
+    yl = list()
+    zl = list()
+    ml = list()
+    
     #print(str(len(xarr)) + " / " + str(len(yarr)) + " / " + str(len(zarr)) + " / " + str(len(marr)))
-    xl = list(xarr)
-    yl = list(yarr)
-    zl = list(zarr)
-    ml = list(marr)
+    while (len(xarr) > 0):
+        xl.append(xarr.pop(0))
+        yl.append(yarr.pop(0))
+        zl.append(zarr.pop(0))
+        ml.append(marr.pop(0))
 
     savelock.release()
     return xl,yl,zl,ml

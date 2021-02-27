@@ -349,7 +349,7 @@ class FormCallbacks(object):
         else:
              self.com =  __import__("TCPCommunicator")
         targetwidth = 0.32
-        targetheight = 0.64
+        targetheight = 0.32
         maxturns = 1000
         minwidth = 0.08
         minheight = 0.16

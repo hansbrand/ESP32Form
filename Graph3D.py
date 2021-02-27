@@ -67,6 +67,15 @@ class Graph3D(Tk.Frame):
         canvas.get_tk_widget().pack()
         ax=fig.add_subplot(111,projection='3d')
         ax.view_init(azim=0, elev=90)
+        ax.clear()
+        ax.set_xlabel("X - Axis")
+        ax.set_ylabel("Y - Axis")
+        ax.set_zlabel("Z - Axis")
+        ax.xaxis.set_major_locator(plt.MaxNLocator(5))
+        ax.yaxis.set_major_locator(plt.MaxNLocator(5))
+        ax.zaxis.set_major_locator(plt.MaxNLocator(5))
+
+
         
         #parent.title("Graph3D")
         # canvas = FigureCanvasTkAgg(fig, parent)
@@ -119,13 +128,13 @@ class Graph3D(Tk.Frame):
                 return
            
 
-            ax.clear()
-            ax.set_xlabel("X - Axis")
-            ax.set_ylabel("Y - Axis")
-            ax.set_zlabel("Z - Axis")
-            ax.xaxis.set_major_locator(plt.MaxNLocator(5))
-            ax.yaxis.set_major_locator(plt.MaxNLocator(5))
-            ax.zaxis.set_major_locator(plt.MaxNLocator(5))
+            # ax.clear()
+            # ax.set_xlabel("X - Axis")
+            # ax.set_ylabel("Y - Axis")
+            # ax.set_zlabel("Z - Axis")
+            # ax.xaxis.set_major_locator(plt.MaxNLocator(5))
+            # ax.yaxis.set_major_locator(plt.MaxNLocator(5))
+            # ax.zaxis.set_major_locator(plt.MaxNLocator(5))
 
             # if is3D:
             #     m = DC.dc["0"]["polygons"]
