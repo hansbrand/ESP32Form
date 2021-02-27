@@ -50,7 +50,7 @@ def Vcalcvpoint (err,m1,m2):
 
 
 def Hestimate(err, m):
-    if (m.state in ["COMPUTED","VALID"]):
+    if (m.state in ["VALID"]):
         err.x += m.x
         err.y += m.y
         err.z += m.z
@@ -158,12 +158,6 @@ def interpolate(err, mrows, mcols):
     #print (str(err.x) + ":" + str(err.y) + ":" + str(err.z))
     return("COMPUTED")
         
-
-
-
-
-
-
 
 def printall(plist):
     for i in range(0,20):

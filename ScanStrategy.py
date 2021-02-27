@@ -203,6 +203,8 @@ def getVerPoints( p1, p2, div):
             for i in range(1,div1 + 1 ):
                 ny = adjust(p1.vnewdeg + float(d * i))
                 nx = p1.hnewdeg
+                if ny >= p2.vnewdeg:
+                    break
                 if (ny > 200.0):
                     print(ny)
                 if not (nx,ny) in DC.pointDone:                    
@@ -217,26 +219,34 @@ def getVerAngles(row):
     verset = set()
     l = len(row)
     pointset = set()
+    scanlimits = (0,0)
+    if l == 2:
+        scanlimits = (0,1)
+    elif l == 3:
+        scanlimits = (1,2)
+    else:
+        scanlimits = (1, l - 2)
 
-    for index in range(1, l - 2):
+
+    for index in range(scanlimits[0],scanlimits[1]):
         p = row[index]
         if p.state in ["VALID","COMPUTED"]:
             #minimal degree       
-            np =   row[index - 1]           
-            dh = abs( np.vnewdeg - p.vnewdeg)
-            if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
-                dist = Calculator.get3Ddist(p,np)
-                if dist > targetheight:
-                    #halfit
-                    div = int(dist / targetheight)
+            if l > 2:
+                np =   row[index - 1]           
+                dh = abs( np.vnewdeg - p.vnewdeg)
+                if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
+                    dist = Calculator.get3Ddist(p,np)
+                    if dist > targetheight:
+                        #halfit
+                        div = int(dist / targetheight)
+                        hd = (p.vnewdeg + np.vnewdeg) / 2.0
+                        pset = getVerPoints(np,p,div)
+                        if len(pset) > 0:
+                            pointset.update(pset)
+                            hd = adjust(hd)
 
-                    hd = (p.vnewdeg + np.vnewdeg) / 2.0
-                    pset = getVerPoints(np,p,div)
-                    if len(pset) > 0:
-                        pointset.update(pset)
-                        hd = adjust(hd)
-
-                        verset.update([hd])
+                            verset.update([hd])
 
             #minimal degree                    
             dh = abs( row[index + 1].vnewdeg - p.vnewdeg)
@@ -246,7 +256,6 @@ def getVerAngles(row):
                 if dist > targetheight:
                     #halfit
                     div = int(dist / targetheight)
-
                     hd = (p.vnewdeg +np.vnewdeg) / 2.0
                     pset = getVerPoints(p,np,div)
                     if len(pset) > 0:

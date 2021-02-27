@@ -136,6 +136,7 @@ def addLimits(dp):
             limits3D["zmax"] = dp.z    
             limits3D["hmax"] = dp.hnewdeg
             limits3D["vmax"] = dp.vnewdeg
+            limits3D["maxdistance"] = dp.meter
         else:
             limits3D["xmin"] = limits3D["xmin"] if (limits3D["xmin"] < dp.x) else dp.x
             limits3D["xmax"] = limits3D["xmax"] if (limits3D["xmax"] > dp.x) else dp.x
@@ -145,6 +146,7 @@ def addLimits(dp):
             limits3D["zmax"] = limits3D["zmax"] if (limits3D["zmax"] > dp.z) else dp.z
             limits3D["hmax"] = limits3D["hmax"] if (limits3D["hmax"] > dp.hnewdeg) else dp.hnewdeg
             limits3D["vmax"] = limits3D["vmax"] if (limits3D["vmax"] > dp.vnewdeg) else dp.vnewdeg
+            limits3D["maxdistance"] = limits3D["maxdistance"] if (limits3D["maxdistance"] > dp.meter) else dp.meter
     except Exception as exc:
         print(exc)
         return
