@@ -426,7 +426,7 @@ def startServer():
             
             
             status["text"] = 'Client:', addr[0]
-            status["bg"] = "green"
+            status["bg"] = "lightgreen"
 
         s.close() 
 

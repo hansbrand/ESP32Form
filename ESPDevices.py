@@ -291,30 +291,49 @@ def getTimeDictvalue(k):
         dtimelock.release()
         return dictDeviceTime[k][2]
 
+def getTimeFactor():
+    global dictDeviceTime, dtimelock
+    dtimelock.acquire()
+    ret = 1;
+    if (dictDeviceTime != None) and  (dictDeviceTime["NE"][0] != 0):
+        ret = dictDeviceTime["TO"][0] / dictDeviceTime["NE"][0]
+    dtimelock.release()
+    return ret
+
+
 def handleCommands(message, start):
     global dictDeviceTime, dtimelock
     dtimelock.acquire()
     if dictDeviceTime == None:
         dictDeviceTime = dict()
     key = start.split("|")[1]
-    if not key in ["S1","S2","M1","M2","M3"]:
+    if not key in ["S1","S2","M1","M2","M3","TO","NE"]:
         dtimelock.release()
 
         return
+    avalue = message.split(":")[1]
+    avalue = avalue.split("/")[0]
+    avalue = float(avalue.strip())
     tvalue = float(message.split("/")[1])
     if not key in dictDeviceTime.keys():
-        dictDeviceTime[key] = [tvalue,1.0,tvalue]
+        if (key in ["TO","NE"]):
+            dictDeviceTime[key] = [avalue,1.0,avalue]
+        else:            
+            dictDeviceTime[key] = [tvalue,1.0,tvalue]
     else:
-        v = dictDeviceTime[key] 
-        v[0] += tvalue
-        v[1] += 1.0
-        v[2] = v[0] / float(v[1])
-        dictDeviceTime[key] = v
+        if (key in ["TO","NE"]):
+            v = dictDeviceTime[key] 
+            v[0] += avalue
+            v[1] += 1.0
+            v[2] = v[0] / float(v[1])
+            dictDeviceTime[key] = v
+        else:
+            v = dictDeviceTime[key] 
+            v[0] += tvalue
+            v[1] += 1.0
+            v[2] = v[0] / float(v[1])
+            dictDeviceTime[key] = v
     dtimelock.release()
-
-
-
-
 
 
 def handleMotor(message):
@@ -362,13 +381,13 @@ def isSensor(message):
             if (parts[0][1] == '1'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS1")
                 sbar["text"] = parts[1]
-                sbar["bg"] = "green"
+                sbar["bg"] = "lightgreen"
                 #FormMobile.FormMobile.enableButtons(True)
 
             if (parts[0][1] == '2'):
                 sbar = FormCommand.FormCommand.getWidgetByName("STATUS2")
                 sbar["text"] = parts[1]
-                sbar["bg"] = "green"
+                sbar["bg"] = "lightgreen"
                 #FormMobile.FormMobile.enableButtons(True)
 
             return False

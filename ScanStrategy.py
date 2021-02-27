@@ -593,7 +593,8 @@ def nextTurn():
     connect.current2send = len(commands)
     connect.alreadysent = 0
     
-    connect.estimatedTime = genCommandTime(commands) * 1.1
+    connect.estimatedTime = genCommandTime(commands) * ED.getTimeFactor()
+    connect.estimatedTime *= 1.2
 
     for c in commands:
         connect.addCommand(c)
@@ -601,9 +602,9 @@ def nextTurn():
     passdone = False
     time.sleep(1)
     difftime = time.monotonic() - starttime
-    ds ="{:8.4f}".format(difftime)
+    ds ="{:8.2f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
-    passtext = "PASS " + str(currentturns + 1) + "(" + str(maxturns + 1) + "): " + str(len(commands))
+    passtext = "PASS " + str(currentturns + 1) + "(" + ds + "): " + str(len(commands))
     passfield["text"] = passtext
 
     totaldiff = time.time() - totaltime
