@@ -677,6 +677,10 @@ def simulateTurn():
             FormMobile.enableButtons(True,False)
             FM.ilog("Scanning done!!!")
             return
+    passfield = FormCommand.FormCommand.getWidgetByName("PASS")
+    passtext = "PASS " + str(currentturns + 1) + " : " + str(len(commands))
+    time.sleep(3)
+
             
 
 
