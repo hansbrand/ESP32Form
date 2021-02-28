@@ -434,18 +434,18 @@ def getMessageID(message):
         parts = message.split("|")
         #parts = message.split(":")
 
-        #print( parts)
+        print( parts)
 
         if len(parts) < 3:
             return -1
         #return int(parts[3])
         if (message.startswith("M")):
-            if (int(parts[3] % 5) == 0):
-                print(".", end = '')
+ #           if (int(parts[3]) % 5 == 0):
+ #               print(".", end = '')
             return int(parts[3])
         if (message.startswith("S")):
-            if (int(parts[3] % 5) == 0):
-                print(".", end = '')
+#            if (int(parts[2]) % 5 == 0):
+#                print(".", end = '')
             return int(parts[2])
         return -1
     except Exception as exc:

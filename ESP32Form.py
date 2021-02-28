@@ -224,7 +224,7 @@ class Application(tk.Frame):
         self.lastStatus = 0
 
         initDataContainer()
-        self.initCanvas(master)
+        #self.initCanvas(master)
         atexit.register(self.cleanup)
         #sender = EMailer.Emailer()
         #sendTo = 'fdeitzer@gmail.com'
