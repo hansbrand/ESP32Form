@@ -323,7 +323,7 @@ def handleCommands(message, start):
     else:
         if (key in ["TO","NE"]):
             v = dictDeviceTime[key] 
-            v[0] += avalue
+            v[0] = avalue
             v[1] += 1.0
             v[2] = v[0] / float(v[1])
             dictDeviceTime[key] = v
@@ -367,6 +367,7 @@ def isSensor(message):
                 SS.setpassdone()
 
             print(message)
+
             return False
         if (message[0] != 'S'):return False
         if ((st in deviceList) != True): return False
@@ -433,13 +434,18 @@ def getMessageID(message):
         parts = message.split("|")
         #parts = message.split(":")
 
-        print( parts)
+        #print( parts)
+
         if len(parts) < 3:
             return -1
         #return int(parts[3])
         if (message.startswith("M")):
+            if (int(parts[3] % 5) == 0):
+                print(".", end = '')
             return int(parts[3])
         if (message.startswith("S")):
+            if (int(parts[3] % 5) == 0):
+                print(".", end = '')
             return int(parts[2])
         return -1
     except Exception as exc:
