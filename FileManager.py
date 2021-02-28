@@ -21,6 +21,47 @@ isLoaded = False
 logger = None
 #import ESP32Form
 
+
+
+def getDistanceColor(val,limits = None):
+
+    if val == -30000:
+        return ("black")
+
+    if (DataContainer.limits3D != None):
+        BLUEVALUE = max(DataContainer.limits3D["maxdistance"],-DataContainer.limits3D["maxdistance"])
+        REDLIMIT = BLUEVALUE * 0.4
+        GREENLIMIT = BLUEVALUE * 0.1
+    else:
+        return((0,0,0))
+
+    if val > BLUEVALUE: 
+        return((0,0,255))
+
+    if val < GREENLIMIT: 
+        return((0,255,0))            
+
+
+    if val < REDLIMIT:
+        refval = (REDLIMIT - float(val))  
+        delta = float(REDLIMIT - GREENLIMIT)  
+        refquot = refval / delta
+        if (refquot > 1):
+            refquot = 1
+        r = min (int((1 - refquot) * 255.0), 255)
+        g = min (int(refquot * 255.0), 255)
+        b = 0
+    else:
+        refval =  (float(val) - REDLIMIT) 
+        delta =  (BLUEVALUE - REDLIMIT) 
+        refquot = refval / delta
+        if (refquot > 1):
+            refquot = 1
+        r = min (int((1 - refquot) * 255.0), 255)
+        g = 0
+        b = min (int(refquot * 255.0), 255)
+    return (r,g,b)
+
 def analyse(line):
     mi = messageInfo()
     mi.currentMessage=line
@@ -197,7 +238,7 @@ def saveCSVlist(slist,ext):
             directory =os.path.join(dirname, 'dist\\') + datestr
             if  not os.path.isdir(directory):
                 os.mkdir(directory)
-            filename = directory + "\\DIST" + time.strftime("%H_%M_%S")+"_" + ext +".txt"
+            filename = directory + "\\DIST" + time.strftime("%H_%M_%S") +".txt"
  
         with open(filename, 'wt+') as f:
             for l in slist:
@@ -209,18 +250,31 @@ def saveCSVlist(slist,ext):
             if  not os.path.isdir(directory):
                 os.mkdir(directory)
             filename = directory + "/DIST" + time.strftime("%H_%M_%S")+"_" + ext +".xyz"
+            filecolor = directory + "/DIST" + time.strftime("%H_%M_%S")+"_col.xyz"
         else:
             directory =os.path.join(dirname, 'dist\\') + datestr
             if  not os.path.isdir(directory):
                 os.mkdir(directory)
-            filename = directory + "\\DIST" + time.strftime("%H_%M_%S")+"_" + ext +".xyz"
+            filename = directory + "\\DIST" + time.strftime("%H_%M_%S")+ ".xyz"
+            filecolor = directory + "\\DIST" + time.strftime("%H_%M_%S")+"_col.xyz"
+
  
         with open(filename, 'wt+') as f:
             for l in DataContainer.PointCloud:
                 if (l.state == "VALID"):
-                    line = str(l.x) + " " + str(l.y) + " " + str(l.z) + "\n"
+                    line = str(l.x) + " " + str(l.y) + " " + str(l.z) +  "\n"
+                    #l = l.replace("|"," ")
+                    f.write(line)
+
+        with open(filecolor, 'wt+') as f:
+            for l in DataContainer.PointCloud:
+                if (l.state == "VALID"):
+                    r,g,b = getDistanceColor(l.meter)
+                    line = str(l.x) + " " + str(l.y) + " " + str(l.z) + "\t\t" + str(r) +  " " + str(g) +  " " + str(b) + "\n"
                     #l = l.replace("|",";")
                     f.write(line)
+
+
     except Exception as exc:
         print(exc)
 
@@ -250,7 +304,7 @@ def SaveTurn(slist,width, height,turn):
  
         with open(filename, 'wt+') as f:
             for l in slist:
-                #line = str(int(x[l])) + ";" + str(int(y[l])) + ";" + str(int(z[l])) + "\n"
+                #line = str(int(x[l])) + " " + str(int(y[l])) + " " + str(int(z[l])) + "\n"
                 #l = l.replace("|",";")
                 f.write(l)
 
