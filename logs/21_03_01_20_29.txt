@@ -1,0 +1,62 @@
+INFO : 21_03_01_20_29   Session started
+INFO : 21_03_01_20_31   Strategy started
+INFO : 21_03_01_20_31   Start h degree : 20
+INFO : 21_03_01_20_31   Start v degree : 20.0
+INFO : 21_03_01_20_31   Start targetwitdth : 1.28
+INFO : 21_03_01_20_31   Start targetheight : 1.28
+INFO : 21_03_01_20_34   PASS 1, Time :2 : 57
+INFO : 21_03_01_20_34   Total :3 : 00
+INFO : 21_03_01_20_35   PASS 2, Time :1 : 28
+INFO : 21_03_01_20_35   Total :4 : 28
+INFO : 21_03_01_20_38   PASS 3, Time :2 : 22
+INFO : 21_03_01_20_38   Total :6 : 50
+INFO : 21_03_01_20_41   PASS 4, Time :3 : 00
+INFO : 21_03_01_20_41   Total :9 : 50
+INFO : 21_03_01_20_43   PASS 5, Time :2 : 34
+INFO : 21_03_01_20_43   Total :12 : 25
+INFO : 21_03_01_20_45   PASS 6, Time :1 : 58
+INFO : 21_03_01_20_45   Total :14 : 24
+INFO : 21_03_01_20_47   PASS 7, Time :2 : 00
+INFO : 21_03_01_20_47   Total :16 : 24
+INFO : 21_03_01_20_49   PASS 8, Time :1 : 47
+INFO : 21_03_01_20_49   Total :18 : 12
+INFO : 21_03_01_20_51   PASS 9, Time :2 : 16
+INFO : 21_03_01_20_51   Total :20 : 29
+INFO : 21_03_01_20_54   PASS 10, Time :2 : 49
+INFO : 21_03_01_20_54   Total :23 : 18
+INFO : 21_03_01_20_57   PASS 11, Time :2 : 58
+INFO : 21_03_01_20_57   Total :26 : 17
+INFO : 21_03_01_21_00   PASS 12, Time :2 : 23
+INFO : 21_03_01_21_00   Total :28 : 41
+INFO : 21_03_01_21_02   PASS 13, Time :2 : 04
+INFO : 21_03_01_21_02   Total :30 : 45
+INFO : 21_03_01_21_04   PASS 14, Time :2 : 19
+INFO : 21_03_01_21_04   Total :33 : 05
+INFO : 21_03_01_21_06   PASS 15, Time :1 : 48
+INFO : 21_03_01_21_06   Total :34 : 53
+INFO : 21_03_01_21_08   PASS 16, Time :2 : 11
+INFO : 21_03_01_21_08   Total :37 : 05
+INFO : 21_03_01_21_10   PASS 17, Time :2 : 17
+INFO : 21_03_01_21_10   Total :39 : 23
+INFO : 21_03_01_21_13   PASS 18, Time :2 : 18
+INFO : 21_03_01_21_13   Total :41 : 41
+INFO : 21_03_01_21_15   PASS 19, Time :2 : 39
+INFO : 21_03_01_21_15   Total :44 : 21
+INFO : 21_03_01_21_19   PASS 20, Time :3 : 47
+INFO : 21_03_01_21_19   Total :48 : 09
+INFO : 21_03_01_21_22   PASS 21, Time :3 : 21
+INFO : 21_03_01_21_22   Total :51 : 30
+INFO : 21_03_01_21_26   PASS 22, Time :3 : 28
+INFO : 21_03_01_21_26   Total :54 : 58
+INFO : 21_03_01_21_29   PASS 23, Time :3 : 24
+INFO : 21_03_01_21_29   Total :58 : 23
+INFO : 21_03_01_21_33   PASS 24, Time :3 : 16
+INFO : 21_03_01_21_33   Total :61 : 40
+INFO : 21_03_01_21_36   PASS 25, Time :3 : 33
+INFO : 21_03_01_21_36   Total :65 : 14
+INFO : 21_03_01_21_39   PASS 26, Time :2 : 45
+INFO : 21_03_01_21_39   Total :67 : 59
+INFO : 21_03_01_21_41   PASS 27, Time :2 : 28
+INFO : 21_03_01_21_41   Total :70 : 27
+INFO : 21_03_01_21_44   PASS 28, Time :2 : 31
+INFO : 21_03_01_21_44   Total :72 : 59

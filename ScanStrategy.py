@@ -68,7 +68,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     MINWIDTH = minwidth
     MINHEIGHT = minheight
 
-    hdegree = 10
+    hdegree = 20
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)

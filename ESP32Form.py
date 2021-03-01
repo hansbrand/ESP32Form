@@ -217,14 +217,12 @@ class Application(tk.Frame):
             fb = FormBuild.FormBuild(master)
         fb.genCallBacks()
 
-
-
         initDataContainer()
         ESPDevices.initDevices()
         self.lastStatus = 0
 
         initDataContainer()
-        #self.initCanvas(master)
+        self.initCanvas(master)
         atexit.register(self.cleanup)
         #sender = EMailer.Emailer()
         #sendTo = 'fdeitzer@gmail.com'
