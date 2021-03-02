@@ -174,13 +174,15 @@ def addPoint(dp):
     global ErrorList
 
     try:
+        if dp == None:
+            return
         PointCloud.append(dp)
         if (dp.hnewdeg < 200):
             lastS1 = dp
         else:
             lastS2 = dp
         savelock.acquire()
-        pointDone.update([(dp.x,dp.y)])
+        #pointDone.update([dp.hnewdeg,dp.vnewdeg])
         addArr(dp)
         addLimits(dp)
         addRows(dp)

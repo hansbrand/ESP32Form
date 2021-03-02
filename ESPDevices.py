@@ -481,18 +481,13 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
     counter +=1
     commandList.append(message)
     vindex = vstart
-    DC.pointDone.update([hindex,vindex])
-    DC.pointDone.update([hindex+200,vindex])
     while (vindex < vend):
       message = "M2:" + str(vindex) + ":" 
       counter += 1
       commandList.append(message)
-      DC.pointDone.update([hindex,vindex])
       message = "M3:" + str(vindex) + ":" 
       counter += 1
       commandList.append(message)
-      DC.pointDone.update([hindex,vindex])
-      DC.pointDone.update([hindex + 200,vindex])
 
       if (scanning):
             addScanning(counter)
@@ -500,15 +495,11 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
     
     if (vindex > vend):
       message = "M2:" + str(vend) + ":" 
-      DC.pointDone.update([hindex,vindex])
-      DC.pointDone.update([hindex + 200,vindex])
 
       counter += 1
       commandList.append(message)
       message = "M3:" + str(vend) + ":" 
       counter += 1
-      DC.pointDone.update([hindex,vend])
-      DC.pointDone.update([hindex + 200,vend])
 
       commandList.append(message)
       if (scanning):
@@ -524,8 +515,6 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
     commandList.append(message)
 
     vindex -= vdelta
-    DC.pointDone.update([hindex,vend])
-    DC.pointDone.update([hindex + 200,vend])
 
 
     while (vindex != 0 ):
@@ -535,14 +524,10 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
         addScanning(counter)
       counter +=1
       message = "M2:" + str(vindex) + ":" 
-      DC.pointDone.update([hindex,vindex])
-      DC.pointDone.update([hindex + 200,vindex])
 
       commandList.append(message)
       counter +=1
       message = "M3:" + str(vindex) + ":" 
-      DC.pointDone.update([hindex,vindex])
-      DC.pointDone.update([hindex + 200,vindex])
       commandList.append(message)
       if (vindex == 0):
           break

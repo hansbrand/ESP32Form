@@ -12,6 +12,7 @@ from collections import OrderedDict
 from DataPoint import DataPoint
 from FormMobile import FormMobile 
 import EMailer
+import math
 
 strategyActive = False
 currentturns = 0
@@ -109,17 +110,41 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     strategyActive = True
 
 
-def getHorPoints( p1, p2, div, upper):
+def getDivisor(p1,p2,targetsize,diffangle):
+    try:
+        ret = 1
+        diff = max(p1.meter,p2.meter) 
+        # if (diff > 4.0):
+        #     print (diff)
+        ddangle = diffangle / 0.225
+        scale = diff * math.sin(math.radians(0.225))
+        nangle = targetsize / scale
+        ret = ddangle / nangle
+    except Exception as exc:
+        print(exc)
+        return(1)
+    return int(ret)
+
+
+def getHorPoints( p1, p2, div):
     pset = set()
-    if (upper < p1.hnewdeg):
-        upper += 400
-    delta = abs(upper - p1.hnewdeg)
+
+    if (p2.hnewdeg < p1.hnewdeg):
+        pfrom = p1.hnewdeg
+        pto = p2.hnewdeg + 400
+    else:
+        pfrom = p1.hnewdeg
+        pto = p2.hnewdeg
+
+    delta = abs(pto - pfrom)
+
     #minimize
     for div1 in range(div,0,-1):
         d = delta / float(div1 + 1)
-        if (d > (0.25 * div1)):
+        total = (0.25 * div1)
+        if (d > total):
             for i in range(1,div1 + 1):
-                nx = adjust(p1.hnewdeg + float(d * i))
+                nx = adjust(pfrom + float(d * i))
                 f,g = modf(nx)
                 if (nx > 400):
                     g -= 400
@@ -144,50 +169,54 @@ def getHorAngles(row):
     horset = set()
     pointset = set()
     l = len(row)
-    for index in range(0, l - 1):
+    if ( l == 2):
+        f = 0
+        t = 1
+    elif (l == 3):
+        f = 1
+        t = 2
+    else:
+        f = 0
+        t = l - 1
+    for index in range(f,t):
         p = row[index]
         if p.vnewdeg > 200.0:
             print(p.vnewdeg)
-        if p.state in ["VALID","COMPUTED"]:
+        if p.state in ["VALID"]:
             #sonderfall
             if l > 2:
                 #minimal degree                    
                 np =  row[index - 1]
-                upper = p.hnewdeg
-                lower = np.hnewdeg
-                
-                dh = abs( lower - upper)
-                if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
+                deltaAngle = p.hAngle - np.hAngle
+                if deltaAngle <= 0:
+                    deltaAngle = (p.hAngle + 360.0) - np.hAngle
+
+                if np.state in ["VALID"]:
                     dist = Calculator.get3Ddist(p,np)
                     if dist > targetwidth:
                         #halfit
-
-                        div = int(dist / targetwidth)
-                        hd = (upper + np.hnewdeg) / 2.0
-                        pset = getHorPoints(np,p,div,upper)
+                        div = getDivisor(np, p, targetwidth, abs(deltaAngle))
+                        pset = getHorPoints(np,p,div)
                         if len(pset) > 0:
                             pointset.update(pset)
-                            hd = adjust(hd)
-                            horset.update([hd])
 
 
             #minimal degree                    
             np = row[(index + 1) % l]
             dh = abs(np.hnewdeg - p.hnewdeg)
-            upper = np.hnewdeg
-            if (upper < p.hnewdeg ):
-                upper += 400
-            if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
+            deltaAngle = np.hAngle - p.hAngle
+            if deltaAngle <= 0:
+                deltaAngle = (np.hAngle + 360.0) - p.hAngle
+
+
+            if np.state in ["VALID"]:
                 dist = Calculator.get3Ddist(p,np)
                 if dist > targetwidth:
-                    div = int(dist / targetwidth)
+                    div = getDivisor(np, p, targetwidth,abs(deltaAngle))
                     #halfit
-                    hd = (upper + p.hnewdeg) / 2.0
-                    pset = getHorPoints(p,np,div,upper)
+                    pset = getHorPoints(p,np,div)
                     if len(pset) > 0:
                         pointset.update(pset)
-                        hd = adjust(hd)
-                        horset.update([hd])
 
     return horset,pointset
 
@@ -230,16 +259,16 @@ def getVerAngles(row):
 
     for index in range(scanlimits[0],scanlimits[1]):
         p = row[index]
-        if p.state in ["VALID","COMPUTED"]:
+        if p.state in ["VALID"]:
             #minimal degree       
             if l > 2:
                 np =   row[index - 1]           
                 dh = abs( np.vnewdeg - p.vnewdeg)
-                if np.state in ["VALID","COMPUTED"] and (dh >= 0.5):
+                if np.state in ["VALID"] and (dh >= 0.5):
                     dist = Calculator.get3Ddist(p,np)
                     if dist > targetheight:
                         #halfit
-                        div = int(dist / targetheight)
+                        div = getDivisor(np, p, targetheight, abs(np.vAngle - p.vAngle))
                         hd = (p.vnewdeg + np.vnewdeg) / 2.0
                         pset = getVerPoints(np,p,div)
                         if len(pset) > 0:
@@ -251,11 +280,11 @@ def getVerAngles(row):
             #minimal degree                    
             dh = abs( row[index + 1].vnewdeg - p.vnewdeg)
             np = row[index + 1]
-            if np.state in ["VALID","COMPUTED"] and (dh >= 5):
+            if np.state in ["VALID"] and (dh >= 5):
                 dist = Calculator.get3Ddist(p,np)
                 if dist > targetheight:
                     #halfit
-                    div = int(dist / targetheight)
+                    div = getDivisor(np, p, targetheight, abs(np.vAngle - p.vAngle))
                     hd = (p.vnewdeg +np.vnewdeg) / 2.0
                     pset = getVerPoints(p,np,div)
                     if len(pset) > 0:
@@ -648,8 +677,11 @@ def setpassdone():
 
 def initSimulation():
     global targetheight,targetwidth
+    global MINWIDTH, MINHEIGHT    
     targetwidth = 0.32
-    targetheight = 0.64
+    targetheight = 0.32
+    MINWIDTH = 0.8
+    MINHEIGHT = 0.8
 
 def simulateTurn():
     global strategyActive, currentturns,targetwidth

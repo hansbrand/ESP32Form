@@ -348,8 +348,8 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        targetwidth = 1.28
-        targetheight = 1.28
+        targetwidth = 0.32
+        targetheight = 0.32
         maxturns = 1000
         minwidth = 0.08
         minheight = 0.08
