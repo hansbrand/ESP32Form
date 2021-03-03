@@ -158,8 +158,6 @@ def getHorPoints( p1, p2, div):
                 if not (nx,ny) in DC.pointDone:                    
                     #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
-
-
             break
     return (pset)
 
@@ -172,9 +170,9 @@ def getHorAngles(row):
     if ( l == 2):
         f = 0
         t = 1
-    elif (l == 3):
-        f = 1
-        t = 2
+    # elif (l == 3):
+    #     f = 1
+    #     t = 2
     else:
         f = 0
         t = l - 1
