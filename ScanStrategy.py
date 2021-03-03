@@ -69,7 +69,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     MINWIDTH = minwidth
     MINHEIGHT = minheight
 
-    hdegree = 20
+    hdegree = 10
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
@@ -182,22 +182,21 @@ def getHorAngles(row):
             print(p.vnewdeg)
         if p.state in ["VALID"]:
             #sonderfall
-            if l > 2:
+            #if l > 2:
                 #minimal degree                    
-                np =  row[index - 1]
-                deltaAngle = p.hAngle - np.hAngle
-                if deltaAngle <= 0:
-                    deltaAngle = (p.hAngle + 360.0) - np.hAngle
+            np =  row[index - 1]
+            deltaAngle = p.hAngle - np.hAngle
+            if deltaAngle <= 0:
+                deltaAngle = (p.hAngle + 360.0) - np.hAngle
 
-                if np.state in ["VALID"]:
-                    dist = Calculator.get3Ddist(p,np)
-                    if dist > targetwidth:
-                        #halfit
-                        div = getDivisor(np, p, targetwidth, abs(deltaAngle))
-                        pset = getHorPoints(np,p,div)
-                        if len(pset) > 0:
-                            pointset.update(pset)
-
+            if np.state in ["VALID"]:
+                dist = Calculator.get3Ddist(p,np)
+                if dist > targetwidth:
+                    #halfit
+                    div = getDivisor(np, p, targetwidth, abs(deltaAngle))
+                    pset = getHorPoints(np,p,div)
+                    if len(pset) > 0:
+                        pointset.update(pset)
 
             #minimal degree                    
             np = row[(index + 1) % l]
@@ -217,6 +216,34 @@ def getHorAngles(row):
                         pointset.update(pset)
 
     return horset,pointset
+
+# def fillLowerRows(p):
+#     pset = set()
+#     if p.state != "VALID":
+#         return pset
+#     as = math.asin(targetheight / p.meter)
+#     angle = adjust(as)
+#     cangle = p.vnewdeg - angle
+#     hangle = p.hnewdeg
+#     while cangle >= 0.0:
+#         if not (hangle,cangle) in DC.pointDone:
+#             pset.update([(hangle,cangle)])        
+#         cangle -= angle
+#     return pset
+
+# def fillUpperRows(p):
+#     pset = set()
+#     if p.state != "VALID":
+#         return pset
+#     angle = adjust(math.asin(SupportsFl targetheight / p.meter))
+#     cangle = p.vnewdeg + angle
+#     hangle = p.hnewdeg
+#     while cangle <= 193.0:
+#         if not (hangle,cangle) in DC.pointDone:
+#             pset.update([(hangle,cangle)])        
+#         cangle += angle
+#     return pset
+
 
 
 def getVerPoints( p1, p2, div):
@@ -290,6 +317,11 @@ def getVerAngles(row):
                         hd = adjust(hd)
 
                         verset.update([hd])
+    # if (row[0].vnewdeg !=  0.0):
+    #     pointset.update(fillLowerRows(row[0]))
+    # if (row[-1].vnewdeg !=  193.0):
+    #     pointset.update(fillUpperRows(row[-1]))
+
     return verset,pointset
 
 def addS1Scanning(commandList):

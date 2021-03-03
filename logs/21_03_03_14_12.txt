@@ -1,0 +1,6 @@
+INFO : 21_03_03_14_12   Session started
+INFO : 21_03_03_14_12   Strategy started
+INFO : 21_03_03_14_12   Start h degree : 10
+INFO : 21_03_03_14_12   Start v degree : 10.0
+INFO : 21_03_03_14_12   Start targetwitdth : 0.32
+INFO : 21_03_03_14_12   Start targetheight : 0.32
