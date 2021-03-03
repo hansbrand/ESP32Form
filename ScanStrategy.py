@@ -217,32 +217,59 @@ def getHorAngles(row):
 
     return horset,pointset
 
-# def fillLowerRows(p):
-#     pset = set()
-#     if p.state != "VALID":
-#         return pset
-#     as = math.asin(targetheight / p.meter)
-#     angle = adjust(as)
-#     cangle = p.vnewdeg - angle
-#     hangle = p.hnewdeg
-#     while cangle >= 0.0:
-#         if not (hangle,cangle) in DC.pointDone:
-#             pset.update([(hangle,cangle)])        
-#         cangle -= angle
-#     return pset
+def fillLowerRows(p):
+    pset = set()
+    if p.state != "VALID":
+        return pset
+    #as = math.asin(targetheight / p.meter)
+    onestepdelta = p.meter * math.sin(math.radians(0.225))
+    if (onestepdelta <= 0):
+        return pset
+    #TODO: make it better
+    startangle = 0.225
+    startdist = onestepdelta
+    while startdist < (targetheight - onestepdelta):
+        startdist += onestepdelta
+        startangle += 0.225
+    # calclate altgrad -> neugrad
+    startangle *= 1.1111111111
+    startangle = adjust(startangle)
+    cangle = adjust( (p.vnewdeg - startangle))
+    hangle = p.hnewdeg
+    while cangle >= 0.0:
+        if not (hangle,cangle) in DC.pointDone:
+            #calculate h
+            pset.update([(hangle,cangle)])        
+        cangle -= startangle
+    return pset
 
-# def fillUpperRows(p):
-#     pset = set()
-#     if p.state != "VALID":
-#         return pset
-#     angle = adjust(math.asin(SupportsFl targetheight / p.meter))
-#     cangle = p.vnewdeg + angle
-#     hangle = p.hnewdeg
-#     while cangle <= 193.0:
-#         if not (hangle,cangle) in DC.pointDone:
-#             pset.update([(hangle,cangle)])        
-#         cangle += angle
-#     return pset
+
+def fillUpperRows(p):
+    pset = set()
+    if p.state != "VALID":
+        return pset
+    #as = math.asin(targetheight / p.meter)
+    onestepdelta = p.meter * math.sin(math.radians(0.225))
+    if (onestepdelta <= 0):
+        return pset
+    #TODO: make it better
+    startangle = 0.225
+    startdist = onestepdelta
+    while startdist < (targetheight - onestepdelta):
+        startdist += onestepdelta
+        startangle += 0.225
+    # calclate altgrad -> neugrad
+    startangle *= 1.111111111
+    startangle = adjust(startangle)
+    cangle = adjust( (p.vnewdeg + startangle))
+    hangle = p.hnewdeg
+    while cangle <= 193.0:
+        if not (hangle,cangle) in DC.pointDone:
+            #calculate h
+            pset.update([(hangle,cangle)])        
+        cangle += startangle
+    return pset
+
 
 
 
@@ -317,10 +344,10 @@ def getVerAngles(row):
                         hd = adjust(hd)
 
                         verset.update([hd])
-    # if (row[0].vnewdeg !=  0.0):
-    #     pointset.update(fillLowerRows(row[0]))
-    # if (row[-1].vnewdeg !=  193.0):
-    #     pointset.update(fillUpperRows(row[-1]))
+    if (row[0].vnewdeg !=  0.0):
+        pointset.update(fillLowerRows(row[0]))
+    if (row[-1].vnewdeg !=  193.0):
+        pointset.update(fillUpperRows(row[-1]))
 
     return verset,pointset
 
