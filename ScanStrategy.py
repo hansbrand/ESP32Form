@@ -89,7 +89,7 @@ def startScan( width, height, turns, connector, minwidth, minheight):
 
     for s in clist:
         connect.addCommand(s)
-        print(s)
+        #print(s)
         pass
 
     difftime = time.time() - starttime

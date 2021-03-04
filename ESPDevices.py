@@ -179,7 +179,7 @@ def genSimpleCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = M
   message = "C1:" + str(C_STEPPERCALIBRATE) + ":" 
 #   for mes in commandList:
 #       print(mes)
-  print(message)
+  #print(message)
   commandList.append(message)
 
   return commandList
@@ -254,7 +254,7 @@ def genTestCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAX
 
     commandList.append(getstatsCommand())
 
-    print(commandList[-10:])
+    #print(commandList[-10:])
     return commandList
 
 
@@ -278,7 +278,7 @@ def genHorizontalCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend
 
     commandList.append(getstatsCommand())
 
-    print(commandList[-10:])
+    #print(commandList[-10:])
     return commandList
 
 def getTimeDictvalue(k):
@@ -468,7 +468,7 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
 
   counter = 0
   commandList.append(starttimerCommand())
-  commandList.append(calibrateCommand())
+  #commandList.append(calibrateCommand())
   hindex = hstart
   vindex = vstart
   while  (hindex < hend):

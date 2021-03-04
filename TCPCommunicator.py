@@ -190,6 +190,9 @@ def sendSingleCommand(command):
 
 
     try:
+        if (str(ESPDevices.C_STARTTIMER) in command):
+            sendCounter = 0
+
         command += str(sendCounter)+"\n"
         #print("send : " + command)
         commandlock.acquire()
