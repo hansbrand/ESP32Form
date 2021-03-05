@@ -215,7 +215,7 @@ def recomputeErrors():
         errorscalculated = True
         DC.addComputedPoints(resultlist,el, mrows, mcols)
     except Exception as pexc:
-            print("3D Error: ", pexc)
+            print("Calculate Error: ", pexc)
 
     pass
 

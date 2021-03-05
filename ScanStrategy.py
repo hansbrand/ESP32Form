@@ -155,9 +155,12 @@ def getHorPoints( p1, p2, div):
                     print (ny)
                 if (nx > 400.0):
                     print (nx)
-                if not (nx,ny) in DC.pointDone:                    
+                if not tuple([int(nx * 10.0),int(ny*10.0)]) in DC.pointDone:                    
                     #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
+                else:
+                    print("ignore")     
+
             break
     return (pset)
 
@@ -237,9 +240,11 @@ def fillLowerRows(p):
     cangle = adjust( (p.vnewdeg - startangle))
     hangle = p.hnewdeg
     while cangle >= 0.0:
-        if not (hangle,cangle) in DC.pointDone:
+        if not tuple([int(hangle*10),int(cangle*10)]) in DC.pointDone:
             #calculate h
-            pset.update([(hangle,cangle)])        
+            pset.update([(hangle,cangle)])   
+        else:
+            print("ignore")     
         cangle -= startangle
     return pset
 
@@ -264,9 +269,12 @@ def fillUpperRows(p):
     cangle = adjust( (p.vnewdeg + startangle))
     hangle = p.hnewdeg
     while cangle <= 193.0:
-        if not (hangle,cangle) in DC.pointDone:
+        if not tuple([int(hangle*10),int(cangle*10)]) in DC.pointDone:
             #calculate h
-            pset.update([(hangle,cangle)])        
+            pset.update([(hangle,cangle)])
+        else:
+            print("ignore")     
+
         cangle += startangle
     return pset
 
@@ -288,9 +296,12 @@ def getVerPoints( p1, p2, div):
                     break
                 if (ny > 200.0):
                     print(ny)
-                if not (nx,ny) in DC.pointDone:                    
+                if not tuple([int(nx*10), int(ny*10)]) in DC.pointDone:                    
                     #DC.pointDone.update([(nx,ny)])
                     pset.update([(nx,ny)])
+                else:
+                    print("ignore")     
+
             break
     return pset
 

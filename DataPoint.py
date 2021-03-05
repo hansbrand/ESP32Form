@@ -56,6 +56,10 @@ class DataPoint(object):
 
             self.hAngle *= 0.900000000000001
             self.vAngle *= 0.900000000000001
+
+            if (self.hnewdeg == 0)  and (self.vnewdeg == 193.0):
+                        print("found")
+
             
             tx = xradius *    math.cos(math.radians(self.hAngle))
             ty = xradius *    math.sin(math.radians(self.hAngle))
@@ -111,12 +115,13 @@ class DataPoint(object):
                 # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
             #if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
-            if ((self.hnewdeg,self.vnewdeg) in DC.pointDone):
+            if (tuple([0,1930]) in DC.pointDone):
+                print("found")
+            if (tuple([int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0)]) in DC.pointDone):
                 return None
             if  (self.meter < 6.0) and (self.z > -1.5):
-
                 self.state = "VALID"
-                DC.pointDone.update([(self.hnewdeg,self.vnewdeg)])
+                DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
 
                 # if (abs(self.x) > 6):
                 #         print(self.meter)
