@@ -176,6 +176,13 @@ def addPoint(dp):
     try:
         if dp == None:
             return
+        if (dp.state != "VALID"):
+            savelock.acquire()
+            ErrorList.append(dp)
+            errorcount += 1
+            savelock.release()
+            return
+
         PointCloud.append(dp)
         if (dp.hnewdeg < 200):
             lastS1 = dp
@@ -186,9 +193,6 @@ def addPoint(dp):
         addArr(dp)
         addLimits(dp)
         addRows(dp)
-        if (dp.state != "VALID"):
-            ErrorList.append(dp)
-            errorcount += 1
             #print("Errors : " + str(errorcount) + "/"+ str(len(PointCloud)))
         savelock.release()
         

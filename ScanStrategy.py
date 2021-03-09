@@ -13,6 +13,7 @@ from DataPoint import DataPoint
 from FormMobile import FormMobile 
 import EMailer
 import math
+import EdgeManager as EM
 
 strategyActive = False
 currentturns = 0
@@ -26,6 +27,7 @@ MINHEIGHT = 0.2
 totaltime = None
 passtime = -1.0
 passdone = True
+currentModus = "EDGE"
 
 def adjust(deg):
     f,g = modf(deg)
@@ -54,11 +56,11 @@ def sendMail():
     
 
 
-def startScan( width, height, turns, connector, minwidth, minheight):
+def startScan( width, height, turns, connector, minwidth, minheight,modus = "NORMAL"):
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
     global MINWIDTH, MINHEIGHT
-    global totaltime,passtime,passdone
+    global totaltime,passtime,passdone,currentModus
 
     targetwidth = width
     targetheight = height
@@ -68,6 +70,8 @@ def startScan( width, height, turns, connector, minwidth, minheight):
     reversescan = False
     MINWIDTH = minwidth
     MINHEIGHT = minheight
+    currentModus = modus
+
 
     hdegree = 10
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
@@ -626,6 +630,31 @@ def createRange(PointSet,reversescan, HorSet, VerSet):
     commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
     return commands,PointSet
 
+def createEdges(PointSet,reversescan):
+        #row by row
+
+    PointSet = EM.createEdges()
+
+    
+    # create scanpoints from angle sets
+    PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
+    #scanlist,scanrows,scancols = createScanPoints(HorSet,VerSet)
+
+    # sort in horizontal order with horpos
+    #scancols = sorted(scancols.items(), key = getRealh ,reverse = reversescan)
+    # for k in scancols.keys():     
+    #     scancols[k] = sorted(scancols[k],key=lambda d: (d['realH'], d['hor_angle']) )
+
+
+    #getcommands
+    commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
+    return commands,PointSet
+
+
+
+
+
+
 
 def genCommandTime(commands):
     t = 0
@@ -743,13 +772,14 @@ def setpassdone():
 
 
 
-def initSimulation():
+def initSimulation(modus = "NORMAL"):
     global targetheight,targetwidth
-    global MINWIDTH, MINHEIGHT    
+    global MINWIDTH, MINHEIGHT,currentModus 
     targetwidth = 0.32
     targetheight = 0.32
     MINWIDTH = 0.8
     MINHEIGHT = 0.8
+    currentModus = modus
 
 def simulateTurn():
     global strategyActive, currentturns,targetwidth
@@ -763,7 +793,10 @@ def simulateTurn():
     PointSet = set()
     DC.sortRows()
 
-    commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+    if (currentModus == "EDGE"):
+        PointSet = EM.createEdges()
+    else:
+        commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
     if (len(commands) < 100):
         tw = targetwidth / 2.0
         th = targetheight / 2.0
@@ -771,6 +804,7 @@ def simulateTurn():
             FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
             targetwidth = tw
             targetheight = th
+            
             commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
         else: 
             strategyActive = False

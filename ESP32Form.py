@@ -194,8 +194,8 @@ class Application(tk.Frame):
         #master.attributes('-fullscreen', True)
         #master.update()
 
-        FM.startlogging()
-        FM.ilog("Session started")
+        #FM.startlogging()
+        #FM.ilog("Session started")
 
 
         self.master = master

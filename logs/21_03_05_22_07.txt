@@ -1,9 +1,0 @@
-INFO : 21_03_05_22_07   Session started
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!
-INFO : 21_03_05_22_07   Scanning done!!!

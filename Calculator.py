@@ -116,6 +116,8 @@ def interpolate(err, mrows, mcols):
     validcounter = 0
     estcounter = 0
 
+    if len(mrows) < 5 or len(mcols) < 5:
+        return("INVALID")
     err.x = 0
     err.y = 0
     err.z = 0
@@ -188,29 +190,29 @@ def recomputeErrors():
             resultlist.append(err)
 
         
-        elist = list(el)
-        for err in elist:
-            col = mcols.get(err.hnewdeg)
-            row = mrows.get(err.vnewdeg)
-            if (interpolate(err, row, col) == "COMPUTED"):
-                resultlist.append(err)
-                el.remove(err)
-            else:
-                #print(err)
-                pass
+        # elist = list(el)
+        # for err in elist:
+        #     col = mcols.get(err.hnewdeg)
+        #     row = mrows.get(err.vnewdeg)
+        #     if (interpolate(err, row, col) == "COMPUTED"):
+        #         resultlist.append(err)
+        #         el.remove(err)
+        #     else:
+        #         #print(err)
+        #         pass
 
 
-        elist = list(el)
+        # elist = list(el)
         
-        for err in elist:
-            col = mcols.get(err.hnewdeg)
-            row = mrows.get(err.vnewdeg)
-            if (estimate(err, row, col) == "COMPUTED"):
-                resultlist.append(err)
-                el.remove(err)
-            else:
-                #print(err)
-                pass
+        # for err in elist:
+        #     col = mcols.get(err.hnewdeg)
+        #     row = mrows.get(err.vnewdeg)
+        #     if (estimate(err, row, col) == "COMPUTED"):
+        #         resultlist.append(err)
+        #         el.remove(err)
+        #     else:
+        #         #print(err)
+        #         pass
 
         errorscalculated = True
         DC.addComputedPoints(resultlist,el, mrows, mcols)
