@@ -74,7 +74,7 @@ def startScan( width, height, turns, connector, minwidth, minheight,modus = "NOR
     currentModus = modus
 
 
-    hdegree = 10
+    hdegree = 5
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
@@ -663,8 +663,6 @@ def nextTurn():
     global targetheight,maxturns,connect,reversescan
     global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone
 
-
-
     if not passdone:
         return
     starttime = time.monotonic()
@@ -781,43 +779,47 @@ def simulateTurn():
     global targetheight,maxturns,connect,reversescan
     global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone
 
-    Calculator.recomputeErrors()
-    reversescan = not reversescan
-    HorSet = set()
-    VerSet = set()
-    PointSet = set()
-    DC.sortRows()
+    try:
+        Calculator.recomputeErrors()
+        reversescan = not reversescan
+        HorSet = set()
+        VerSet = set()
+        PointSet = set()
+        DC.sortRows()
 
-    if (currentModus == ["EDGE","BOTH"]):
-        PointSet = EM.createEdges()
+        if (currentModus == ["EDGE","BOTH"]):
+            PointSet = EM.createEdges()
 
-    if (currentModus in ["DETAIL","BOTH"]):
-        PointSet = RM.createRectangles(targetwidth,targetheight)
+        if (currentModus in ["DETAIL","BOTH"]):
+            PointSet = RM.createRectangles(targetwidth,targetheight)
 
-    PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
-    #getcommands
-    commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
+        PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
+        #getcommands
+        commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
 
-    # else:
-    #     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-    if (len(commands) < 100):
-        tw = targetwidth / 2.0
-        th = targetheight / 2.0
-        if (tw >= MINWIDTH) and (th >= MINHEIGHT):
-            FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
-            targetwidth = tw
-            targetheight = th
-            
-            commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-        else: 
-            strategyActive = False
-            #sendMail()
-            FormMobile.enableButtons(True,False)
-            FM.ilog("Scanning done!!!")
-            return
-    passfield = FormCommand.FormCommand.getWidgetByName("PASS")
-    passtext = "PASS " + str(currentturns + 1) + " : " + str(len(commands))
-    time.sleep(3)
+        # else:
+        #     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+        if (len(commands) < 100):
+            tw = targetwidth / 2.0
+            th = targetheight / 2.0
+            if (tw >= MINWIDTH) and (th >= MINHEIGHT):
+                FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
+                targetwidth = tw
+                targetheight = th
+                
+                commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+            else: 
+                strategyActive = False
+                #sendMail()
+                FormMobile.enableButtons(True,False)
+                FM.ilog("Scanning done!!!")
+                return
+        passfield = FormCommand.FormCommand.getWidgetByName("PASS")
+        passtext = "PASS " + str(currentturns + 1) + " : " + str(len(commands))
+        time.sleep(3)
+    except Exception as exc:
+        print (exc)
+
 
             
 
