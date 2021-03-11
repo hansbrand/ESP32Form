@@ -50,7 +50,7 @@ class Application(tk.Frame):
     drawtime = 10
 
     @classmethod
-    def cleanup(self):
+    def cleanup(cls):
         global ISLINUXOS
 
         print("exit")
@@ -97,9 +97,9 @@ class Application(tk.Frame):
         #self.newwin.iconify()
 
  
-    @classmethod
-    def setshow3D(self):
-        show3Dwindow = True
+    # @classmethod
+    # def setshow3D(cls):
+    #     show3Dwindow = True
     
     def checkScanning(self):
         global allowdraw

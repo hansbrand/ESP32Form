@@ -127,14 +127,14 @@ class Graph3D(Tk.Frame):
 
                 return
            
-
-            # ax.clear()
-            # ax.set_xlabel("X - Axis")
-            # ax.set_ylabel("Y - Axis")
-            # ax.set_zlabel("Z - Axis")
-            # ax.xaxis.set_major_locator(plt.MaxNLocator(5))
-            # ax.yaxis.set_major_locator(plt.MaxNLocator(5))
-            # ax.zaxis.set_major_locator(plt.MaxNLocator(5))
+            if DC.isAnalyze:
+                ax.clear()
+                ax.set_xlabel("X - Axis")
+                ax.set_ylabel("Y - Axis")
+                ax.set_zlabel("Z - Axis")
+                ax.xaxis.set_major_locator(plt.MaxNLocator(5))
+                ax.yaxis.set_major_locator(plt.MaxNLocator(5))
+                ax.zaxis.set_major_locator(plt.MaxNLocator(5))
 
             # if is3D:
             #     m = DC.dc["0"]["polygons"]
@@ -170,8 +170,6 @@ class Graph3D(Tk.Frame):
             print("3D Error: ", pexc)
 
 
-    def zreset(self,event):
-        DataPool.resetIndices()
 
 
 

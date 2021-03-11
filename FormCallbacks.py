@@ -355,8 +355,28 @@ class FormCallbacks(object):
         minheight = 0.08
         DC.initDataContainer()
 
-        SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight)
+        SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight, "DETAIL")
         pass
+
+    @classmethod
+    def callbackEDGES(self , button):
+        print("callbackEDGES")
+        FormMobile.enableButtons(True, True)
+        if (self.classname == "USBCommunicator"):
+             self.com =  __import__("USBCommunicator")
+        else:
+             self.com =  __import__("TCPCommunicator")
+        targetwidth = 0.32
+        targetheight = 0.32
+        maxturns = 1000
+        minwidth = 0.08
+        minheight = 0.08
+        DC.initDataContainer()
+
+        SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight,'EDGE')
+        pass
+
+
 
     @classmethod
     def callbackMESH(self , button):

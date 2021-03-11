@@ -160,7 +160,7 @@ def loadfile(filename):
         datafd=open(filename,"rt")
         buffer = datafd.readlines()
         datafd.close()
-        SS.initSimulation("EDGE")
+        SS.initSimulation("DETAIL")
         for message in buffer:
             ident = message[0:2]
             if ident in   ESPDevices.deviceList:

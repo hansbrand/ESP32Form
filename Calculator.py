@@ -215,7 +215,7 @@ def recomputeErrors():
         #         pass
 
         errorscalculated = True
-        DC.addComputedPoints(resultlist,el, mrows, mcols)
+        #DC.addComputedPoints(resultlist,el, mrows, mcols)
     except Exception as pexc:
             print("Calculate Error: ", pexc)
 

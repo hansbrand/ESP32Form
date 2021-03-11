@@ -1,6 +1,8 @@
 import numpy as np
 import DataContainer as DC
-
+from DataPoint import DataPoint
+import math
+from intersection import line_intersection
 
 def genScanPoints(p1, p2, isrow):
     ret = set()
@@ -14,7 +16,11 @@ def genScanPoints(p1, p2, isrow):
     if (a1 > a2) and not isrow:
         a2 += 400
     
-    delta = 0.5 if (abs(a1-a2) >= 2.0) else 0.25
+    delta = 2.0 
+    if (abs(a1-a2) <= 10.0): delta = 1
+    if (abs(a1-a2) <= 2.0): delta = 0.25
+    if (abs(a1-a2) <= 0.25): 
+        return ret
     
 
     deg = a1 + delta
@@ -24,46 +30,104 @@ def genScanPoints(p1, p2, isrow):
         ret.update([val])
         deg += delta
 
-
     return ret
 
 def getEdgePoint(row):
-    p1 = row[0]
-    p1 = np.array([p1.x, p1.y, p1.z])
-    p2 = row[1]
-    p2 = np.array([p2.x, p2.y, p2.z])
-    p3 = row[2]
-    p3 = np.array([p3.x, p3.y, p3.z])
-    p4 = row[3]
-    p4 = np.array([p4.x, p4.y, p4.z])
-    d1 = p2 - p1
-    d2 = p4 - p3
+    try:
+        x = list()
+        p1 = row[0]
+        p2 = row[1]
+        p3 = row[2]
+        p4 = row[3]
 
-    #t, s = np.linalg.solve(np.array([A[1]-A[0], B[0]-B[1]]).T, B[0]-A[0])
-    t, s = np.linalg.solve(np.array([d1, d2]).T, p2[0]-p1[0])
-    print((1-t)*p1[0] + t*p1[1])
+        ix = False
+        iy = False
+        iz = False
+
+        distx = abs(p2.x - p3.x)
+        disty = abs(p2.y - p3.y)
+        distz = abs(p2.z - p3.z)
+
+        if (distx >= disty) and (distx >= distz): ix = True
+        elif (disty >= distx) and (disty >= distz): iy = True
+        elif (distz >= disty) and (distz >= distx): iz = True
+
+        p12d = [p1.x,p1.y]
+        p22d = [p2.x,p2.y]
+        p32d = [p3.x,p3.y]
+        p42d = [p4.x,p4.y]
+
+        np1 = np.array([p1.x, p1.y, p1.z])
+        np2 = np.array([p2.x, p2.y, p2.z])
+        np3 = np.array([p3.x, p3.y, p3.z])
+        np4 = np.array([p4.x, p4.y, p4.z])
+
+        d1 = np2 - np1
+        d2 = np4 - np3
+
+        if iz:
+            rx, ry = line_intersection(([p1.x,p1.y],[p2.x,p2.y]),([p3.x,p3.y], [p4.x,p4.y]))
+            rz = p2.z + p3.z / 2#+ rx * d1[2]
+        if ix:
+            ry, rz = line_intersection(([p1.y,p1.z],[p2.y,p2.z]),([p3.y,p3.z], [p4.y,p4.z]))
+            rx = p2.x + p3.x / 2 #+ rx * d1[2]
+
+        if iy:
+            rx, rz = line_intersection(([p1.x,p1.z],[p2.x,p2.z]),([p3.x,p3.z], [p4.x,p4.z]))
+            ry = p2.y + p3.y / 2 #+ rx * d1[2]
+
+        if rx == -10000 or rz == -10000 or ry == -10000:
+            return x
+
+
+        dp = DataPoint()
+        dp.x = rx
+        dp.y = ry
+        dp.z = rz
+        dp.state = "EDGE"
+
+        if (dp.x < -2) and (dp.y >3) and (dp.x > -3.5):
+            rx, ry = line_intersection((p12d,p22d),(p32d,p42d))
+        x = list([dp])
+        return (x)
+    except Exception as exc:
+        print(exc)
+        return x
+
+    #print((1-t)*p1[0] + t*p1[1])
 
 
 
 
 def vp( points):
     try:
+
         p1 = points[0]
         p1 = np.array([p1.x,p1.y,p1.z])
         p2 = points[1]
         p2 = np.array([p2.x,p2.y,p2.z])
-        p3 = p2 - p1
+        p3 = p2 + (-p1)
         A = np.array(p3)
 
         p1 = points[2]
         p1 = np.array([p1.x,p1.y,p1.z])
         p2 = points[3]
         p2 = np.array([p2.x,p2.y,p2.z])
-        p3 = p2 - p1
+        p3 = p2 + (-p1)
         B = np.array(p3)
+
         C = np.dot(A,B)
-        print(C)
-        return C
+        #C = A[0] * B[0] + A[1] * B[1] + A[2] * B[2]
+
+        vl1 = math.sqrt(A[0] ** 2 + A[1] ** 2 + A[2] ** 2)
+        vl2 = math.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2)
+
+        cosphi = C / (vl1 * vl2)
+
+        phi = np.degrees (np.arccos(cosphi))
+
+        #print( phi )
+        return phi
     except Exception as exc:
         print(exc)
 
@@ -71,19 +135,35 @@ def vp( points):
 def getAngleList(plist ,isrow):
     alist = set()
     edges = list()
+    
     l = len(plist)
     if l < 4:
-        return
+        return alist, edges
     
     last = l - 3
-    if isrow: last = l
+    if isrow: 
+        last = l
     for i in range(0 , last):
-        if abs(vp(plist[i:i+4])) < 0.1:
+        partlist =plist[i:i+4] 
+        if (isrow):
+            partlist = list()
+            for i in range(0,4):
+                partlist.append(plist[i % l])
+                if (plist[i % l].state != "VALID"):
+                    print("wrong")
+        
+
+
+        degree = vp(partlist) % 180
+        if degree < 135 and degree > 45:
+            cross = getEdgePoint(partlist)
+            if (len(cross) > 0):
+                for e in cross:
+                    edges.append(e)
             al = genScanPoints(plist[1],plist[2],isrow)
-            cross = getEdgePoint(plist[i:i+4])
             alist.update(al)
             pass
-    return alist
+    return alist, edges
 
 
 
@@ -97,11 +177,24 @@ def createEdges():
         mcols = dict(mcols)
 
         for key in mrows.keys():
-            result.update(getAngleList(mrows[key],False))
+            points, edge = getAngleList(mrows[key],False)
+            result.update(points)
+            if (len(edge) > 0):
+                for e in edge:
+                    if DC.filter(e):
+                        edges.append(e)
         for key in mcols.keys():
-            result.update(getAngleList(mcols[key],True))
+            points, edge = getAngleList(mcols[key],True)
+            result.update(points)
+            if (len(edge) > 0):
+                for e in edge:
+                    if DC.filter(e):
+                        edges.append(e)
+    
+        DC.setEdgeList(edges)
         return result
     except Exception as exc:
         print(exc)
+        return result
 
 

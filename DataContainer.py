@@ -9,6 +9,7 @@ PointDict = None
 ErrorList = None
 ComputedPoints = None
 StatusList = None
+EdgeList = None
 xarr = []
 yarr = []
 zarr = []
@@ -19,6 +20,7 @@ mcols = None
 lastS1 = None
 lastS2 = None
 pointDone = set()
+isAnalyze = False
 
 
 
@@ -77,7 +79,7 @@ def getMarkerColor(val,limits = None):
 
 
 def initDataContainer():
-    global PointCloud,pointDone
+    global PointCloud,pointDone, EdgeList
     global PointDict
     global ErrorList
     global StatusList
@@ -88,13 +90,16 @@ def initDataContainer():
     global limits3D
     global mrows
     global mcols
-    global errorcount, ComputedPoints
+    global errorcount, ComputedPoints, isAnalyze
+
+    isAnalyze = False
 
     PointCloud = []
     PointDict = []
     ErrorList = []
     StatusList = []
     ComputedPoints = []
+    EdgeList = []
     xarr = []
     yarr = []
     zarr = []   
@@ -205,28 +210,48 @@ def addPoint(dp):
     pass
 
 def getPointData():
-    global xarr
-    global yarr
-    global zarr
-    global marr
-    global savelock
+    global xarr, yarr, zarr, marr
+    global savelock, EdgeList,isAnalyze
 
 
+    try:
+        savelock.acquire()
+        xl = list()
+        yl = list()
+        zl = list()
+        ml = list()
+        
+        #print(str(len(xarr)) + " / " + str(len(yarr)) + " / " + str(len(zarr)) + " / " + str(len(marr)))
+        if not isAnalyze:
+            while (len(xarr) > 0):
+                xl.append(xarr.pop(0))
+                yl.append(yarr.pop(0))
+                zl.append(zarr.pop(0))
+                ml.append(marr.pop(0))
+        else:                
+            xl = list(xarr)
+            yl = list(yarr)
+            zl = list(zarr)
+            ml = list(marr)
+        
+        for e in EdgeList:
+            xl.append(e.x)
+            yl.append(e.y)
+            zl.append(e.z)
+            ml.append("black")
+
+        savelock.release()
+        return xl,yl,zl,ml
+    except Exception as exc:
+        print(" getpoint3D : "+ exc)
+        savelock.release()
+        return xl,yl,zl,ml    
+
+def setEdgeList(edges):
+    global EdgeList
     savelock.acquire()
-    xl = list()
-    yl = list()
-    zl = list()
-    ml = list()
-    
-    #print(str(len(xarr)) + " / " + str(len(yarr)) + " / " + str(len(zarr)) + " / " + str(len(marr)))
-    while (len(xarr) > 0):
-        xl.append(xarr.pop(0))
-        yl.append(yarr.pop(0))
-        zl.append(zarr.pop(0))
-        ml.append(marr.pop(0))
-
+    EdgeList = list(edges)
     savelock.release()
-    return xl,yl,zl,ml
 
 def getlimits3D():
     global limits3D
@@ -278,3 +303,12 @@ def sortRows():
         return mrows,mcols
 
 
+
+def filter(dp):
+    if dp.x < limits3D["xmin"]: return False
+    if dp.x > limits3D["xmax"]: return False
+    if dp.y < limits3D["ymin"]: return False
+    if dp.y > limits3D["ymax"]: return False
+    if dp.z < limits3D["zmin"]: return False
+    if dp.z > limits3D["zmax"]: return False
+    return True

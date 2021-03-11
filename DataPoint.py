@@ -17,9 +17,14 @@ class DataPoint(object):
     hkey = ""
     vkey = ""
 
-    def __init__(self,line):
+    def __init__(self,line = ""):
         try:
             #print(line)
+            if ( line == ""):
+                self.x = 0
+                self.y = 0
+                self.z = 0
+                return 
             xradius =0.096
             ysensordelta =0.017
             parsed = line.split("|")
@@ -115,8 +120,6 @@ class DataPoint(object):
                 # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
             #if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
-            if (tuple([0,1930]) in DC.pointDone):
-                print("found")
             if (tuple([int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0)]) in DC.pointDone):
                 return None
             if  (self.meter < 6.0) and (self.z > -1.5):

@@ -22,11 +22,13 @@ class FormMobile(tk.Frame):
     "STOP",
     # "TEST1",
     # "TEST20",
-    "TEST80",
+    # "TEST80",
     # "TEST200",
     
-    "FULLSCAN",
+    #"FULLSCAN",
     "QUICKSCAN",
+    "EDGES",
+
     #"SHOW",
     "SAVE_FILE",
     "LOAD_FILE",
@@ -34,7 +36,7 @@ class FormMobile(tk.Frame):
     #"ADJUST",
     #"MUP",
     #"MDOWN",
-    "MESH",
+    #"MESH",
     "HORIZONTAL",
     "QUIT"
     )
@@ -81,7 +83,7 @@ class FormMobile(tk.Frame):
             for c in s:
                 boldFont = tkFont.Font (size = 12, weight = "bold")
                 bt=tk.Button(labelframe,underline=0, font = boldFont)
-                if c in ["INIT",  "QUIT","LOAD_FILE","SAVE_FILE"]:#,"S30x70"]:
+                if c in ["INIT",  "QUIT","LOAD_FILE","SAVE_FILE","EDGES","S30x70"]:
                     bt["state"] = tk.NORMAL
                     bt["bg"] = "lightgrey"
                 else:                    
@@ -190,8 +192,16 @@ class FormMobile(tk.Frame):
 
     @classmethod
     def enableButtons(self,toenable,isscanning = False):
-        scanset = ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE", "FULLSCAN","TEST80"]
+        scanset = ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE", "FULLSCAN","TEST80","EDGES"]
         for bt in self.buttonlist:
+                if not FormCallbacks.initpressed:
+                    if bt["text"] == "INIT":
+                        bt["bg"] = "red"
+                    if bt["text"] in ["INIT",  "QUIT","LOAD_FILE","SAVE_FILE"]:
+                            bt["state"] = tk.NORMAL
+                    else:                    
+                        bt["state"] = tk.DISABLED
+                    continue
                 if toenable:
                     bt["state"] = tk.NORMAL
                     bt["bg"] = "lightgrey"
@@ -205,14 +215,6 @@ class FormMobile(tk.Frame):
                         else:
                             bt["state"] = tk.NORMAL
                             bt["bg"] = "lightgrey"
-
-                else:
-                    if bt["text"] == "INIT":
-                        bt["bg"] = "red"
-                    if bt["text"] in ["INIT",  "QUIT","LOAD_FILE","LOAD_FILE"]:
-                            bt["state"] = tk.NORMAL
-                    else:                    
-                        bt["state"] = tk.DISABLED
 
 
 
