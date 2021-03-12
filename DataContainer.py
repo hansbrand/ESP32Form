@@ -299,9 +299,26 @@ def sortRows():
                 #printall(mcols[k])
                 mcols[k] = sorted(mcols[k],key=lambda d: (d['hnewdeg'], d['vnewdeg']) )
                 #printall(mcols[k])
+        
         savelock.release()
         return mrows,mcols
 
+def sortIdentRows():
+        global mrows,mcols
+        savelock.acquire()
+        #mcols = sorted(mcols.items())
+        #mrows = sorted(mrows.items())
+        for k in mrows.keys():
+            #printall(mrows[k])
+            mrows[k] = sorted(mrows[k],key=lambda d: (d['vnewdeg'],d['hnewdeg']) )
+            #printall(mrows[k])
+        for k in mcols.keys():     
+                #printall(mcols[k])
+                mcols[k] = sorted(mcols[k],key=lambda d: (d['hnewdeg'], d['vnewdeg']) )
+                #printall(mcols[k])
+        
+        savelock.release()
+        return mrows,mcols
 
 
 def filter(dp):

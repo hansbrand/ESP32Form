@@ -1,5 +1,6 @@
 import math
 import DataContainer as DC
+from DataPoint import DataPoint as DP
 
 VList = list()
 HList = list()
@@ -7,6 +8,21 @@ VstartList = list()
 HstartList = list()
 targetheight = 0
 targetwidth = 0
+
+def adjust(deg):
+    f,g = math.modf(deg)
+    d = int(f * 100.0)
+
+    if ( d % 25   == 0):
+        return( float (g) + (float(d) / 100.0))
+    q = int(d / 25.0)
+    less = q * 25
+    more = (q + 1) * 25
+    if (abs(d-less) < abs(more - d)):
+        return( float (g) + (float(less) / 100.0))
+    else:
+        return( float (g) + (float(more) / 100.0))
+
 
 def getDivisor(p1,p2,targetsize,diffangle):
     try:
@@ -42,41 +58,121 @@ def createHLine(p1,p2):
     global HList
     if p1.hnewdeg > p2.hnewdeg:
         p1,p2 = p2,p1
-    HList.append([p1.hnewdeg,p1.vnewdeg,p2.hnewdeg,p2.vnewdeg])
+    HList.append(tuple([p1.hnewdeg,p1.vnewdeg,p2.hnewdeg,p2.vnewdeg]))
     pass
 
 def checkInLine(line, point):
     global HList,VList
+    global VstartList, HstartList
+
     isline = None
+    
     if line is VList:
+        if point in VstartList:
+            return False
         for v in VList:
             if (v[1] <= point.vnewdeg) and (point.vnewdeg <= v[3] ) and (v[0] == point.hnewdeg):
                 return True
 
     if line is HList:
+        if point in HstartList:
+            return False
         for h in HList:
             if (h[0] <= point.hnewdeg) and (point.hnewdeg <= h[2] ) and (h[1] == point.vnewdeg):
                 return True
-        isline = [p for p in VList 
-            if ((p[1] <= point.hnewdeg <= p[2] ) and p[0] == point.vnewdeg)][0]
     return isline
 
+def checkCrossLine(line, point, deg1, deg2):
+    global HList,VList
+    global VstartList, HstartList
+
+    try:
+        isline = None
+        ret = None
+        if line is VList:
+            first = next(filter(lambda p:  point[0] == p.hnewdeg and point[1] == p.vnewdeg, VstartList), None)
+            if first:
+                return True,True,(point[0],point[1])
+            for v in VList:
+                if (v[1] <= point[1]) and (point[1] <= v[3] ) and (deg1 <= v[0])  and (deg2 >= v[0]):
+                    ret = (v[0], point[1])               
+                    return True, False, ret
+
+        if line is HList:
+            first = next(filter(lambda p:  point[0] == p.hnewdeg and point[1] == p.vnewdeg, HstartList), None)
+
+            if first:
+                return True,True,(point[0],point[1])
+            for h in HList:
+                if (h[0] <= point[0]) and (point[0] <= h[2] ) and (deg1 <= h[1])  and (deg2 >= h[1]):
+                    ret = ( point[0], h[1])               
+                    return True,False,ret
+        return False,None,None
+    except Exception as exc:
+        print(exc)
+        return False,None,None
+
+
+
+
+
+
 def getVScans(start, stop, div):
+    global VList, HList
+    global VstartList, HstartList
+
     pset = set()
-    delta = (stop.vnewdeg - start.vnewdeg) / div
+    if (stop.vnewdeg - start.vnewdeg) < 0.5:
+        return pset
+    delta = (stop.vnewdeg - start.vnewdeg) / (div + 1)
     deg = start.vnewdeg + delta
+    olddeg = start.vnewdeg
     while deg < stop.vnewdeg:
-        pset.update([(start.hnewdeg, deg)])
+        deg = adjust(deg)
+        isok,isstart,t = checkCrossLine(HList,(start.hnewdeg, deg), olddeg, deg)
+        if isok:
+            if isstart:
+                break
+            else:
+                pset.update([(start.hnewdeg, deg)])
+                break
+        else:
+                pset.update([(start.hnewdeg, deg)])
+
+        olddeg = deg
         deg += delta
     return pset
 
-# found_bmi_range = [bmi_range for bmi_range
-#                    in bmi_ranges
-#                    if bmi_ranges[2] <= bmi <= bmi_ranges[3]
-#                   ][0]
-def createLines(rows):
+
+def getHScans(start, stop, div):
     global VList, HList
     global VstartList, HstartList
+
+    pset = set()
+    if (stop.hnewdeg - start.hnewdeg) < 0.5:
+        return pset
+    delta = (stop.hnewdeg - start.hnewdeg) / (div + 1)
+    deg = start.hnewdeg + delta
+    olddeg = start.hnewdeg
+    while deg < stop.hnewdeg:
+        deg = adjust(deg)
+        isok,isstart,t = checkCrossLine(VList,(deg, start.vnewdeg), olddeg, deg)
+        if isok:
+            if isstart:
+                break
+            else:
+                pset.update([(start.hnewdeg, deg)])
+                break
+        else:
+                pset.update([(start.hnewdeg, deg)])
+        olddeg = deg
+        deg += delta
+    return pset
+
+
+def createLines(rows,mrows):
+    global VList, HList
+    global VstartList, HstartList, targetheight,targetwidth
     try:
         # each point in column
         pointset = set()
@@ -101,47 +197,122 @@ def createLines(rows):
 
                 if tlist:
                     createVLine(point,tlist[-1])
-                    VstartList.append([tlist[-1]])
+                    VstartList.append(tlist[-1])
+                    HstartList.append(tlist[-1])
+                    
                 else:
+                    createVLine(point,rows[index + 1])
+                    VstartList.append(rows[index + 1])
+                    HstartList.append(rows[index + 1])
                     div = getDivisor(point,rows[index + 1],targetheight, 
                                      abs(point.vAngle - rows[index + 1].vAngle))
                     if div > 0:
                         pointset.update(getVScans(point,rows[index + 1],div))
-
-
-                
+                #remove from startlist
+                if point in VstartList:
+                    VstartList.remove(point)
+            if point in HstartList:
+                rvnewdeg = point.vnewdeg
+                if rvnewdeg in mrows.keys():
+                    srow = mrows[rvnewdeg]
+                    colindex = srow.index(point,0) 
+                    l = len(mrows[rvnewdeg])
+                    pnext = srow[(colindex + 1) % l]
+                    if get3Ddist(point,pnext) > targetwidth:
+                        div = getDivisor(point,pnext,targetwidth, 
+                                     abs(point.hAngle - pnext.hAngle))
+                        if div > 0:
+                            pointset.update(getHScans(point,pnext,div))
+                        createHLine(point,pnext)
+                        VstartList.append(pnext)
+                        HstartList.append(pnext)
+                    else:
+                        createHLine(point,pnext)
+                        VstartList.append(pnext)
+                        HstartList.append(pnext)
+                if point in HstartList:
+                    HstartList.remove(point)
+            
             index += 1
-            return pointset
+        return pointset
     except Exception as exc:
         print(exc)
         return pointset
-        
+
+def makeHNewStartpoints(mrows, mcols, p):
+    global VList, HList
+
+    ret = list()
+
+    return ret
+
+def makeVNewStartpoints(mrows, mcols, p):
+    global VList, HList
+
+    ret = list()
+
+    return ret
 
 
-def searchRectangles(mrows,mcols):
+
+def solveStartpoints(mrows,mcols):
+    global VList, HList
+    global VstartList, HstartList
+
     try:
+        ret = True
         pset = set()
-    # initial pass
-        for k in mcols.keys():
-            pset.update(createLines(mcols[k]))
+        horlist = list(HstartList)
+        verlist = list(VstartList)
+        for p in VstartList:
+            verlist = makeVNewStartpoints(mrows,mcols, p)
+
+        for p in HstartList:
+            horlist = makeHNewStartpoints(mrows,mcols, p)
+        return ret,pset
     except Exception as exc:
         print(exc)
+        return ret, pset
+
+def searchRectangles(mrows,mcols): 
+    global VList, HList
+    global VstartList, HstartList
+
+    try:
+        pset = set()
+        solveset = set()
+    # initial pass
+        for k in mcols.keys():
+            pset.update(createLines(mcols[k], mrows))
+        done, solveset = solveStartpoints(mrows,mcols)
+        while not done:
+            pset.update(solveset)
+            done, solveset = solveStartpoints(mrows,mcols)
+            pass
+        pset.update(solveset)
+        return pset
+    except Exception as exc:
+        print(exc)
+        return pset
     pass
 
 def createRectangles(tw, th):
     global HList, VList,VstartList, HstartList, targetheight, targetwidth
 
-    mrows, mcols = DC.sortRows()
+    mrows, mcols = DC.sortIdentRows()
     pset = set()
 
     VList = list()
     HList = list()
     VstartList = list()
     HstartList = list()
+    VstartList.append(mcols[0][0])
+    HstartList.append(mrows[0][0])
     targetheight = th
     targetwidth = tw
     pset = searchRectangles(mrows,mcols)    
 
+    # purify
     for p in pset:
         if p in DC.pointDone:
             pset.remove(p)

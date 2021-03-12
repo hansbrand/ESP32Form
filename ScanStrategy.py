@@ -787,11 +787,12 @@ def simulateTurn():
         PointSet = set()
         DC.sortRows()
 
-        if (currentModus == ["EDGE","BOTH"]):
-            PointSet = EM.createEdges()
-
         if (currentModus in ["DETAIL","BOTH"]):
-            PointSet = RM.createRectangles(targetwidth,targetheight)
+            PointSet.update(RM.createRectangles(targetwidth,targetheight))
+
+        if (currentModus == ["EDGE","BOTH"]):
+            PointSet.update( EM.createEdges())
+
 
         PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
         #getcommands
@@ -800,15 +801,15 @@ def simulateTurn():
         # else:
         #     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
         if (len(commands) < 100):
-            tw = targetwidth / 2.0
-            th = targetheight / 2.0
-            if (tw >= MINWIDTH) and (th >= MINHEIGHT):
-                FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
-                targetwidth = tw
-                targetheight = th
+            # tw = targetwidth / 2.0
+            # th = targetheight / 2.0
+            # if (tw >= MINWIDTH) and (th >= MINHEIGHT):
+            #     FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
+            #     targetwidth = tw
+            #     targetheight = th
                 
-                commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-            else: 
+            #     commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+            # else: 
                 strategyActive = False
                 #sendMail()
                 FormMobile.enableButtons(True,False)

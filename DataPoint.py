@@ -24,6 +24,8 @@ class DataPoint(object):
                 self.x = 0
                 self.y = 0
                 self.z = 0
+                self.hnewdeg = 0
+                self.vnewdeg = 0
                 return 
             xradius =0.096
             ysensordelta =0.017
