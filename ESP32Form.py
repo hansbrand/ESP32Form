@@ -192,10 +192,11 @@ class Application(tk.Frame):
         global communicator
         super().__init__(master)
         #master.attributes('-fullscreen', True)
+        
         #master.update()
 
-        #FM.startlogging()
-        #FM.ilog("Session started")
+        FM.startlogging()
+        FM.ilog("Session started")
 
 
         self.master = master

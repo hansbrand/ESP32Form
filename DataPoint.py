@@ -122,8 +122,6 @@ class DataPoint(object):
                 # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
             #if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
-            if (tuple([int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0)]) in DC.pointDone):
-                return None
             if  (self.meter < 6.0) and (self.z > -1.5):
                 self.state = "VALID"
                 DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])

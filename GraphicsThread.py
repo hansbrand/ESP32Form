@@ -63,7 +63,7 @@ class GraphicsThread(StoppableThread):
             if graph3D.Is2Draw():
                 graph3D.drawDia(True)
                 newwin.update()
-            sleep(2)
+            sleep(15)
 
 
         pass

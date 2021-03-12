@@ -1,0 +1,8 @@
+INFO : 21_03_12_18_28   Session started
+INFO : 21_03_12_18_29   Strategy started
+INFO : 21_03_12_18_29   Start h degree : 10
+INFO : 21_03_12_18_29   Start v degree : 10.0
+INFO : 21_03_12_18_29   Start targetwitdth : 0.32
+INFO : 21_03_12_18_29   Start targetheight : 0.32
+INFO : 21_03_12_18_39   PASS 1, Time :9 : 50
+INFO : 21_03_12_18_39   Total :9 : 52

@@ -34,6 +34,9 @@ def getDivisor(p1,p2,targetsize,diffangle):
         scale = diff * math.sin(math.radians(0.225))
         nangle = targetsize / scale
         ret = ddangle / nangle
+        if ret >= 2: ret = 2
+        if ret >= 4: ret = 4
+        if ret >= 8: ret = 8
         return int(ret)
     except Exception as exc:
         print(exc)
@@ -124,17 +127,31 @@ def getVScans(start, stop, div):
     pset = set()
     if (stop.vnewdeg - start.vnewdeg) < 0.5:
         return pset
-    delta = (stop.vnewdeg - start.vnewdeg) / (div + 1)
+    delta = float(stop.vnewdeg - start.vnewdeg) / float(div + 1)
     deg = start.vnewdeg + delta
-    olddeg = start.vnewdeg
+    olddeg = float(start.vnewdeg)
     while deg < stop.vnewdeg:
+        if (deg < 0 or deg > 193):
+            print (deg)
+            olddeg = deg
+            deg += delta
+
+            continue
         deg = adjust(deg)
+
         isok,isstart,t = checkCrossLine(HList,(start.hnewdeg, deg), olddeg, deg)
         if isok:
             if isstart:
                 break
             else:
-                pset.update([(start.hnewdeg, deg)])
+                pset.update([(start.hnewdeg, t[1])])
+                VstartList.append(stop)
+                if (t[1] < 0 or t[1] > 193):
+                    print (deg)
+                    olddeg = deg
+                    deg += delta
+
+                    continue
                 break
         else:
                 pset.update([(start.hnewdeg, deg)])
@@ -151,20 +168,22 @@ def getHScans(start, stop, div):
     pset = set()
     if (stop.hnewdeg - start.hnewdeg) < 0.5:
         return pset
-    delta = (stop.hnewdeg - start.hnewdeg) / (div + 1)
+    delta = float(stop.hnewdeg - start.hnewdeg) / float(div + 1)
     deg = start.hnewdeg + delta
     olddeg = start.hnewdeg
     while deg < stop.hnewdeg:
+
         deg = adjust(deg)
         isok,isstart,t = checkCrossLine(VList,(deg, start.vnewdeg), olddeg, deg)
         if isok:
             if isstart:
                 break
             else:
-                pset.update([(start.hnewdeg, deg)])
+                pset.update([(t[0], start.vnewdeg)])
+                HstartList.append(stop)
                 break
         else:
-                pset.update([(start.hnewdeg, deg)])
+                pset.update([(deg, start.vnewdeg)])
         olddeg = deg
         deg += delta
     return pset
@@ -189,6 +208,7 @@ def createLines(rows,mrows):
                 for p in rows[index + 1:]:
                     if get3Ddist(p,point) < targetheight:
                         tlist.append(p)
+                        HstartList.append(p)
                         pindex += 1
                     else:
                         break
@@ -198,7 +218,9 @@ def createLines(rows,mrows):
                 if tlist:
                     createVLine(point,tlist[-1])
                     VstartList.append(tlist[-1])
-                    HstartList.append(tlist[-1])
+                    if point in VstartList:
+                            VstartList.remove(point)
+                    #HstartList.append(tlist[-1])
                     
                 else:
                     createVLine(point,rows[index + 1])
@@ -267,8 +289,8 @@ def solveStartpoints(mrows,mcols):
         for p in VstartList:
             verlist = makeVNewStartpoints(mrows,mcols, p)
 
-        for p in HstartList:
-            horlist = makeHNewStartpoints(mrows,mcols, p)
+        # for p in HstartList:
+        #     horlist = makeHNewStartpoints(mrows,mcols, p)
         return ret,pset
     except Exception as exc:
         print(exc)
@@ -284,11 +306,11 @@ def searchRectangles(mrows,mcols):
     # initial pass
         for k in mcols.keys():
             pset.update(createLines(mcols[k], mrows))
-        done, solveset = solveStartpoints(mrows,mcols)
-        while not done:
-            pset.update(solveset)
-            done, solveset = solveStartpoints(mrows,mcols)
-            pass
+        # done, solveset = solveStartpoints(mrows,mcols)
+        # while not done:
+        #     pset.update(solveset)
+        #     done, solveset = solveStartpoints(mrows,mcols)
+        #     pass
         pset.update(solveset)
         return pset
     except Exception as exc:
@@ -313,8 +335,10 @@ def createRectangles(tw, th):
     pset = searchRectangles(mrows,mcols)    
 
     # purify
+    x = set(pset)
     for p in pset:
         if p in DC.pointDone:
-            pset.remove(p)
+            x.remove(p)
+    pset = x
 
     return pset

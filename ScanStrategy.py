@@ -74,7 +74,7 @@ def startScan( width, height, turns, connector, minwidth, minheight,modus = "NOR
     currentModus = modus
 
 
-    hdegree = 5
+    hdegree = 10
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
@@ -691,8 +691,18 @@ def nextTurn():
     VerSet = set()
     PointSet = set()
     DC.sortRows()
+    if (currentModus in ["DETAIL","BOTH"]):
+        PointSet.update(RM.createRectangles(targetwidth,targetheight))
 
-    commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+    if (currentModus in ["EDGE","BOTH"]):
+        PointSet.update( EM.createEdges())
+    PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
+    #getcommands
+    commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
+
+
+
+    #commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
     if (len(commands) < 100):
         tw = targetwidth / 2.0
         th = targetheight / 2.0
@@ -715,7 +725,10 @@ def nextTurn():
     connect.estimatedTime = genCommandTime(commands) * ED.getTimeFactor()
     connect.estimatedTime *= 1.2
 
+    pointcounter = 0
     for c in commands:
+        if c[0] == "S":
+            pointcounter += 1
         connect.addCommand(c)
 
     passdone = False
@@ -723,7 +736,7 @@ def nextTurn():
     difftime = time.monotonic() - starttime
     ds ="{:8.2f}".format(difftime)
     passfield = FormCommand.FormCommand.getWidgetByName("PASS")
-    passtext = "PASS " + str(currentturns + 1) + "(" + ds + "): " + str(len(commands))
+    passtext = "PASS " + str(currentturns + 1) + "(" + ds + "): " + str(pointcounter)
     passfield["text"] = passtext
 
     totaldiff = time.time() - totaltime
