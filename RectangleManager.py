@@ -34,9 +34,10 @@ def getDivisor(p1,p2,targetsize,diffangle):
         scale = diff * math.sin(math.radians(0.225))
         nangle = targetsize / scale
         ret = ddangle / nangle
-        if ret >= 2: ret = 2
-        if ret >= 4: ret = 4
-        if ret >= 8: ret = 8
+        if ret >= 1: ret = 1
+        if ret >= 3: ret = 3
+        if ret >= 5: ret = 5
+        if ret >= 7: ret = 7
         return int(ret)
     except Exception as exc:
         print(exc)
@@ -124,6 +125,9 @@ def getVScans(start, stop, div):
     global VList, HList
     global VstartList, HstartList
 
+    if div > 2:
+        print(div)
+
     pset = set()
     if (stop.vnewdeg - start.vnewdeg) < 0.5:
         return pset
@@ -144,7 +148,8 @@ def getVScans(start, stop, div):
             if isstart:
                 break
             else:
-                pset.update([(start.hnewdeg, t[1])])
+                #pset.update([(start.hnewdeg, t[1])])
+                pset.update([(start.hnewdeg,deg)])
                 VstartList.append(stop)
                 if (t[1] < 0 or t[1] > 193):
                     print (deg)
@@ -179,7 +184,8 @@ def getHScans(start, stop, div):
             if isstart:
                 break
             else:
-                pset.update([(t[0], start.vnewdeg)])
+                #pset.update([(t[0], start.vnewdeg)])
+                pset.update([(deg, start.vnewdeg)])
                 HstartList.append(stop)
                 break
         else:
@@ -261,21 +267,54 @@ def createLines(rows,mrows):
         print(exc)
         return pointset
 
-def makeHNewStartpoints(mrows, mcols, p):
+def makeLeftVpoints(mrows, mcols, point):
     global VList, HList
+    global VstartList, HstartList,targetheight
+    try:
+        retpoint = None
+        pset = set()
+        deg = point.hnewdeg
+        index = mcols[deg].index(point,0)
+        np = mcols[deg][index + 1]
+        if get3Ddist(np ,point) < targetheight:
+            div = getDivisor(point,np,targetheight, 
+                                abs(point.vAngle - np.vAngle))
+            if div > 0:
+                if not np in VstartList:
+                    retpoint = np
+                delta = abs(np.vnewdeg - point.vnewdeg) / float(div +1)
+                n = point.vnewdeg + delta 
+                pset.update(([point.hnewdeg,n]))
+        return pset, np
+    except Exception as exc:
+        print(exc)
+        return pset, np
 
-    ret = list()
-
-    return ret
-
-def makeVNewStartpoints(mrows, mcols, p):
+def makeLeftHpoints(mrows, mcols, point):
     global VList, HList
+    global VstartList, HstartList
+    try:
+        retpoint = None
+        pset = set()
+        deg = point.vnewdeg
+        l = len(mrows)
+        index = mrows[deg].index(point,0)
+        np = mrows[deg][(index + 1) % l]
+        if get3Ddist(np ,point) < targetwidth:
+            div = getDivisor(point,np,targetwidth, 
+                                abs(point.hAngle - np.hAngle))
+            if div > 0:
+                if not np in HstartList:
+                    retpoint = np
+                delta = abs(np.hnewdeg - point.hnewdeg) / float(div +1)
+                n = adjust((point.vnewdeg + delta) % 400)
+                pset.update([(n, point.vnewdeg)])
+        return pset, np
+    except Exception as exc:
+        print(exc)
+        return pset, np
 
-    ret = list()
-
-    return ret
-
-
+    pass
 
 def solveStartpoints(mrows,mcols):
     global VList, HList
@@ -286,12 +325,55 @@ def solveStartpoints(mrows,mcols):
         pset = set()
         horlist = list(HstartList)
         verlist = list(VstartList)
+        l1 = len(horlist)
+        l2 = len(verlist)
         for p in VstartList:
-            verlist = makeVNewStartpoints(mrows,mcols, p)
+            hdeg = p.hnewdeg
+            if not hdeg in mcols.keys():
+                verlist.remove(p)
+                continue
 
-        # for p in HstartList:
-        #     horlist = makeHNewStartpoints(mrows,mcols, p)
-        return ret,pset
+            if not p in mcols[hdeg]:
+                verlist.remove(p)
+                continue
+            if p == mcols[hdeg][-1]:
+                verlist.remove(p)
+                continue
+
+            xset, newpoint = makeLeftVpoints(mrows, mcols,p)
+            if len(xset) > 0:
+                pset.update(xset)
+            if (p in verlist):
+                verlist.remove(p)
+            if (newpoint != None) and (not newpoint in verlist) and not checkInLine(HList, newpoint):
+                verlist.append(newpoint)
+
+        for p in HstartList:
+            vdeg = p.vnewdeg
+            if not vdeg in mrows.keys():
+                horlist.remove(p)
+                continue
+            if not p in mrows[vdeg]:
+                horlist.remove(p)
+                continue
+            if p == mrows[vdeg][-1]:
+                horlist.remove(p)
+                continue
+            xset, newpoint = makeLeftHpoints(mrows, mcols,p)
+            if len(xset) > 0:
+                pset.update(xset)
+            if (p in horlist):
+                horlist.remove(p)
+            if (newpoint != None) and (not newpoint in horlist) and not checkInLine(VList, newpoint):
+                horlist.append(newpoint)
+
+
+        l1 = len(horlist)
+        l2 = len(verlist)
+        HstartList = horlist
+        VstartList = verlist
+        #TODO
+        return (l1 + l2 == 0),pset
     except Exception as exc:
         print(exc)
         return ret, pset
@@ -306,11 +388,10 @@ def searchRectangles(mrows,mcols):
     # initial pass
         for k in mcols.keys():
             pset.update(createLines(mcols[k], mrows))
-        # done, solveset = solveStartpoints(mrows,mcols)
-        # while not done:
-        #     pset.update(solveset)
-        #     done, solveset = solveStartpoints(mrows,mcols)
-        #     pass
+        done, solveset = solveStartpoints(mrows,mcols)
+        while not done:
+             pset.update(solveset)
+             done, solveset = solveStartpoints(mrows,mcols)
         pset.update(solveset)
         return pset
     except Exception as exc:
@@ -341,4 +422,5 @@ def createRectangles(tw, th):
             x.remove(p)
     pset = x
 
+    l = len(pset)
     return pset

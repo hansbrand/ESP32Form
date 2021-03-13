@@ -101,6 +101,7 @@ class Application(tk.Frame):
     # def setshow3D(cls):
     #     show3Dwindow = True
     
+    
     def checkScanning(self):
         global allowdraw
         if not FormCallbacks.initpressed:
