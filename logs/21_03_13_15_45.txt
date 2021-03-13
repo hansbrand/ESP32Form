@@ -1,0 +1,61 @@
+INFO : 21_03_13_15_45   Session started
+INFO : 21_03_13_15_46   Strategy started
+INFO : 21_03_13_15_46   Start h degree : 10
+INFO : 21_03_13_15_46   Start v degree : 10.0
+INFO : 21_03_13_15_46   Start targetwitdth : 0.32
+INFO : 21_03_13_15_46   Start targetheight : 0.32
+INFO : 21_03_13_15_56   PASS 1, Time :9 : 11
+INFO : 21_03_13_15_56   Total :9 : 13
+INFO : 21_03_13_16_09   PASS 2, Time :13 : 21
+INFO : 21_03_13_16_09   Total :22 : 35
+INFO : 21_03_13_16_18   PASS 3, Time :9 : 26
+INFO : 21_03_13_16_18   Total :32 : 01
+INFO : 21_03_13_16_26   PASS 4, Time :7 : 06
+INFO : 21_03_13_16_26   Total :39 : 08
+INFO : 21_03_13_16_32   PASS 5, Time :5 : 54
+INFO : 21_03_13_16_32   Total :45 : 03
+INFO : 21_03_13_16_35   PASS 6, Time :3 : 26
+INFO : 21_03_13_16_35   Total :48 : 29
+INFO : 21_03_13_16_38   PASS 7, Time :2 : 34
+INFO : 21_03_13_16_38   Total :51 : 04
+INFO : 21_03_13_16_40   PASS 8, Time :2 : 08
+INFO : 21_03_13_16_40   Total :53 : 13
+INFO : 21_03_13_16_42   PASS 9, Time :1 : 53
+INFO : 21_03_13_16_42   Total :55 : 06
+INFO : 21_03_13_16_43   PASS 10, Time :1 : 47
+INFO : 21_03_13_16_43   Total :56 : 54
+INFO : 21_03_13_16_45   PASS 11, Time :1 : 37
+INFO : 21_03_13_16_45   Total :58 : 31
+INFO : 21_03_13_16_47   PASS 12, Time :1 : 38
+INFO : 21_03_13_16_47   Total :60 : 10
+INFO : 21_03_13_16_48   PASS 13, Time :1 : 32
+INFO : 21_03_13_16_48   Total :61 : 42
+INFO : 21_03_13_16_50   PASS 14, Time :1 : 36
+INFO : 21_03_13_16_50   Total :63 : 18
+INFO : 21_03_13_16_51   PASS 15, Time :1 : 37
+INFO : 21_03_13_16_51   Total :64 : 56
+INFO : 21_03_13_16_53   PASS 16, Time :1 : 34
+INFO : 21_03_13_16_53   Total :66 : 30
+INFO : 21_03_13_16_55   PASS 17, Time :1 : 32
+INFO : 21_03_13_16_55   Total :68 : 03
+INFO : 21_03_13_16_56   PASS 18, Time :1 : 27
+INFO : 21_03_13_16_56   Total :69 : 31
+INFO : 21_03_13_16_57   PASS 19, Time :1 : 25
+INFO : 21_03_13_16_57   Total :70 : 56
+INFO : 21_03_13_16_59   PASS 20, Time :1 : 25
+INFO : 21_03_13_16_59   Total :72 : 22
+INFO : 21_03_13_17_00   PASS 21, Time :1 : 25
+INFO : 21_03_13_17_00   Total :73 : 48
+INFO : 21_03_13_17_02   PASS 22, Time :1 : 26
+INFO : 21_03_13_17_02   Total :75 : 14
+INFO : 21_03_13_17_03   PASS 23, Time :1 : 15
+INFO : 21_03_13_17_03   Total :76 : 30
+INFO : 21_03_13_17_04   PASS 24, Time :1 : 16
+INFO : 21_03_13_17_04   Total :77 : 47
+INFO : 21_03_13_17_06   PASS 25, Time :1 : 17
+INFO : 21_03_13_17_06   Total :79 : 04
+INFO : 21_03_13_17_07   PASS 26, Time :1 : 12
+INFO : 21_03_13_17_07   Total :80 : 17
+INFO : 21_03_13_17_07   Resolution changed : 0.16 x 0.16
+INFO : 21_03_13_17_08   PASS 27, Time :1 : 00
+INFO : 21_03_13_17_08   Total :81 : 18

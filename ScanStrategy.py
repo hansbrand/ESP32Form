@@ -661,7 +661,7 @@ def genCommandTime(commands):
 def nextTurn():
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
-    global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone
+    global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone,currentModus
 
     if not passdone:
         return
@@ -694,7 +694,7 @@ def nextTurn():
     if (currentModus in ["DETAIL","BOTH"]):
         PointSet.update(RM.createRectangles(targetwidth,targetheight))
 
-    if (currentModus in ["EDGE","BOTH"]):
+    if (currentModus == ["EDGE","BOTH"]) or len(PointSet) < 40:
         PointSet.update( EM.createEdges())
     PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
     #getcommands
@@ -703,15 +703,16 @@ def nextTurn():
 
 
     #commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-    if (len(commands) < 100):
-        tw = targetwidth / 2.0
-        th = targetheight / 2.0
-        if (tw >= MINWIDTH) and (th >= MINHEIGHT):
-            FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
-            targetwidth = tw
-            targetheight = th
-            commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-        else: 
+    if (len(commands) < 100) and currentModus == "DETAIL":
+        # tw = targetwidth / 2.0
+        # th = targetheight / 2.0
+        # if (tw >= MINWIDTH) and (th >= MINHEIGHT):
+        #     FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
+        #     targetwidth = tw
+        #     targetheight = th
+        currentModus = "BOTH"
+            #commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+    elif (currentModus == "BOTH") and (len(commands) < 100): 
             strategyActive = False
             #sendMail()
             FormMobile.enableButtons(True,False)
@@ -790,7 +791,7 @@ def initSimulation(modus = "DETAIL"):
 def simulateTurn():
     global strategyActive, currentturns,targetwidth
     global targetheight,maxturns,connect,reversescan
-    global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone
+    global MINWIDTH, MINHEIGHT,totaltime,passtime, passdone,currentModus
 
     try:
         Calculator.recomputeErrors()
@@ -803,7 +804,7 @@ def simulateTurn():
         if (currentModus in ["DETAIL","BOTH"]):
             PointSet.update(RM.createRectangles(targetwidth,targetheight))
 
-        if (currentModus == ["EDGE","BOTH"]):
+        if (currentModus == ["EDGE","BOTH"]) or len(PointSet) < 40:
             PointSet.update( EM.createEdges())
 
 
@@ -813,7 +814,7 @@ def simulateTurn():
 
         # else:
         #     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-        if (len(commands) < 100):
+        if (len(commands) < 100) and currentModus == "DETAIL":
             # tw = targetwidth / 2.0
             # th = targetheight / 2.0
             # if (tw >= MINWIDTH) and (th >= MINHEIGHT):
@@ -822,7 +823,8 @@ def simulateTurn():
             #     targetheight = th
                 
             #     commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-            # else: 
+            currentModus = "BOTH"
+        else: 
                 strategyActive = False
                 #sendMail()
                 FormMobile.enableButtons(True,False)

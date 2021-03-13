@@ -34,10 +34,10 @@ def getDivisor(p1,p2,targetsize,diffangle):
         scale = diff * math.sin(math.radians(0.225))
         nangle = targetsize / scale
         ret = ddangle / nangle
-        if ret >= 1: ret = 1
-        if ret >= 3: ret = 3
-        if ret >= 5: ret = 5
         if ret >= 7: ret = 7
+        elif ret >= 5: ret = 5
+        elif ret >= 3: ret = 3
+        elif ret >= 1: ret = 1
         return int(ret)
     except Exception as exc:
         print(exc)
@@ -125,11 +125,9 @@ def getVScans(start, stop, div):
     global VList, HList
     global VstartList, HstartList
 
-    if div > 2:
-        print(div)
 
     pset = set()
-    if (stop.vnewdeg - start.vnewdeg) < 0.5:
+    if abs((stop.vnewdeg - start.vnewdeg)) < 0.5:
         return pset
     delta = float(stop.vnewdeg - start.vnewdeg) / float(div + 1)
     deg = start.vnewdeg + delta
@@ -150,6 +148,8 @@ def getVScans(start, stop, div):
             else:
                 #pset.update([(start.hnewdeg, t[1])])
                 pset.update([(start.hnewdeg,deg)])
+                pset.update([(stop.hnewdeg,stop.vnewdeg)])
+                pset.update([t])
                 VstartList.append(stop)
                 if (t[1] < 0 or t[1] > 193):
                     print (deg)
@@ -171,7 +171,7 @@ def getHScans(start, stop, div):
     global VstartList, HstartList
 
     pset = set()
-    if (stop.hnewdeg - start.hnewdeg) < 0.5:
+    if abs(stop.hnewdeg - start.hnewdeg) < 0.5:
         return pset
     delta = float(stop.hnewdeg - start.hnewdeg) / float(div + 1)
     deg = start.hnewdeg + delta
@@ -186,6 +186,8 @@ def getHScans(start, stop, div):
             else:
                 #pset.update([(t[0], start.vnewdeg)])
                 pset.update([(deg, start.vnewdeg)])
+                pset.update([(stop.hnewdeg, stop.vnewdeg)])
+                pset.update([t])
                 HstartList.append(stop)
                 break
         else:

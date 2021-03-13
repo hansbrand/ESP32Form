@@ -122,7 +122,10 @@ def vp( points):
         vl1 = math.sqrt(A[0] ** 2 + A[1] ** 2 + A[2] ** 2)
         vl2 = math.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2)
 
-        cosphi = C / (vl1 * vl2)
+        if ((vl1 * vl2) != 0):
+            cosphi = C / (vl1 * vl2)
+        else:
+            return 0.0
 
         phi = np.degrees (np.arccos(cosphi))
 

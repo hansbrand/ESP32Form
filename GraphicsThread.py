@@ -59,10 +59,12 @@ class GraphicsThread(StoppableThread):
         #root.mainloop()
         
         newwin.update()
+        root.iconify()
         while True:
             if graph3D.Is2Draw():
-                graph3D.drawDia(True)
-                newwin.update()
+                if root.state() == 'normal':
+                    graph3D.drawDia(True)
+                    newwin.update()
             sleep(15)
 
 
