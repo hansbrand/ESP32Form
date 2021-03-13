@@ -42,6 +42,8 @@ class DataPoint(object):
                 self.vnewdeg =self.vAngle
                 self.hAngle *= 0.900000000000001
                 self.vAngle *= 0.900000000000001
+                DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
+
                 if self.vnewdeg > 200.0:
                     print(self.vnewdeg)
                 return
@@ -73,11 +75,14 @@ class DataPoint(object):
             #print(math.sqrt(tx ** 2 + ty ** 2))
             if ('Er' in self.meter):
                 self.state = "ERROR"
+                DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
+
                 return
             try:
                 self.meter = float(self.meter)
             except ValueError:
                 self.state = "UNKNOWN"
+                DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
                 return
 
             self.meter += ysensordelta
