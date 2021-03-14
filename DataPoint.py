@@ -42,6 +42,7 @@ class DataPoint(object):
                 self.vnewdeg =self.vAngle
                 self.hAngle *= 0.900000000000001
                 self.vAngle *= 0.900000000000001
+                self.meter = -30000
                 DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
 
                 if self.vnewdeg > 200.0:
@@ -66,8 +67,6 @@ class DataPoint(object):
             self.hAngle *= 0.900000000000001
             self.vAngle *= 0.900000000000001
 
-            if (self.hnewdeg == 0)  and (self.vnewdeg == 193.0):
-                        print("found")
 
             
             tx = xradius *    math.cos(math.radians(self.hAngle))
@@ -75,6 +74,8 @@ class DataPoint(object):
             #print(math.sqrt(tx ** 2 + ty ** 2))
             if ('Er' in self.meter):
                 self.state = "ERROR"
+                self.meter = -30000
+
                 DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
 
                 return
@@ -127,7 +128,7 @@ class DataPoint(object):
                 # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
             #if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
-            if  (self.meter < 6.0) and (self.z > -1.5):
+            if  (self.meter < 7.0) and (self.z > -1.5):
                 self.state = "VALID"
                 DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
 
@@ -139,6 +140,8 @@ class DataPoint(object):
                 #         pass
             else:
                 self.state = "INVALID"
+                self.meter = -30000
+             
 
            
         except Exception as exc:

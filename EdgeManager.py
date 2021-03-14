@@ -3,6 +3,7 @@ import DataContainer as DC
 from DataPoint import DataPoint
 import math
 from intersection import line_intersection
+import Calculator as CC
 
 def genScanPoints(p1, p2, isrow):
     ret = set()
@@ -86,8 +87,12 @@ def getEdgePoint(row):
         dp.z = rz
         dp.state = "EDGE"
 
-        if (dp.x < -2) and (dp.y >3) and (dp.x > -3.5):
-            rx, ry = line_intersection((p12d,p22d),(p32d,p42d))
+        dist1 = CC.get3Ddist(dp, p1)
+        dist2 = CC.get3Ddist(dp, p2)
+        if dist1 < dist2:
+            dp = p1
+        else:
+            dp = p2
         x = list([dp])
         return (x)
     except Exception as exc:
