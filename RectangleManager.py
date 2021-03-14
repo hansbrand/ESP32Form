@@ -420,7 +420,7 @@ def createRectangles(tw, th):
     # purify
     x = set(pset)
     for p in pset:
-        if p in DC.pointDone:
+        if tuple([int(p[0] * 10.0),int(p[1]*10.0)]) in DC.pointDone:                    
             x.remove(p)
     pset = x
 

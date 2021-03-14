@@ -181,7 +181,7 @@ class Application(tk.Frame):
             # TCPCommunicator.addCommand(ESPDevices.
             # Sensor1.statusCommand(),True)
             # TCPCommunicator.addCommand(ESPDevices.Sensor2.statusCommand(),True)
-
+        self.master.update()
         self.master.after(300,self.eventloop)
 
 

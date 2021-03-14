@@ -136,37 +136,37 @@ def vp( points):
 
 
 def getAngleList(plist ,isrow):
-    alist = set()
-    edges = list()
-    
-    l = len(plist)
-    if l < 4:
-        return alist, edges
-    
-    last = l - 3
-    if isrow: 
-        last = l
-    for i in range(0 , last):
-        partlist =plist[i:i+4] 
-        if (isrow):
-            partlist = list()
-            for i in range(0,4):
-                partlist.append(plist[i % l])
-                if (plist[i % l].state != "VALID"):
-                    print("wrong")
+    try:
+        alist = set()
+        edges = list()
         
-
-
-        degree = vp(partlist) % 180
-        if degree < 135 and degree > 45:
-            cross = getEdgePoint(partlist)
-            if (len(cross) > 0):
-                for e in cross:
-                    edges.append(e)
-            al = genScanPoints(plist[1],plist[2],isrow)
-            alist.update(al)
-            pass
-    return alist, edges
+        l = len(plist)
+        if l < 4:
+            return alist, edges
+        
+        last = l - 3
+        if isrow: 
+            last = l
+        for i in range(0 , last):
+            partlist =plist[i:i+4] 
+            if (isrow):
+                partlist = list()
+                for i in range(0,4):
+                    partlist.append(plist[i % l])
+                    if (plist[i % l].state != "VALID"):
+                        print("wrong")
+            degree = vp(partlist) % 180
+            if degree < 135 and degree > 45:
+                cross = getEdgePoint(partlist)
+                if (len(cross) > 0):
+                    for e in cross:
+                        edges.append(e)
+                al = genScanPoints(plist[1],plist[2],isrow)
+                alist.update(al)
+                pass
+        return alist, edges
+    except Exception as exc:
+        print(exc)
 
 
 
@@ -193,7 +193,13 @@ def createEdges():
                 for e in edge:
                     if DC.filter(e):
                         edges.append(e)
-    
+
+        x = set(result)
+        for p in result:
+            if tuple([int(p[0] * 10.0),int(p[1]*10.0)]) in DC.pointDone:                    
+                x.remove(p)
+        result = x
+
         DC.setEdgeList(edges)
         return result
     except Exception as exc:

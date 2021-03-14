@@ -779,13 +779,14 @@ def setpassdone():
 
 def initSimulation(modus = "DETAIL"):
     global targetheight,targetwidth
-    global MINWIDTH, MINHEIGHT,currentModus 
+    global MINWIDTH, MINHEIGHT,currentModus,currentturns
     targetwidth = 0.32
     targetheight = 0.32
     MINWIDTH = 0.8
     MINHEIGHT = 0.8
     currentModus = modus
     DC.isAnalyze = True
+    currentturns = 0
 
 
 def simulateTurn():
@@ -801,10 +802,11 @@ def simulateTurn():
         PointSet = set()
         DC.sortRows()
 
+        currentturns += 1
         if (currentModus in ["DETAIL","BOTH"]):
             PointSet.update(RM.createRectangles(targetwidth,targetheight))
 
-        if (currentModus == ["EDGE","BOTH"]) or len(PointSet) < 40:
+        if (currentModus == ["EDGE","BOTH"]) or len(PointSet) < 50:
             PointSet.update( EM.createEdges())
 
 
@@ -824,7 +826,7 @@ def simulateTurn():
                 
             #     commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
             currentModus = "BOTH"
-        else: 
+        elif (currentModus == "BOTH") and (len(commands) < 100): 
                 strategyActive = False
                 #sendMail()
                 FormMobile.enableButtons(True,False)
@@ -832,6 +834,8 @@ def simulateTurn():
                 return
         passfield = FormCommand.FormCommand.getWidgetByName("PASS")
         passtext = "PASS " + str(currentturns + 1) + " : " + str(len(commands))
+        passfield["text"] = passtext
+
         time.sleep(3)
     except Exception as exc:
         print (exc)
