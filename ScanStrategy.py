@@ -74,7 +74,7 @@ def startScan( width, height, turns, connector, minwidth, minheight,modus = "NOR
     currentModus = modus
 
 
-    hdegree = 10
+    hdegree = 5
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
