@@ -98,7 +98,7 @@ def checkCrossLine(line, point, deg1, deg2):
             if first:
                 return True,True,(point[0],point[1])
             for v in VList:
-                if (v[1] <= point[1]) and (point[1] <= v[3] ) and (deg1 <= v[0])  and (deg2 >= v[0]):
+                if (v[1] < point[1]) and (point[1] < v[3] ) and (deg1 <= v[0])  and (deg2 >= v[0]):
                     ret = (v[0], point[1])               
                     return True, False, ret
 
@@ -108,7 +108,7 @@ def checkCrossLine(line, point, deg1, deg2):
             if first:
                 return True,True,(point[0],point[1])
             for h in HList:
-                if (h[0] <= point[0]) and (point[0] <= h[2] ) and (deg1 <= h[1])  and (deg2 >= h[1]):
+                if (h[0] < point[0]) and (point[0] < h[2] ) and (deg1 <= h[1])  and (deg2 >= h[1]):
                     ret = ( point[0], h[1])               
                     return True,False,ret
         return False,None,None
