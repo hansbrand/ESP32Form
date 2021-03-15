@@ -173,11 +173,16 @@ def getHScans(start, stop, div):
     pset = set()
     if abs(stop.hnewdeg - start.hnewdeg) < 0.5:
         return pset
-    delta = float(stop.hnewdeg - start.hnewdeg) / float(div + 1)
-    deg = start.hnewdeg + delta
-    stopdeg = stop.hnewdeg
-    if stopdeg < start.hnewdeg:
-        stopdeg = stopdeg + 400
+    if (stop.hnewdeg < start.hnewdeg) and (stop.hnewdeg != 0.0):
+        pset.update([(0.0, start.vnewdeg)])
+        return pset
+    if stop.hnewdeg == 0.0:
+        stopdeg = 400.0
+    else:
+        stopdeg = stop.hnewdeg
+
+    delta = float(abs(stopdeg - start.hnewdeg)) / float(div + 1)
+    deg = (start.hnewdeg + delta) % 400
     olddeg = start.hnewdeg
     while deg < stopdeg:
 
@@ -196,7 +201,7 @@ def getHScans(start, stop, div):
         else:
                 pset.update([(deg, start.vnewdeg)])
         olddeg = deg
-        deg += delta
+        deg = (deg + delta) % 400
     return pset
 
 
@@ -249,11 +254,11 @@ def createLines(rows,mrows):
                 rvnewdeg = point.vnewdeg
                 if rvnewdeg in mrows.keys():
                     srow = mrows[rvnewdeg]
+                    if len(srow) < 5:
+                        continue
                     colindex = srow.index(point,0) 
                     l = len(mrows[rvnewdeg])
                     pnext = srow[(colindex + 1) % l]
-                    if ((colindex + 1) % l) == 0:
-                        print (pnext.hnewdeg)
                     if get3Ddist(point,pnext) > targetwidth:
                         div = getDivisor(point,pnext,targetwidth, 
                                      abs(point.hAngle - pnext.hAngle))
@@ -306,11 +311,20 @@ def makeLeftHpoints(mrows, mcols, point):
         pset = set()
         deg = point.vnewdeg
         l = len(mrows[deg])
-        index = mrows[deg].index(point,0)
-        if ((index + 1) % l) >= 0:
-            print(index)
+        np = None
+        if (l < 5):
+            return pset, np
 
+        index = mrows[deg].index(point,0)
+        pn = mrows[deg][index]
         np = mrows[deg][(index + 1) % l]
+        if ((index + 1) % l) == 0:
+            np = mrows[deg][(index + 1) % l]
+            pset.update([(0.0, point.vnewdeg)])            
+            return pset, np
+        if ( np.hnewdeg < pn.hnewdeg):
+            return pset, None
+
         if get3Ddist(np ,point) < targetwidth:
             div = getDivisor(point,np,targetwidth, 
                                 abs(point.hAngle - np.hAngle))
