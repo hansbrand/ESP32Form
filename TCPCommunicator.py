@@ -312,7 +312,7 @@ def updateSend():
             else:
                 if (current2send == 0):
                     current2send = 1
-                if st >= estimatedTime:
+                if st >= (estimatedTime - 10):
                     estimatedTime += 30.0
                 tdelta = estimatedTime / float(current2send)
                 tsingle = tdelta * float(alreadysent)

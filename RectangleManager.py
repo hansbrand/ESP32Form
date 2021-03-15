@@ -175,8 +175,11 @@ def getHScans(start, stop, div):
         return pset
     delta = float(stop.hnewdeg - start.hnewdeg) / float(div + 1)
     deg = start.hnewdeg + delta
+    stopdeg = stop.hnewdeg
+    if stopdeg < start.hnewdeg:
+        stopdeg = stopdeg + 400
     olddeg = start.hnewdeg
-    while deg < stop.hnewdeg:
+    while deg < stopdeg:
 
         deg = adjust(deg)
         isok,isstart,t = checkCrossLine(VList,(deg, start.vnewdeg), olddeg, deg)
@@ -234,10 +237,11 @@ def createLines(rows,mrows):
                     createVLine(point,rows[index + 1])
                     VstartList.append(rows[index + 1])
                     HstartList.append(rows[index + 1])
+                    l = len(rows)
                     div = getDivisor(point,rows[index + 1],targetheight, 
-                                     abs(point.vAngle - rows[index + 1].vAngle))
+                                     abs(point.vAngle - rows[(index + 1) % l].vAngle))
                     if div > 0:
-                        pointset.update(getVScans(point,rows[index + 1],div))
+                        pointset.update(getVScans(point,rows[(index + 1) % l],div))
                 #remove from startlist
                 if point in VstartList:
                     VstartList.remove(point)
@@ -248,6 +252,8 @@ def createLines(rows,mrows):
                     colindex = srow.index(point,0) 
                     l = len(mrows[rvnewdeg])
                     pnext = srow[(colindex + 1) % l]
+                    if ((colindex + 1) % l) == 0:
+                        print (pnext.hnewdeg)
                     if get3Ddist(point,pnext) > targetwidth:
                         div = getDivisor(point,pnext,targetwidth, 
                                      abs(point.hAngle - pnext.hAngle))
@@ -286,7 +292,7 @@ def makeLeftVpoints(mrows, mcols, point):
                     retpoint = np
                 delta = abs(np.vnewdeg - point.vnewdeg) / float(div +1)
                 n = point.vnewdeg + delta 
-                pset.update(([point.hnewdeg,n]))
+                pset.update([(point.hnewdeg,n)])
         return pset, np
     except Exception as exc:
         print(exc)
@@ -299,8 +305,11 @@ def makeLeftHpoints(mrows, mcols, point):
         retpoint = None
         pset = set()
         deg = point.vnewdeg
-        l = len(mrows)
+        l = len(mrows[deg])
         index = mrows[deg].index(point,0)
+        if ((index + 1) % l) >= 0:
+            print(index)
+
         np = mrows[deg][(index + 1) % l]
         if get3Ddist(np ,point) < targetwidth:
             div = getDivisor(point,np,targetwidth, 

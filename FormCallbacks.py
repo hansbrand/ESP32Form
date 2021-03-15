@@ -348,11 +348,11 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        targetwidth = 0.32
-        targetheight = 0.32
+        targetwidth = 0.05
+        targetheight = 0.05
         maxturns = 1000
-        minwidth = 0.08
-        minheight = 0.08
+        minwidth = 0.4
+        minheight = 0.04
         DC.initDataContainer()
 
         SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight, "DETAIL")
@@ -366,11 +366,11 @@ class FormCallbacks(object):
              self.com =  __import__("USBCommunicator")
         else:
              self.com =  __import__("TCPCommunicator")
-        targetwidth = 0.32
-        targetheight = 0.32
+        targetwidth = 0.05
+        targetheight = 0.05
         maxturns = 1000
-        minwidth = 0.08
-        minheight = 0.08
+        minwidth = 0.05
+        minheight = 0.05
         DC.initDataContainer()
 
         SS.startScan(targetwidth, targetheight, maxturns, self.com, minwidth, minheight,'EDGE')

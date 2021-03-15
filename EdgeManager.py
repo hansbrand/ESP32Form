@@ -66,17 +66,19 @@ def getEdgePoint(row):
         d1 = np2 - np1
         d2 = np4 - np3
 
-        if iz:
-            rx, ry = line_intersection(([p1.x,p1.y],[p2.x,p2.y]),([p3.x,p3.y], [p4.x,p4.y]))
-            rz = p2.z + p3.z / 2#+ rx * d1[2]
-        if ix:
-            ry, rz = line_intersection(([p1.y,p1.z],[p2.y,p2.z]),([p3.y,p3.z], [p4.y,p4.z]))
-            rx = p2.x + p3.x / 2 #+ rx * d1[2]
+        # if iz:
+        #     rx, ry = line_intersection(([p1.x,p1.y],[p2.x,p2.y]),([p3.x,p3.y], [p4.x,p4.y]))
+        #     rz = p2.z + p3.z / 2#+ rx * d1[2]
+        # if ix:
+        #     ry, rz = line_intersection(([p1.y,p1.z],[p2.y,p2.z]),([p3.y,p3.z], [p4.y,p4.z]))
+        #     rx = p2.x + p3.x / 2 #+ rx * d1[2]
 
-        if iy:
-            rx, rz = line_intersection(([p1.x,p1.z],[p2.x,p2.z]),([p3.x,p3.z], [p4.x,p4.z]))
-            ry = p2.y + p3.y / 2 #+ rx * d1[2]
+        # if iy:
+        #     rx, rz = line_intersection(([p1.x,p1.z],[p2.x,p2.z]),([p3.x,p3.z], [p4.x,p4.z]))
+        #     ry = p2.y + p3.y / 2 #+ rx * d1[2]
 
+        rx, ry = line_intersection(([p1.x,p1.y],[p2.x,p2.y]),([p3.x,p3.y], [p4.x,p4.y]))
+        rz = p2.z + p3.z / 2#+ rx * d1[2]
         if rx == -10000 or rz == -10000 or ry == -10000:
             return x
 

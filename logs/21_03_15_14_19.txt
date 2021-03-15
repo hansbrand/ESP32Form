@@ -1,0 +1,54 @@
+INFO : 21_03_15_14_19   Session started
+INFO : 21_03_15_14_21   Strategy started
+INFO : 21_03_15_14_21   Start h degree : 10
+INFO : 21_03_15_14_21   Start v degree : 10.0
+INFO : 21_03_15_14_21   Start targetwitdth : 0.05
+INFO : 21_03_15_14_21   Start targetheight : 0.05
+INFO : 21_03_15_14_29   PASS 1, Time :8 : 50
+INFO : 21_03_15_14_29   Total :8 : 52
+INFO : 21_03_15_14_45   PASS 2, Time :15 : 43
+INFO : 21_03_15_14_45   Total :24 : 36
+INFO : 21_03_15_14_57   PASS 3, Time :11 : 24
+INFO : 21_03_15_14_57   Total :36 : 01
+INFO : 21_03_15_15_01   PASS 4, Time :4 : 51
+INFO : 21_03_15_15_01   Total :40 : 52
+INFO : 21_03_15_15_04   PASS 5, Time :2 : 45
+INFO : 21_03_15_15_04   Total :43 : 38
+INFO : 21_03_15_15_06   PASS 6, Time :1 : 16
+INFO : 21_03_15_15_06   Total :44 : 55
+INFO : 21_03_15_15_13   PASS 7, Time :7 : 29
+INFO : 21_03_15_15_13   Total :52 : 25
+INFO : 21_03_15_15_15   PASS 8, Time :1 : 38
+INFO : 21_03_15_15_15   Total :54 : 03
+INFO : 21_03_15_15_17   PASS 9, Time :1 : 57
+INFO : 21_03_15_15_17   Total :56 : 00
+INFO : 21_03_15_15_19   PASS 10, Time :2 : 34
+INFO : 21_03_15_15_19   Total :58 : 34
+INFO : 21_03_15_15_21   PASS 11, Time :2 : 10
+INFO : 21_03_15_15_21   Total :60 : 45
+INFO : 21_03_15_15_23   PASS 12, Time :1 : 40
+INFO : 21_03_15_15_23   Total :62 : 26
+INFO : 21_03_15_15_24   PASS 13, Time :1 : 14
+INFO : 21_03_15_15_24   Total :63 : 41
+INFO : 21_03_15_15_26   PASS 14, Time :1 : 26
+INFO : 21_03_15_15_26   Total :65 : 07
+INFO : 21_03_15_15_27   PASS 15, Time :1 : 32
+INFO : 21_03_15_15_27   Total :66 : 40
+INFO : 21_03_15_15_29   PASS 16, Time :1 : 30
+INFO : 21_03_15_15_29   Total :68 : 10
+INFO : 21_03_15_15_30   PASS 17, Time :1 : 32
+INFO : 21_03_15_15_30   Total :69 : 42
+INFO : 21_03_15_15_32   PASS 18, Time :1 : 26
+INFO : 21_03_15_15_32   Total :71 : 08
+INFO : 21_03_15_15_42   PASS 19, Time :9 : 49
+INFO : 21_03_15_15_42   Total :80 : 58
+INFO : 21_03_15_15_46   PASS 20, Time :4 : 38
+INFO : 21_03_15_15_46   Total :85 : 37
+INFO : 21_03_15_15_52   PASS 21, Time :5 : 34
+INFO : 21_03_15_15_52   Total :91 : 11
+INFO : 21_03_15_15_58   PASS 22, Time :6 : 02
+INFO : 21_03_15_15_58   Total :97 : 13
+INFO : 21_03_15_16_04   PASS 23, Time :6 : 26
+INFO : 21_03_15_16_04   Total :103 : 40
+INFO : 21_03_15_16_11   PASS 24, Time :7 : 05
+INFO : 21_03_15_16_11   Total :110 : 46

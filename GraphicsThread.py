@@ -65,7 +65,7 @@ class GraphicsThread(StoppableThread):
                 #if root.state() == 'normal':
                     graph3D.drawDia(True)
                     newwin.update()
-            sleep(15)
+            sleep(5)
 
 
         pass

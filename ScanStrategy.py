@@ -73,8 +73,10 @@ def startScan( width, height, turns, connector, minwidth, minheight,modus = "NOR
     MINHEIGHT = minheight
     currentModus = modus
 
-
-    hdegree = 5
+    if (modus == "EDGE"):
+        hdegree = 5
+    else:
+        hdegree = 10
     factor = ((targetheight * 1000.0) / (targetwidth * 1000.0))
     vdegree = hdegree * factor
     vdegree = adjust(vdegree)
@@ -712,7 +714,7 @@ def nextTurn():
         #     targetheight = th
         currentModus = "BOTH"
             #commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-    elif (currentModus == "BOTH") and (len(commands) < 100): 
+    elif (currentModus in ["BOTH","EDGE"]) and (len(commands) < 100): 
             strategyActive = False
             #sendMail()
             FormMobile.enableButtons(True,False)
@@ -826,7 +828,7 @@ def simulateTurn():
                 
             #     commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
             currentModus = "BOTH"
-        elif (currentModus == "BOTH") and (len(commands) < 100): 
+        elif (currentModus in ["BOTH","EDGE"]) and (len(commands) < 100): 
                 strategyActive = False
                 #sendMail()
                 FormMobile.enableButtons(True,False)

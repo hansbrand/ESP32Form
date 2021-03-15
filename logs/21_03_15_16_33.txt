@@ -1,0 +1,13 @@
+INFO : 21_03_15_16_33   Session started
+INFO : 21_03_15_16_33   Strategy started
+INFO : 21_03_15_16_33   Start h degree : 5
+INFO : 21_03_15_16_33   Start v degree : 5.0
+INFO : 21_03_15_16_33   Start targetwitdth : 0.05
+INFO : 21_03_15_16_33   Start targetheight : 0.05
+INFO : 21_03_15_17_06   PASS 1, Time :33 : 04
+INFO : 21_03_15_17_06   Total :33 : 06
+INFO : 21_03_15_17_10   PASS 2, Time :3 : 05
+INFO : 21_03_15_17_10   Total :36 : 12
+INFO : 21_03_15_17_12   PASS 3, Time :2 : 04
+INFO : 21_03_15_17_12   Total :38 : 16
+INFO : 21_03_15_17_12   Scanning done!!!
