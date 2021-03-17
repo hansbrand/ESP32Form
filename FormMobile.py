@@ -17,7 +17,8 @@ class FormMobile(tk.Frame):
     servercommand=(
     "INIT",
     "CALIBRATE",
-#    "TO10",
+    "TO10",
+    "TO2",
     "PIEP",
     "STOP",
     # "TEST1",
@@ -34,8 +35,8 @@ class FormMobile(tk.Frame):
     "LOAD_FILE",
     "S30x70",
     #"ADJUST",
-    #"MUP",
-    #"MDOWN",
+    "MUP",
+    "MDOWN",
     #"MESH",
     "HORIZONTAL",
     "QUIT"

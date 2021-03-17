@@ -95,6 +95,13 @@ class FormCallbacks(object):
 
 
     @classmethod
+    def callbackTO2(self , button):
+        print("callbackTO2")
+        self.com.addCommand(ESPDevices.turnCommand("M2",10) )
+        self.com.addCommand(ESPDevices.turnCommand("M3",10) )
+
+
+    @classmethod
     def callbackMUP(self , button):
         global CALPOS
         global CALDELTA
