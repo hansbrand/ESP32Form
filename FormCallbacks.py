@@ -13,8 +13,9 @@ from FormMobile import FormMobile
 
 checkButtonval = None
 CALPOS = 170.0
-CALDELTA = .2
+CALDELTA = .25
 initpressed = False
+startdegree = 10
 
 class FormCallbacks(object):
     com = None
@@ -89,21 +90,33 @@ class FormCallbacks(object):
 
     @classmethod
     def callbackTO10(self , button):
+        global startdegree,CALPOS
         print("callbackTO10")
-        self.com.addCommand(ESPDevices.turnCommand("M2",10) )
-        self.com.addCommand(ESPDevices.turnCommand("M3",10) )
+        self.com.addCommand(ESPDevices.turnCommand("M2",startdegree) )
+        self.com.addCommand(ESPDevices.turnCommand("M3",startdegree) )
+        self.com.addCommand(ESPDevices.piepCommand("S1") )
+        self.com.addCommand(ESPDevices.piepCommand("S2"))
+
+        startdegree += 10
+        CALPOS = startdegree
 
 
     @classmethod
     def callbackTO2(self , button):
+        global startdegree,CALPOS
         print("callbackTO2")
-        self.com.addCommand(ESPDevices.turnCommand("M2",2) )
-        self.com.addCommand(ESPDevices.turnCommand("M3",2) )
+        self.com.addCommand(ESPDevices.turnCommand("M2",startdegree) )
+        self.com.addCommand(ESPDevices.turnCommand("M3",startdegree) )
+        self.com.addCommand(ESPDevices.piepCommand("S1") )
+        self.com.addCommand(ESPDevices.piepCommand("S2"))
+
+        startdegree += 2
+        CALPOS = startdegree
 
 
     @classmethod
     def callbackMUP(self , button):
-        global CALPOS
+        global CALPOS, startdegree
         global CALDELTA
         print("callbackMUP")
         CALPOS -= CALDELTA
@@ -111,12 +124,13 @@ class FormCallbacks(object):
         sbar["text"] =str(CALPOS)
         self.com.addCommand(ESPDevices.turnCommand("M2",CALPOS) )
         self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
+        startdegree = CALPOS
 
 
 
     @classmethod
     def callbackMDOWN(self , button):
-        global CALPOS
+        global CALPOS, startdegree
         global CALDELTA
         print("callbackMDOWN")
         CALPOS += 1
@@ -125,6 +139,7 @@ class FormCallbacks(object):
         sbar["text"] = str(CALPOS)
         self.com.addCommand(ESPDevices.turnCommand("M2",CALPOS) )
         self.com.addCommand(ESPDevices.turnCommand("M3",CALPOS) )
+        startdegree = CALPOS
 
     @classmethod
     def callbackPIEP(self , button):
