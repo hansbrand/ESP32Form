@@ -63,11 +63,8 @@ class DataPoint(object):
             self.hkey = str(self.hAngle)
             self.vkey = str(self.vAngle)
 
-
             self.hAngle *= 0.900000000000001
             self.vAngle *= 0.900000000000001
-
-
             
             tx = xradius *    math.cos(math.radians(self.hAngle))
             ty = xradius *    math.sin(math.radians(self.hAngle))

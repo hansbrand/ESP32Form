@@ -8,6 +8,7 @@ VstartList = list()
 HstartList = list()
 targetheight = 0
 targetwidth = 0
+MINDEG = 11.0
 
 def adjust(deg):
     f,g = math.modf(deg)
@@ -23,6 +24,12 @@ def adjust(deg):
     else:
         return( float (g) + (float(more) / 100.0))
 
+def isMinRange(deg1,deg2):
+    global MINDEG
+    if ((deg2-deg1) < MINDEG ):
+        return True
+    else:
+        return False
 
 def getDivisor(p1,p2,targetsize,diffangle):
     try:
@@ -118,9 +125,6 @@ def checkCrossLine(line, point, deg1, deg2):
 
 
 
-
-
-
 def getVScans(start, stop, div):
     global VList, HList
     global VstartList, HstartList
@@ -130,39 +134,40 @@ def getVScans(start, stop, div):
     if abs((stop.vnewdeg - start.vnewdeg)) < 0.5:
         return pset
     delta = float(stop.vnewdeg - start.vnewdeg) / float(div + 1)
+    pset.update([(start.hnewdeg, start.vnewdeg)])
+    pset.update([(stop.hnewdeg, stop.vnewdeg)])
+
     deg = start.vnewdeg + delta
     olddeg = float(start.vnewdeg)
+    count = 1
     while deg < stop.vnewdeg:
         if (deg < 0 or deg > 193):
-            print (deg)
+            #print (deg)
             olddeg = deg
             deg += delta
 
             continue
         deg = adjust(deg)
 
-        isok,isstart,t = checkCrossLine(HList,(start.hnewdeg, deg), olddeg, deg)
-        if isok:
-            if isstart:
-                break
-            else:
-                #pset.update([(start.hnewdeg, t[1])])
-                pset.update([(start.hnewdeg,deg)])
-                pset.update([(stop.hnewdeg,stop.vnewdeg)])
-                pset.update([t])
-                VstartList.append(stop)
-                if (t[1] < 0 or t[1] > 193):
-                    print (deg)
-                    olddeg = deg
-                    deg += delta
-
-                    continue
-                break
-        else:
-                pset.update([(start.hnewdeg, deg)])
+        #pset.update([(start.hnewdeg, t[1])])
+        pset.update([(start.hnewdeg,deg)])
+        pset.update([(stop.hnewdeg,stop.vnewdeg)])
+        VstartList.append(stop)
+        pset.update([(start.hnewdeg, deg)])
 
         olddeg = deg
+        count += 1
         deg += delta
+    xset = set(pset)
+    for p in pset:
+        xs = p[0]
+        ys = p[1]
+        ss = xs
+        for i  in range(0,count + 1):
+            xset.update([(adjust(ss),ys)])
+            ss = ss + delta
+
+    pset = xset
     return pset
 
 
@@ -173,35 +178,38 @@ def getHScans(start, stop, div):
     pset = set()
     if abs(stop.hnewdeg - start.hnewdeg) < 0.5:
         return pset
-    if (stop.hnewdeg < start.hnewdeg) and (stop.hnewdeg != 0.0):
-        pset.update([(0.0, start.vnewdeg)])
-        return pset
-    if stop.hnewdeg == 0.0:
-        stopdeg = 400.0
+    if stop.hnewdeg <  start.hnewdeg:
+        stopdeg = stop.hnewdeg + 400.0
     else:
         stopdeg = stop.hnewdeg
+
+    pset.update([(start.hnewdeg, start.vnewdeg)])
+    pset.update([(stopdeg, stop.vnewdeg)])
 
     delta = float(abs(stopdeg - start.hnewdeg)) / float(div + 1)
     deg = (start.hnewdeg + delta) % 400
     olddeg = start.hnewdeg
+    HstartList.append(stop)
+    count = 1
     while deg < stopdeg:
-
         deg = adjust(deg)
-        isok,isstart,t = checkCrossLine(VList,(deg, start.vnewdeg), olddeg, deg)
-        if isok:
-            if isstart:
-                break
-            else:
-                #pset.update([(t[0], start.vnewdeg)])
-                pset.update([(deg, start.vnewdeg)])
-                pset.update([(stop.hnewdeg, stop.vnewdeg)])
-                pset.update([t])
-                HstartList.append(stop)
-                break
-        else:
-                pset.update([(deg, start.vnewdeg)])
+        #pset.update([(t[0], start.vnewdeg)])
+        pset.update([(deg, start.vnewdeg)])
         olddeg = deg
         deg = (deg + delta) % 400
+        count += 1
+
+    xset = set(pset)
+    for p in pset:
+        xs = p[0]
+        ys = p[1]
+        ss = ys
+        for i  in range(0,count + 1):
+            if (ys * i < 193.0):
+                xset.update([(xs % 400, adjust(ss))])
+                ss += delta
+    pset = xset
+
     return pset
 
 
@@ -215,35 +223,32 @@ def createLines(rows,mrows):
         for  row in rows[:-1]:
             #search hline
             point = row
+            r1 = rows[index + 1]
             isline = False
             if VList:
                 isline = checkInLine(VList, point)
             if not isline:
-                pindex = index + 1
                 tlist = []
                 for p in rows[index + 1:]:
-                    if get3Ddist(p,point) < targetheight:
+                    if (get3Ddist(p,point) < targetheight) and isMinRange(point.vnewdeg, p.vnewdeg):
                         tlist.append(p)
                         HstartList.append(p)
-                        pindex += 1
                     else:
                         break
-                else:
-                    pass
 
                 if tlist:
                     createVLine(point,tlist[-1])
                     VstartList.append(tlist[-1])
                     if point in VstartList:
                             VstartList.remove(point)
-                    #HstartList.append(tlist[-1])
+                    HstartList.append(tlist[-1])
                     
-                else:
-                    createVLine(point,rows[index + 1])
-                    VstartList.append(rows[index + 1])
-                    HstartList.append(rows[index + 1])
+                elif isMinRange(point.vnewdeg,r1.vnewdeg):
+                    createVLine(point,r1)
+                    VstartList.append(r1)
+                    HstartList.append(r1)
                     l = len(rows)
-                    div = getDivisor(point,rows[index + 1],targetheight, 
+                    div = getDivisor(point,r1,targetheight, 
                                      abs(point.vAngle - rows[(index + 1) % l].vAngle))
                     if div > 0:
                         pointset.update(getVScans(point,rows[(index + 1) % l],div))
@@ -254,12 +259,18 @@ def createLines(rows,mrows):
                 rvnewdeg = point.vnewdeg
                 if rvnewdeg in mrows.keys():
                     srow = mrows[rvnewdeg]
-                    if len(srow) < 5:
+                    if len(srow) < 3:
+                        if point in HstartList:
+                            HstartList.remove(point)
                         continue
                     colindex = srow.index(point,0) 
                     l = len(mrows[rvnewdeg])
                     pnext = srow[(colindex + 1) % l]
-                    if get3Ddist(point,pnext) > targetwidth:
+                    stopdeg = pnext.hnewdeg
+                    if point.hnewdeg > pnext.hnewdeg:
+                        stopdeg = pnext.hnewdeg + 400
+                        #print(point.hnewdeg)
+                    if get3Ddist(point,pnext) > targetwidth and  isMinRange(point.hnewdeg,stopdeg):
                         div = getDivisor(point,pnext,targetwidth, 
                                      abs(point.hAngle - pnext.hAngle))
                         if div > 0:
@@ -267,7 +278,7 @@ def createLines(rows,mrows):
                         createHLine(point,pnext)
                         VstartList.append(pnext)
                         HstartList.append(pnext)
-                    else:
+                    elif isMinRange(point.hnewdeg, stopdeg):
                         createHLine(point,pnext)
                         VstartList.append(pnext)
                         HstartList.append(pnext)
@@ -284,20 +295,20 @@ def makeLeftVpoints(mrows, mcols, point):
     global VList, HList
     global VstartList, HstartList,targetheight
     try:
-        retpoint = None
+        np = None
         pset = set()
         deg = point.hnewdeg
         index = mcols[deg].index(point,0)
         np = mcols[deg][index + 1]
-        if get3Ddist(np ,point) < targetheight:
+        if get3Ddist(np ,point) > targetheight and isMinRange(point.vnewdeg,np.vnewdeg):
             div = getDivisor(point,np,targetheight, 
                                 abs(point.vAngle - np.vAngle))
             if div > 0:
-                if not np in VstartList:
-                    retpoint = np
                 delta = abs(np.vnewdeg - point.vnewdeg) / float(div +1)
                 n = point.vnewdeg + delta 
                 pset.update([(point.hnewdeg,n)])
+        else:
+            np = None
         return pset, np
     except Exception as exc:
         print(exc)
@@ -307,39 +318,64 @@ def makeLeftHpoints(mrows, mcols, point):
     global VList, HList
     global VstartList, HstartList
     try:
-        retpoint = None
         pset = set()
         deg = point.vnewdeg
         l = len(mrows[deg])
         np = None
-        if (l < 5):
+        if (l < 3):
             return pset, np
 
         index = mrows[deg].index(point,0)
         pn = mrows[deg][index]
         np = mrows[deg][(index + 1) % l]
-        if ((index + 1) % l) == 0:
-            np = mrows[deg][(index + 1) % l]
-            pset.update([(0.0, point.vnewdeg)])            
-            return pset, np
+        stopdeg =  np.hnewdeg
+        hstopdeg = np.hAngle
         if ( np.hnewdeg < pn.hnewdeg):
-            return pset, None
+            stopdeg = np.hnewdeg + 400.0
+            hstopdeg = np.hHngle + 180.0
 
-        if get3Ddist(np ,point) < targetwidth:
+        if get3Ddist(np ,point) > targetwidth and isMinRange(point.hnewdeg, stopdeg):
             div = getDivisor(point,np,targetwidth, 
-                                abs(point.hAngle - np.hAngle))
+                                abs(point.hAngle - hstopdeg))
             if div > 0:
                 if not np in HstartList:
                     retpoint = np
-                delta = abs(np.hnewdeg - point.hnewdeg) / float(div +1)
+                delta = abs(stopdeg - point.hnewdeg) / float(div +1)
                 n = adjust((point.vnewdeg + delta) % 400)
                 pset.update([(n, point.vnewdeg)])
+        else:
+            np = None                
         return pset, np
     except Exception as exc:
         print(exc)
         return pset, np
 
     pass
+
+def purifyErrors(mrows,mcols):
+    errorlist,_,_,_ = DC.getAllData()
+    pset = set()
+    for err in errorlist:
+        hdeg = err.hnewdeg
+        vdeg = err.vnewdeg
+
+        if hdeg in mcols.keys():
+            col = mcols[hdeg]
+            if vdeg >= col[0].vnewdeg and vdeg <= col[-1].vnewdeg:
+                first = next(filter(lambda p:  (vdeg <= p.vnewdeg), col), None)
+                if first:
+                    colindex = col.index(first,0) 
+                    nextpoint = col[colindex]
+                    previndex = (colindex - 1) if (colindex - 1) > 0 else len(col) -1
+                    prevpoint = col[previndex]
+                    if (isMinRange(prevpoint.vnewdeg, err.vnewdeg)):
+                        div = getDivisor(prevpoint,err,targetheight,abs(prevpoint.vnewdeg - err.vnewdeg))
+                        div = max(div,1)
+                        pset.update(getVScans(prevpoint,err,div))
+    return pset           
+
+
+
 
 def solveStartpoints(mrows,mcols):
     global VList, HList
@@ -389,7 +425,7 @@ def solveStartpoints(mrows,mcols):
                 pset.update(xset)
             if (p in horlist):
                 horlist.remove(p)
-            if (newpoint != None) and (not newpoint in horlist) and not checkInLine(VList, newpoint):
+            if (newpoint != None) and (not newpoint in horlist):
                 horlist.append(newpoint)
 
 
@@ -418,6 +454,7 @@ def searchRectangles(mrows,mcols):
              pset.update(solveset)
              done, solveset = solveStartpoints(mrows,mcols)
         pset.update(solveset)
+        pset.update(purifyErrors(mrows,mcols))
         return pset
     except Exception as exc:
         print(exc)
