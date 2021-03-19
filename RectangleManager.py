@@ -368,6 +368,7 @@ def makeLeftHpoints(mrows, mcols, point):
     pass
 
 def purifyErrors(mrows,mcols):
+    global targetheight,targetwidth
     try:
         errorlist,_,_,_ = DC.getAllData()
         pset = set()
@@ -385,14 +386,15 @@ def purifyErrors(mrows,mcols):
                         nextpoint = col[colindex]
                         previndex = (colindex - 1) if (colindex - 1) > 0 else len(col) -1
                         prevpoint = col[previndex]
-                        if (isMinRange(prevpoint.vnewdeg, err.vnewdeg)):
-                            div = getDivisor(prevpoint,err,targetheight,abs(prevpoint.vnewdeg - err.vnewdeg))
-                            div = max(div,1)
-                            pset.update(getVScans(prevpoint,err,div))
-                        if (isMinRange(err.vnewdeg, nextpoint.vnewdeg)):
-                            div = getDivisor(err,nextpoint,targetheight,abs(err.vnewdeg - nextpoint.vnewdeg))
-                            div = max(div,1)
-                            pset.update(getVScans(err,nextpoint,div))
+                        if get3Ddist(prevpoint,nextpoint) > targetheight:
+                            if (isMinRange(prevpoint.vnewdeg, err.vnewdeg)):
+                                div = getDivisor(prevpoint,err,targetheight,abs(prevpoint.vnewdeg - err.vnewdeg))
+                                div = max(div,1)
+                                pset.update(getVScans(prevpoint,err,div))
+                            if (isMinRange(err.vnewdeg, nextpoint.vnewdeg)):
+                                div = getDivisor(err,nextpoint,targetheight,abs(err.vnewdeg - nextpoint.vnewdeg))
+                                div = max(div,1)
+                                pset.update(getVScans(err,nextpoint,div))
 
             if vdeg in mrows.keys():
                 row = mrows[vdeg]
@@ -407,20 +409,21 @@ def purifyErrors(mrows,mcols):
                             previndex = len(row) - 1
                             stopdeg = err.hnewdeg + 400
                         prevpoint = row[previndex]
-                        if (isMinRange(prevpoint.hnewdeg, stopdeg)):
-                            div = getDivisor(prevpoint,err,targetwidth,abs(prevpoint.hnewdeg - stopdeg))
-                            div = max(div,1)
-                            pset.update(getHScans(prevpoint,err,div))
-                        
-                        l = len(row)
-                        stopdeg = err.hnewdeg
-                        if ((rowindex + 1) % l)  == 0:
-                            stopdeg = nextpoint.hnewdeg + 400
-                        if (isMinRange(err.hnewdeg, stopdeg)):
-                            div = getDivisor(err,nextpoint,targetwidth,abs(err.hnewdeg - stopdeg))
-                            div = max(div,1)
-                            pset.update(getHScans(err,nextpoint,div))
-        
+                        if get3Ddist(prevpoint,nextpoint) > targetwidth:
+                            if (isMinRange(prevpoint.hnewdeg, stopdeg)):
+                                div = getDivisor(prevpoint,err,targetwidth,abs(prevpoint.hnewdeg - stopdeg))
+                                div = max(div,1)
+                                pset.update(getHScans(prevpoint,err,div))
+                            
+                            l = len(row)
+                            stopdeg = err.hnewdeg
+                            if ((rowindex + 1) % l)  == 0:
+                                stopdeg = nextpoint.hnewdeg + 400
+                            if (isMinRange(err.hnewdeg, stopdeg)):
+                                div = getDivisor(err,nextpoint,targetwidth,abs(err.hnewdeg - stopdeg))
+                                div = max(div,1)
+                                pset.update(getHScans(err,nextpoint,div))
+            
         return pset          
     except Exception as exc:
         print(exc) 
