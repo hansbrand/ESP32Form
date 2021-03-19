@@ -16,7 +16,8 @@ class DataPoint(object):
     vnewdeg = None
     hkey = ""
     vkey = ""
-
+    S1DIFF = 1.5
+    S2DIFF = 1.75
     def __init__(self,line = ""):
         try:
             #print(line)
@@ -54,6 +55,10 @@ class DataPoint(object):
             self.signal = int(measure.split("m,")[1])
             self.hAngle = float(parsed[4])
             self.vAngle = float(parsed[5])
+
+            self.vAngle += self.S1DIFF
+            # else:
+            #     self.vAngle += self.S2DIFF
 
             self.hnewdeg = self.hAngle
             self.vnewdeg =self.vAngle

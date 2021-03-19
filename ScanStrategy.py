@@ -508,6 +508,11 @@ def createCommandList(angles, s1dict,s2dict, s1next,s2next):
                         commands.append(ED.statusCommand(2))
 
         commands.append(ED.getstatsCommand())
+        message = "M2:100:"
+        commands.append(message)
+        message = "M3:100:"
+        commands.append(message)
+
         # for c in commands:
         #     if (c[0:2] in["M2","S1","M1"]):
         #         print(c)
