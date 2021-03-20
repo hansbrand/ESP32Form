@@ -3,7 +3,7 @@ import Calculator
 import operator
 from collections import OrderedDict
 import numpy as np
-import scipy.spatial as spat
+#import scipy.spatial as spat
 
 
 PointCloud = None

@@ -203,8 +203,8 @@ def loadfile(filename):
         #time.sleep(2)
         isScanning = False
         isLoaded = True
-        hull = DataContainer.createHull()
-        saveHull(hull)
+        #hull = DataContainer.createHull()
+        #saveHull(hull)
 
         #print(DataContainer.StatusList)
         return True

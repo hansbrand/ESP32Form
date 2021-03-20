@@ -28,7 +28,7 @@ class DataPoint(object):
                 self.hnewdeg = 0
                 self.vnewdeg = 0
                 return 
-            xradius =0.094
+            xradius =0.096
             ysensordelta =0.017
             parsed = line.split("|")
             measure = parsed[1]
