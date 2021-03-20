@@ -2,6 +2,8 @@ import threading
 import Calculator
 import operator
 from collections import OrderedDict
+import numpy as np
+import scipy.spatial as spat
 
 
 PointCloud = None
@@ -156,6 +158,21 @@ def addLimits(dp):
         print(exc)
         return
         
+def createHull():
+    global PointCloud
+    hulllist = []
+    for p in PointCloud:
+        element = [p.x,p.y,p.z]
+        hulllist.append(element)
+    hullarr = np.array(hulllist)
+    hull = spat.ConvexHull(hullarr)
+    result = []
+    #facets = hull.points[hull.simplices[i, j,k], :] 
+    for simplex in hull.simplices:
+        e = [hullarr[simplex,0],hullarr[simplex,1],hullarr[simplex,2]]
+        result.append(e)
+    return result
+
 def addRows(dp):
     global mrows
     global mcols

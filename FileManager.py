@@ -145,7 +145,31 @@ def isloaded():
         return True
     return False
 
+def saveHull(hull):
+    try:
+        dirname = os.path.dirname(__file__)
+        datestr = time.strftime("%y_%m_%d")
 
+        ISLINUXOS = sys.platform.startswith('linux') or sys.platform.startswith('cygwin')
+        if ISLINUXOS:
+            directory =os.path.join(dirname, 'dist/') + datestr
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename = directory + "/DIST" + time.strftime("%H_%M_%S")+"_hull.txt"
+        else:
+            directory =os.path.join(dirname, 'dist\\') + datestr
+            if  not os.path.isdir(directory):
+                os.mkdir(directory)
+            filename = directory + "\\DIST" + time.strftime("%H_%M_%S") +"_hull.txt"
+ 
+        with open(filename, 'wt+') as f:
+            for h in hull:
+                l = h[0] + " " + h[0] + " " + h[0] + "\n"
+                f.write(l)
+
+
+    except Exception as exc:
+        print(exc)
 
 
 def loadfile(filename):
@@ -179,6 +203,8 @@ def loadfile(filename):
         #time.sleep(2)
         isScanning = False
         isLoaded = True
+        hull = DataContainer.createHull()
+        saveHull(hull)
 
         #print(DataContainer.StatusList)
         return True
