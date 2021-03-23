@@ -87,8 +87,10 @@ def startScan( width, height, turns, connector, minwidth, minheight,modus = "NOR
     strategyActive   =  True
     starttime = time.time()
     totaltime = time.time()
-
-    clist = ED.genStrategyCommands(True, hdelta = hdegree, vdelta = vdegree)
+    if currentModus == "SHAPES":
+        clist = ED.genShapeCommands()
+    else:
+        clist = ED.genStrategyCommands(True, hdelta = hdegree, vdelta = vdegree)
 
     connect.current2send = len(clist)
     connect.alreadysent = 0
@@ -675,7 +677,7 @@ def nextTurn():
     starttime = time.monotonic()
     FM.SaveTurn(connect.receiveList,int(targetwidth *100),int(targetheight*100),currentturns)
     currentturns += 1
-    if (currentturns > maxturns):
+    if (currentturns > maxturns) or currentModus == "SHAPES":
         strategyActive = False
         #sendMail()
         FormMobile.enableButtons(True,False)
@@ -810,35 +812,37 @@ def simulateTurn():
         DC.sortRows()
 
         currentturns += 1
-        if (currentModus in ["DETAIL","BOTH"]):
-            PointSet.update(RM.createRectangles(targetwidth,targetheight))
 
-        if (currentModus == ["EDGE","BOTH"]) or len(PointSet) < 50:
-            PointSet.update( EM.createEdges())
+        if DC.isAnalyze:
+            if (currentModus in ["DETAIL","BOTH"]):
+                PointSet.update(RM.createRectangles(targetwidth,targetheight))
+
+            if (currentModus == ["EDGE","BOTH"]) or len(PointSet) < 50:
+                PointSet.update( EM.createEdges())
 
 
-        PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
-        #getcommands
-        commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
+            PointSet, horlist, s1dict, s2dict,s1next,s2next = createOpposits(PointSet, reversescan)
+            #getcommands
+            commands = createCommandList(horlist, s1dict,s2dict,s1next,s2next)
 
-        # else:
-        #     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-        if (len(commands) < 100) and currentModus == "DETAIL":
-            # tw = targetwidth / 2.0
-            # th = targetheight / 2.0
-            # if (tw >= MINWIDTH) and (th >= MINHEIGHT):
-            #     FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
-            #     targetwidth = tw
-            #     targetheight = th
-                
-            #     commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
-            currentModus = "BOTH"
-        elif (currentModus in ["BOTH","EDGE"]) and (len(commands) < 100): 
-                strategyActive = False
-                #sendMail()
-                FormMobile.enableButtons(True,False)
-                FM.ilog("Scanning done!!!")
-                return
+            # else:
+            #     commands, PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+            if (len(commands) < 100) and currentModus == "DETAIL":
+                # tw = targetwidth / 2.0
+                # th = targetheight / 2.0
+                # if (tw >= MINWIDTH) and (th >= MINHEIGHT):
+                #     FM.ilog("Resolution changed : " + str(tw) + " x " + str(th))
+                #     targetwidth = tw
+                #     targetheight = th
+                    
+                #     commands,PointSet =createRange(PointSet, reversescan, HorSet, VerSet)
+                currentModus = "BOTH"
+            elif (currentModus in ["BOTH","EDGE"]) and (len(commands) < 100): 
+                    strategyActive = False
+                    #sendMail()
+                    FormMobile.enableButtons(True,False)
+                    FM.ilog("Scanning done!!!")
+                    return
         passfield = FormCommand.FormCommand.getWidgetByName("PASS")
         passtext = "PASS " + str(currentturns + 1) + " : " + str(len(commands))
         passfield["text"] = passtext

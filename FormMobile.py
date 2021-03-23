@@ -29,7 +29,7 @@ class FormMobile(tk.Frame):
     #"FULLSCAN",
     #"QUICKSCAN",
     "EDGES",
-
+    "SHAPES",
     #"SHOW",
     "SAVE_FILE",
     "LOAD_FILE",
@@ -84,7 +84,7 @@ class FormMobile(tk.Frame):
             for c in s:
                 boldFont = tkFont.Font (size = 12, weight = "bold")
                 bt=tk.Button(labelframe,underline=0, font = boldFont)
-                if c in ["INIT",  "QUIT","LOAD_FILE","SAVE_FILE","EDGES","S30x70"]:
+                if c in ["INIT",  "QUIT","LOAD_FILE","SAVE_FILE","EDGES","S30x70","SHAPES"]:
                     bt["state"] = tk.NORMAL
                     bt["bg"] = "lightgrey"
                 else:                    
@@ -193,7 +193,7 @@ class FormMobile(tk.Frame):
 
     @classmethod
     def enableButtons(self,toenable,isscanning = False):
-        scanset = ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE", "FULLSCAN","TEST80","EDGES"]
+        scanset = ["S30x70", "FULLSCAN", "QUICKSCAN","CALIBRATE", "FULLSCAN","TEST80","EDGES","SHAPES"]
         for bt in self.buttonlist:
                 if not FormCallbacks.initpressed:
                     if bt["text"] == "INIT":

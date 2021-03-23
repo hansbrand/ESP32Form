@@ -462,7 +462,7 @@ def piepCommand(dev):
 
 def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAXVERTICAL, hdelta = 2.0 ,vdelta = 10.0):
   global commandList
-  round = 0;
+  round = 0
 
   message = ""
 
@@ -554,4 +554,49 @@ def genStrategyCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend =
 #  print(message)
 
   return commandList
+
+
+
+
+def genShapeCommands(scanning = True, hstart = 0,hend = 200,vstart = 0,vend = MAXVERTICAL, hdelta = 0.25 ,vdelta = 10.0):
+    global commandList
+    round = 0
+
+    message = ""
+
+    counter = 0
+    commandList.append(starttimerCommand())
+    #commandList.append(calibrateCommand())
+    hindex = hstart
+    vindex = vstart
+    message = "M1:0.0:" 
+    counter +=1
+    commandList.append(message)
+    message = "M2:98.5:" 
+    counter += 1
+    commandList.append(message)
+    message = "M3:98.5:" 
+    counter += 1
+    commandList.append(message)
+
+    while  (hindex < hend):
+
+        if (scanning):
+            addScanning(counter)
+            counter += 2
+        message = "M1:" + str(hindex) + ":" 
+        counter +=1
+        commandList.append(message)
+        hindex += hdelta
+        round += 1
+        if ((round % 100) == 0):
+            commandList.append(statusCommand(1))
+            commandList.append(statusCommand(2))
+
+    commandList.append(getstatsCommand())
+
+    for mes in commandList:
+       print(mes)
+
+    return commandList
 

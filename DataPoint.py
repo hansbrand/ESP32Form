@@ -35,8 +35,8 @@ class DataPoint(object):
 
             if (len(measure.split("m,")) < 2):
                 self.state = "ERROR"
-                self.hAngle = float(parsed[4])
-                self.vAngle = float(parsed[5])
+                self.hAngle = float(parsed[4]) 
+                self.vAngle = float(parsed[5]) + self.S1DIFF
                 self.hkey = str(self.hAngle)
                 self.vkey = str(self.vAngle)
                 self.hnewdeg = self.hAngle
@@ -130,7 +130,7 @@ class DataPoint(object):
                 # self.y = scanned  * math.sin(math.radians(self.hAngle)) #+ xradius * math.cos(math.radians(self.hAngle))
 
             #if (int(self.signal)  < 4000) and (self.meter < 7) and (self.z > -1.5):
-            if  (self.meter < 7.0) and (self.z > -1.5):
+            if  (self.meter < 8.0) and (self.z > -1.5):
                 self.state = "VALID"
                 DC.pointDone.update([(int(self.hnewdeg * 10.0),int (self.vnewdeg * 10.0))])
 

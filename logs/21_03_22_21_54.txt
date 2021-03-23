@@ -1,0 +1,3 @@
+INFO : 21_03_22_21_54   Session started
+INFO : 21_03_22_21_54   PASS 1, Time :26940774 : 50
+INFO : 21_03_22_21_54   Total :0 : 00
